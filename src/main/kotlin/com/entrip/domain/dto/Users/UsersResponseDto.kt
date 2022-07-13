@@ -3,10 +3,11 @@ package com.entrip.domain.dto.Users
 import com.entrip.domain.Planners
 import com.entrip.domain.Users
 import lombok.Builder
+import java.util.TreeSet
 
 class UsersResponseDto(
     var user_id: String,
-    var planners: HashSet<Planners> = HashSet(),
+    var planners: MutableSet<Planners> = TreeSet(),
     var nickname: String,
     var gender: Int?,
     var photoUrl: String?,

@@ -1,6 +1,7 @@
 package com.entrip.domain
 
 import java.time.LocalDateTime
+import java.util.TreeSet
 import javax.persistence.*
 
 @Entity
@@ -18,11 +19,11 @@ class Planners (
         @Column
         @ManyToMany(fetch = FetchType.EAGER)
         @JoinColumn(name = "USERS_PLANNERS")
-        var users : HashSet<Users> = HashSet(),
+        var users : MutableSet<Users> = TreeSet(),
 
         @Column
         @OneToMany (mappedBy = "planners", fetch = FetchType.EAGER)
-        var plans : HashSet<Plans> = HashSet()
+        var plans : MutableSet<Plans> = TreeSet()
         ){
         fun Planners (title : String, start_date: String, end_date: String) {
                 this.title = title

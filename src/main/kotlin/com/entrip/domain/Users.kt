@@ -1,5 +1,8 @@
 package com.entrip.domain
 
+import apple.laf.JRSUIUtils.Tree
+import sun.security.ec.point.ProjectivePoint.Mutable
+import java.util.TreeSet
 import javax.persistence.*
 
 @Entity
@@ -10,11 +13,11 @@ class Users(
     @Column
     @ManyToMany (fetch = FetchType.EAGER)
     @JoinColumn(name = "PLANNERS_USERS")
-    var planners : HashSet<Planners> = HashSet(),
+    var planners : MutableSet<Planners> = TreeSet(),
 
     @Column
     @OneToMany (mappedBy = "users", fetch = FetchType.EAGER)
-    var comments : HashSet<Comments> = HashSet(),
+    var comments : MutableSet<Comments> = TreeSet(),
 
     @Column
     val nickname: String,
