@@ -7,11 +7,11 @@ class UsersReturnDto (
     var photoUrl : String?,
     var token : String?
         ){
-    fun UsersReturnDto(responseDto: UsersResponseDto) {
-        this.user_id = responseDto.user_id
-        this.nickname = responseDto.nickname
-        this.gender = responseDto.gender
-        this.photoUrl = responseDto.photoUrl
-        this.token = responseDto.token
-    }
+    constructor(responseDto: UsersResponseDto) : this (
+        responseDto.user_id,
+        responseDto.nickname,
+        responseDto.gender,
+        responseDto.photoUrl,
+        responseDto.token
+    )
 }

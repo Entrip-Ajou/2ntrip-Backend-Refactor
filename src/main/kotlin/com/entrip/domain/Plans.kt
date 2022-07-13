@@ -1,4 +1,9 @@
 package com.entrip.domain
 
-class Plans {
+import javax.persistence.Entity
+
+@Entity
+class Plans (
+
+        ) {
 }

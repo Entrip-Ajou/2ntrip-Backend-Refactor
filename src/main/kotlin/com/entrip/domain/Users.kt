@@ -19,15 +19,15 @@ class Users(
     @Column
     val nickname: String,
     var gender : Int? = null,
-    var travelFavorite : String? = null,
     var photoUrl : String? = null,
     var token : String? = null
 
 ): BaseTimeEntity() {
     fun addPlanners(planners : Planners) : Long {
         this.planners.add(planners)
-        //add user to planner code is required
-        return 1 //Change return value to Planners_id
+        if (!planners.users.contains(this))
+            planners.addUsers(this)
+        return planners.planner_id
     }
     fun updateToken(token: String) : String {
         this.token = token
