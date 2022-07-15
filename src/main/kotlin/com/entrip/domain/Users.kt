@@ -7,7 +7,7 @@ import javax.persistence.*
 
 @Entity
 class Users(
-    @Id @Column
+    @Id @Column(name = "USER_ID")
     val user_id: String,
 
     @Column

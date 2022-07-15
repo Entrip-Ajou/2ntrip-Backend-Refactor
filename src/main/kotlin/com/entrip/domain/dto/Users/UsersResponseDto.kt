@@ -2,8 +2,7 @@ package com.entrip.domain.dto.Users
 
 import com.entrip.domain.Planners
 import com.entrip.domain.Users
-import lombok.Builder
-import java.util.TreeSet
+import java.util.*
 
 class UsersResponseDto(
     var user_id: String,

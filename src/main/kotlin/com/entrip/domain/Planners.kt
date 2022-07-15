@@ -8,6 +8,7 @@ import javax.persistence.*
 class Planners (
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @Column(name = "PLANNER_ID")
         var planner_id : Long,
 
         @Column
@@ -31,7 +32,7 @@ class Planners (
                 this.end_date = end_date
         }
 
-        fun update (title : String, start_date: String, end_date: String) {
+        fun update (title : String, start_date: String, end_date: String) : Unit{
                 this.title = title
                 this.start_date = start_date
                 this.end_date = end_date
