@@ -29,7 +29,6 @@ class UsersController (
             message = "User is saved well",
             data = returnDto
         )
-        //Have to learn about new keyword
         val headers : HttpHeaders = HttpHeaders()
         headers.contentType = MediaType ("application", "json", Charset.forName("UTF-8"))
         return ResponseEntity<Messages>(messages, headers, HttpStatus.OK)

@@ -7,5 +7,5 @@ import java.util.Objects
 class Messages (
     val httpStatus : Int,
     val message : String,
-    val data : Any
+    val data : Any?
 )
