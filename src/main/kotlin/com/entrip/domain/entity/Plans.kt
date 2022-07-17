@@ -1,6 +1,5 @@
-package com.entrip.domain
+package com.entrip.domain.entity
 
-import java.util.StringJoiner
 import java.util.TreeSet
 import javax.persistence.*
 
@@ -9,7 +8,7 @@ class Plans (
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "PLAN_ID")
-        val plan_id : Long,
+        val plan_id : Long? = null,
 
         @Column
         var date : String,
@@ -20,12 +19,12 @@ class Plans (
 
         @ManyToOne (fetch = FetchType.EAGER)
         @JoinColumn (name = "PLANNER_ID")
-        var planners: Planners,
+        var planners: Planners? = null,
 
         @OneToMany (mappedBy = "plans", fetch = FetchType.EAGER)
         var comments : MutableSet<Comments> = TreeSet()
         ) {
-        fun update (date: String, todo : String, time : String, location : String, rgb : Long) : Unit {
+        public fun update (date: String, todo : String, time : String, location : String, rgb : Long) : Unit {
                 this.date = date
                 this.todo = todo
                 this.time = time
@@ -33,12 +32,12 @@ class Plans (
                 this.rgb = rgb
         }
 
-        fun setPlanners (planners: Planners) : Long {
+        public fun setPlanners (planners: Planners) : Long? {
                 this.planners = planners
-                return this.planners.planner_id
+                return this.planners!!.planner_id
         }
 
-        fun isExistComments() : Boolean {
+        public fun isExistComments() : Boolean {
                 return comments.isEmpty()
         }
 }

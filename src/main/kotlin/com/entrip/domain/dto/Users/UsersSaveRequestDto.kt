@@ -1,6 +1,6 @@
 package com.entrip.domain.dto.Users
 
-import com.entrip.domain.Users
+import com.entrip.domain.entity.Users
 
 class UsersSaveRequestDto (
     val user_id : String,

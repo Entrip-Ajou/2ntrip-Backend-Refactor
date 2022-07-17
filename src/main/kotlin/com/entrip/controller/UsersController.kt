@@ -21,8 +21,8 @@ class UsersController (
 
     @PostMapping("/api/v1/users")
     fun save (@RequestBody requestDto: UsersSaveRequestDto) : ResponseEntity<Messages> {
-        val user_id : String = usersService.save(requestDto)
-        val responseDto : UsersResponseDto = usersService.findById(user_id)
+        val user_id : String? = usersService.save(requestDto)
+        val responseDto : UsersResponseDto = usersService.findByUserId(user_id)
         val returnDto : UsersReturnDto = UsersReturnDto(responseDto = responseDto)
         val messages : Messages = Messages(
             httpStatus = 200,

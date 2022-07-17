@@ -1,7 +1,7 @@
 package com.entrip.domain.dto.Users
 
 class UsersReturnDto (
-    var user_id : String,
+    var user_id : String?,
     var nickname : String,
     var gender : Int?,
     var photoUrl : String?,

@@ -1,14 +1,13 @@
-package com.entrip.domain
+package com.entrip.domain.entity
 
-import apple.laf.JRSUIUtils.Tree
-import sun.security.ec.point.ProjectivePoint.Mutable
-import java.util.TreeSet
+import com.entrip.domain.BaseTimeEntity
+import java.util.*
 import javax.persistence.*
 
 @Entity
 class Users(
     @Id @Column(name = "USER_ID")
-    val user_id: String,
+    val user_id: String? = null,
 
     @Column
     @ManyToMany (fetch = FetchType.EAGER)
@@ -16,7 +15,8 @@ class Users(
     var planners : MutableSet<Planners> = TreeSet(),
 
     @Column
-    @OneToMany (mappedBy = "users", fetch = FetchType.EAGER)
+    @OneToMany (mappedBy = "users", fetch = FetchType.EAGER, orphanRemoval = true)
+    //Check "orphanRemoval = true" is possible
     var comments : MutableSet<Comments> = TreeSet(),
 
     @Column
@@ -26,13 +26,13 @@ class Users(
     var token : String? = null
 
 ): BaseTimeEntity() {
-    fun addPlanners(planners : Planners) : Long {
+    public fun addPlanners(planners : Planners) : Long? {
         this.planners.add(planners)
-        if (!planners.users.contains(this))
+        if (!planners.users?.contains(this)!!)
             planners.addUsers(this)
         return planners.planner_id
     }
-    fun updateToken(token: String) : String {
+    public fun updateToken(token: String) : String {
         this.token = token
         return token
     }
