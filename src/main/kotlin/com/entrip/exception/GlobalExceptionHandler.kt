@@ -1,7 +1,6 @@
 package com.entrip.exception
 
 import com.entrip.domain.Messages
-import jdk.nashorn.internal.runtime.regexp.joni.Config.log
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -19,7 +18,7 @@ class GlobalExceptionHandler {
     fun handleMethodArgumentNotValidException (e : MethodArgumentNotValidException) : ResponseEntity<Messages> {
         val messages : Messages = Messages(
             400,
-            "MethodArgumentNotValidException" + e.message,
+            "MethodArgumentNotValidException\n" + e.message,
             null
         )
         val headers : HttpHeaders = HttpHeaders()
@@ -31,7 +30,7 @@ class GlobalExceptionHandler {
     fun handleHttpRequestMethodNotSupportedException (e : HttpRequestMethodNotSupportedException) : ResponseEntity<Messages> {
         val messages : Messages = Messages(
             405,
-            "HttpRequestMethodNotSupportedException" + e.message,
+            "HttpRequestMethodNotSupportedException\n" + e.message,
             null
         )
         val headers : HttpHeaders = HttpHeaders()
@@ -43,7 +42,7 @@ class GlobalExceptionHandler {
     fun handleIllegalArgumentException (e : IllegalArgumentException) : ResponseEntity<Messages> {
         val messages : Messages = Messages(
             500,
-            "IllegalArgumentException" + e.message,
+            "IllegalArgumentException\n" + e.message,
             null
         )
         val headers : HttpHeaders = HttpHeaders()
@@ -55,7 +54,7 @@ class GlobalExceptionHandler {
     fun handleNicknameOrUserIdNotValidException (e : NicknameOrUserIdNotValidException) : ResponseEntity<Messages> {
         val messages : Messages = Messages(
             404,
-            "NicknameOrUserIdNotValidException" + e.message,
+            "NicknameOrUserIdNotValidException\n" + e.message,
             null
         )
         val headers : HttpHeaders = HttpHeaders()
