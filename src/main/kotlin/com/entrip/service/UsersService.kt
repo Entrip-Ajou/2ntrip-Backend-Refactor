@@ -16,7 +16,7 @@ import com.entrip.exception.NicknameOrUserIdNotValidException as NicknameOrUserI
 
 @Service
 class UsersService (
-    private val usersRepository: UsersRepository,
+    private final val usersRepository: UsersRepository,
 
     @Autowired
     private val plannersRepository: PlannersRepository

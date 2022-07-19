@@ -21,14 +21,14 @@ class Planners (
         @Column
         @ManyToMany(fetch = FetchType.EAGER)
         @JoinColumn(name = "USERS_PLANNERS")
-        var users : MutableSet<Users>? = TreeSet(),
+        var users : MutableSet<Users> = TreeSet(),
 
         @Column
         @OneToMany (mappedBy = "planners", fetch = FetchType.EAGER)
         var plans : MutableSet<Plans>? = TreeSet()
         ): BaseTimeEntity() {
 
-        fun update (title : String, start_date: String, end_date: String) : Unit{
+        fun update (title: String, start_date: String, end_date: String) : Unit{
                 this.title = title
                 this.start_date = start_date
                 this.end_date = end_date

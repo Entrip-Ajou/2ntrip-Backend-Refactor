@@ -15,7 +15,7 @@ import java.nio.charset.Charset
 
 @RestController
 class UsersController (
-    val usersService: UsersService
+    final val usersService: UsersService
         ){
     private fun sendResponseHttpByJson (message : String?, data : Any?) : ResponseEntity<Messages> {
         val messages : Messages = Messages(
