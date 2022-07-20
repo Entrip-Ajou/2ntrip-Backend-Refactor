@@ -1,11 +1,13 @@
 package com.entrip.domain.entity
 
 import com.entrip.domain.BaseTimeEntity
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import java.time.LocalDateTime
 import java.util.TreeSet
 import javax.persistence.*
 
 @Entity
+@EnableJpaAuditing
 class Planners (
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,8 +38,6 @@ class Planners (
 
         fun addUsers (users : Users) : String? {
                 this.users?.add(users)
-                if (!users.planners.contains(this))
-                        users.addPlanners(this)
                 return users.user_id
         }
 

@@ -106,6 +106,20 @@ class PlannersService (
         return usersList
     }
 
+    public fun findAllPlansWithPlannerId (planner_id: Long) : MutableList<PlansReturnDto> {
+        val planners = findPlanners(planner_id)
+        val plansSet : MutableSet<Plans>? = planners.plans
+        val plansList : MutableList<PlansReturnDto> = ArrayList<PlansReturnDto>()
+        val plansIterator = plansSet?.iterator()
+        while(plansIterator?.hasNext() == true) {
+            val plans = plansIterator.next()
+            val plansResponseDto = PlansResponseDto(plans)
+            val plansReturnDto = PlansReturnDto(plansResponseDto)
+            plansList.add(plansReturnDto)
+        }
+        return plansList
+    }
+
     public fun plannerIsExistWithId (planner_id : Long) : Boolean {
         return plannersRepository.existsById(planner_id)
     }

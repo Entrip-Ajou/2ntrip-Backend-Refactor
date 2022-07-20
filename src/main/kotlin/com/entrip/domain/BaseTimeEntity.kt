@@ -10,10 +10,11 @@ import javax.persistence.MappedSuperclass
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
 abstract class BaseTimeEntity {
+
     @CreatedDate
-    var createdDate : LocalDateTime? = null
+    var createdDate : LocalDateTime = LocalDateTime.now()
     @LastModifiedDate
-    var timestamp : LocalDateTime? = null
+    var timestamp : LocalDateTime = LocalDateTime.now()
 
     fun setTimeStamp(localDateTime: LocalDateTime) : Unit {
         timestamp = localDateTime
