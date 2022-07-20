@@ -48,12 +48,6 @@ class PlannersService (
         return users
     }
 
-    private fun findPlans(plan_id : Long) : Plans {
-        val plans : Plans = plansRepository.findById(plan_id!!).orElseThrow {
-            IllegalArgumentException("Error raise at plansRepository.findById$plan_id")
-        }
-        return plans
-    }
     @Transactional
     public fun save (requestDto : PlannersSaveRequestDto) : Long? {
         val users = findUsers(requestDto.user_id)
@@ -128,12 +122,17 @@ class PlannersService (
     @Transactional
     public fun delete (planner_id : Long) : Long {
         val planners = findPlanners(planner_id)
-        val plannersIterator = planners.plans!!.iterator()
-        while(plannersIterator.hasNext()) {
-            val plans = plannersIterator.next()
-            //remove all the plans in planners
-            //plansService.delete(plans.plan_id)
-
+        val plansIterator = planners.plans!!.iterator()
+        while(plansIterator.hasNext()) {
+            val plans = plansIterator.next()
+            val commentsIterator = plans.comments.iterator()
+            while (commentsIterator.hasNext()) {
+                val comments = commentsIterator.next()
+                commentsIterator.remove()
+                commentsService.delete(comments.comment_id!!)
+            }
+            plansIterator.remove()
+            plansService.delete(plans.plan_id!!)
         }
         val usersIterator = planners.users!!.iterator()
         while(usersIterator.hasNext()) {

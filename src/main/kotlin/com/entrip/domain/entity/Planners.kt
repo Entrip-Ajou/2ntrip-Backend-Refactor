@@ -1,13 +1,11 @@
 package com.entrip.domain.entity
 
 import com.entrip.domain.BaseTimeEntity
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import java.time.LocalDateTime
 import java.util.TreeSet
 import javax.persistence.*
 
 @Entity
-@EnableJpaAuditing
 class Planners (
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)

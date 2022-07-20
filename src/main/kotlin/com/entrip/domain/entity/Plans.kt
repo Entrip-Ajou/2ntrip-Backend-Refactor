@@ -38,6 +38,6 @@ class Plans (
         }
 
         public fun isExistComments() : Boolean {
-                return comments.isEmpty()
+                return comments.isNotEmpty()
         }
 }
