@@ -12,7 +12,7 @@ class WebSocketConfig : WebSocketMessageBrokerConfigurer {
 
     //Endpoint for connecting websocket
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
-        registry.addEndpoint("/ws").withSockJS()
+        registry.addEndpoint("/ws").setAllowedOrigins("*").withSockJS()
     }
 
     //Set prefix for endpoint for message sending and receiving
