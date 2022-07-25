@@ -17,7 +17,7 @@ import java.nio.charset.Charset
 class UsersController (
     final val usersService: UsersService
         ){
-    private fun sendResponseHttpByJson (message : String?, data : Any?) : ResponseEntity<Messages> {
+    private fun sendResponseHttpByJson (message : String, data : Any) : ResponseEntity<Messages> {
         val messages : Messages = Messages(
             httpStatus = 200,
             message = message,
@@ -39,7 +39,7 @@ class UsersController (
     @PutMapping("/api/v1/users/{planner_id}/{user_id}")
     public fun addPlanners (@PathVariable planner_id : Long, @PathVariable user_id : String) : ResponseEntity<Messages> {
         usersService.addPlanners(planner_id, user_id)
-        return sendResponseHttpByJson("Add planner, id : $planner_id with user, id : $user_id", null)
+        return sendResponseHttpByJson("Add planner, id : $planner_id with user, id : $user_id", user_id)
     }
 
     @GetMapping("/api/v1/users/{user_id}")
@@ -70,7 +70,7 @@ class UsersController (
     @DeleteMapping("/api/v1/users/{user_id}")
     public fun delete (@PathVariable user_id : String) : ResponseEntity<Messages> {
         val deletedUserId : String? = usersService.delete(user_id)
-        return sendResponseHttpByJson("Delete user with id : $user_id", deletedUserId)
+        return sendResponseHttpByJson("Delete user with id : $user_id", deletedUserId!!)
     }
 
     @PutMapping("api/v1/users/token/{user_id}/{token}")

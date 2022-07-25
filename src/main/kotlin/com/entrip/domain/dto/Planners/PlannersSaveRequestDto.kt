@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-@NoArgsConstructor
 class PlannersSaveRequestDto (
     val user_id : String
         ){

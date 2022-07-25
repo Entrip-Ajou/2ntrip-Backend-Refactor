@@ -18,7 +18,7 @@ class PlansController (
     final val plansService: PlansService
         ){
 
-    private fun sendResponseHttpByJson (message : String?, data : Any?) : ResponseEntity<Messages> {
+    private fun sendResponseHttpByJson (message : String, data : Any) : ResponseEntity<Messages> {
         val messages : Messages = Messages(
             httpStatus = 200,
             message = message,
