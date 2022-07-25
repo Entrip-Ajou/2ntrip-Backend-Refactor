@@ -23,7 +23,7 @@ import javax.xml.ws.Response
 class PlannersController (
     final val plannersService : PlannersService
         ){
-    private fun sendResponseHttpByJson (message : String?, data : Any?) : ResponseEntity<Messages> {
+    private fun sendResponseHttpByJson (message : String? = null, data : Any? = null) : ResponseEntity<Messages> {
         val messages : Messages = Messages(
             httpStatus = 200,
             message = message,

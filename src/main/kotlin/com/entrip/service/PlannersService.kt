@@ -52,7 +52,7 @@ class PlannersService (
     public fun save (requestDto : PlannersSaveRequestDto) : Long? {
         val users = findUsers(requestDto.user_id)
         val planners = requestDto.toEntity()
-        //planners.setComment_timeStamp()
+        planners.setComment_timeStamp()
         users.addPlanners(planners)
         planners.addUsers(users)
         return plannersRepository.save(planners).planner_id

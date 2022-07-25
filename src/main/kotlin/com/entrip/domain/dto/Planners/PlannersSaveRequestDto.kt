@@ -1,9 +1,11 @@
 package com.entrip.domain.dto.Planners
 
 import com.entrip.domain.entity.Planners
+import lombok.NoArgsConstructor
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+@NoArgsConstructor
 class PlannersSaveRequestDto (
     val user_id : String
         ){
