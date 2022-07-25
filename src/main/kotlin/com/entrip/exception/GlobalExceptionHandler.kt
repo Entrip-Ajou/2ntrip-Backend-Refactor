@@ -18,8 +18,8 @@ class GlobalExceptionHandler {
     fun handleMethodArgumentNotValidException (e : MethodArgumentNotValidException) : ResponseEntity<Messages> {
         val messages : Messages = Messages(
             400,
-            "MethodArgumentNotValidException\n" + e.message,
-            null
+            "MethodArgumentNotValidException\n",
+            e.message!!
         )
         val headers : HttpHeaders = HttpHeaders()
         headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
@@ -30,8 +30,8 @@ class GlobalExceptionHandler {
     fun handleHttpRequestMethodNotSupportedException (e : HttpRequestMethodNotSupportedException) : ResponseEntity<Messages> {
         val messages : Messages = Messages(
             405,
-            "HttpRequestMethodNotSupportedException\n" + e.message,
-            null
+            "HttpRequestMethodNotSupportedException\n",
+            e.message!!
         )
         val headers : HttpHeaders = HttpHeaders()
         headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
@@ -42,8 +42,8 @@ class GlobalExceptionHandler {
     fun handleIllegalArgumentException (e : IllegalArgumentException) : ResponseEntity<Messages> {
         val messages : Messages = Messages(
             500,
-            "IllegalArgumentException\n" + e.message,
-            null
+            "IllegalArgumentException\n",
+            e.message!!
         )
         val headers : HttpHeaders = HttpHeaders()
         headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
@@ -54,8 +54,8 @@ class GlobalExceptionHandler {
     fun handleNicknameOrUserIdNotValidException (e : NicknameOrUserIdNotValidException) : ResponseEntity<Messages> {
         val messages : Messages = Messages(
             404,
-            "NicknameOrUserIdNotValidException\n" + e.message,
-            null
+            "NicknameOrUserIdNotValidException\n",
+            e.message!!
         )
         val headers : HttpHeaders = HttpHeaders()
         headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
@@ -66,8 +66,8 @@ class GlobalExceptionHandler {
     fun handleException (e : Exception) : ResponseEntity<Messages> {
         val messages : Messages = Messages(
             520,
-            "handleEntityNotFoundException : unknown exception\n" + e.message,
-            null
+            "handleEntityNotFoundException : unknown exception\n",
+            e.message!!
         )
         val headers : HttpHeaders = HttpHeaders()
         headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
