@@ -1,6 +1,9 @@
 package com.entrip.exception
 
 import com.entrip.domain.Messages
+import com.entrip.socket.WebSocketEventListener
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -14,6 +17,8 @@ import java.nio.charset.Charset
 @ControllerAdvice
 class GlobalExceptionHandler {
 
+    val logger : Logger = LoggerFactory.getLogger(WebSocketEventListener::class.java)
+
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleMethodArgumentNotValidException (e : MethodArgumentNotValidException) : ResponseEntity<Messages> {
         val messages : Messages = Messages(
@@ -23,6 +28,7 @@ class GlobalExceptionHandler {
         )
         val headers : HttpHeaders = HttpHeaders()
         headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
+        logger.error(e.message)
         return ResponseEntity<Messages>(messages, headers, HttpStatus.BAD_REQUEST)
     }
 
@@ -35,6 +41,7 @@ class GlobalExceptionHandler {
         )
         val headers : HttpHeaders = HttpHeaders()
         headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
+        logger.error(e.message)
         return ResponseEntity<Messages>(messages, headers, HttpStatus.METHOD_NOT_ALLOWED)
     }
 
@@ -47,6 +54,7 @@ class GlobalExceptionHandler {
         )
         val headers : HttpHeaders = HttpHeaders()
         headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
+        logger.error(e.message)
         return ResponseEntity<Messages>(messages, headers, HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
@@ -59,6 +67,7 @@ class GlobalExceptionHandler {
         )
         val headers : HttpHeaders = HttpHeaders()
         headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
+        logger.error(e.message)
         return ResponseEntity<Messages>(messages, headers, HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
@@ -71,6 +80,7 @@ class GlobalExceptionHandler {
         )
         val headers : HttpHeaders = HttpHeaders()
         headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
+        logger.error(e.message)
         return ResponseEntity<Messages>(messages, headers, HttpStatus.SERVICE_UNAVAILABLE)
     }
 }

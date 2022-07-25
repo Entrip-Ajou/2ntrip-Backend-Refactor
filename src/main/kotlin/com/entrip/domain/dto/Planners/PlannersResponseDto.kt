@@ -6,7 +6,7 @@ import com.entrip.domain.entity.Users
 import java.util.*
 
 class PlannersResponseDto(
-    val planner_id: Long?,
+    val planner_id: Long,
     val title: String,
     val start_date: String,
     val end_date: String,
@@ -16,7 +16,7 @@ class PlannersResponseDto(
     val comment_timeStamp: String
         ){
     constructor(entity : Planners) : this (
-        entity.planner_id,
+        entity.planner_id!!,
         entity.title,
         entity.start_date,
         entity.end_date,

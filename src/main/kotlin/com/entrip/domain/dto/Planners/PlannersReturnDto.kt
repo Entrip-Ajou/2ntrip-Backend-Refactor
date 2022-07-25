@@ -1,7 +1,7 @@
 package com.entrip.domain.dto.Planners
 
 class PlannersReturnDto (
-    val planner_id: Long?,
+    val planner_id: Long,
     val title: String,
     val start_date: String,
     val end_date: String,
@@ -9,7 +9,7 @@ class PlannersReturnDto (
     val comment_timeStamp: String
         ){
     constructor(responseDto : PlannersResponseDto) : this (
-        responseDto.planner_id,
+        responseDto.planner_id!!,
         responseDto.title,
         responseDto.start_date,
         responseDto.end_date,
