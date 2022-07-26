@@ -32,14 +32,16 @@ function connect(event) {
 }
 
 
+//subscribe의 endpoint를 다음과 같이 변수를 붙여서 설정하고, ChatController로 이동
 function onConnected() {
-    // Subscribe to the Public Topic
-    stompClient.subscribe('/topic/public', onMessageReceived);
+    // Subscribe to the Public Topic (원래는 /topic/public)
+    stompClient.subscribe('/topic/public/10', onMessageReceived);
 
     // Tell your username to the server
     stompClient.send("/app/chat.addUser",
         {},
-        JSON.stringify({sender: username, type: 'JOIN'})
+        //서버에게 동일 엔드포인트로 JSON 객체를 보냄. 다만 planner_id를 덧붙혀서 보냄
+        JSON.stringify({sender: username, type: 'JOIN', planner_id: 20})
     )
 
     connectingElement.classList.add('hidden');
@@ -52,13 +54,15 @@ function onError(error) {
 }
 
 
+//Set planner_id, current value is default value 10
 function sendMessage(event) {
     var messageContent = messageInput.value.trim();
     if(messageContent && stompClient) {
         var chatMessage = {
             sender: username,
             content: messageInput.value,
-            type: 'CHAT'
+            type: 'CHAT',
+            planner_id:20
         };
         stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
         messageInput.value = '';

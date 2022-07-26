@@ -17,6 +17,7 @@ class WebSocketConfig : WebSocketMessageBrokerConfigurer {
             .setAllowedOrigins("http://2ntrip.com")
             .withSockJS()
     }
+    //Current connect url : ws://2ntrip.com/websocket
 
     //Set prefix for endpoint for message sending and receiving
     override fun configureMessageBroker(config: MessageBrokerRegistry) {
