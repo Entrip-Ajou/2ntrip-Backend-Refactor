@@ -9,7 +9,7 @@ class PlansResponseDto (
     val date : String,
     val todo : String,
     val time : String,
-    val location : String,
+    val location : String? = null,
     val rgb : Long,
     val planners : Planners?,
     val comments : MutableSet<Comments>,

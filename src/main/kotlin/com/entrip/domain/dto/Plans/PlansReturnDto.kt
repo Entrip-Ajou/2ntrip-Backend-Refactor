@@ -5,7 +5,7 @@ class PlansReturnDto(
     val date: String,
     val todo: String,
     val time: String,
-    val location: String,
+    val location: String? = null,
     val rgb: Long,
     val planner_id: Long?,
     val isExistComments: Boolean

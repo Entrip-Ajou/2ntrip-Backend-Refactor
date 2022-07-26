@@ -7,7 +7,7 @@ class PlansSaveRequestDto (
     var date : String,
     var todo : String,
     var time : String,
-    var location : String,
+    var location : String? = null,
     var rgb : Long
         ){
     public fun toEntity() : Plans {
