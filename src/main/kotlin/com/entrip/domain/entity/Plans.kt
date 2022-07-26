@@ -24,7 +24,7 @@ class Plans (
         @OneToMany (mappedBy = "plans", fetch = FetchType.EAGER)
         var comments : MutableSet<Comments> = TreeSet()
         ) {
-        public fun update (date: String, todo : String, time : String, location : String, rgb : Long) : Unit {
+        public fun update (date: String, todo : String, time : String, location : String?, rgb : Long) : Unit {
                 this.date = date
                 this.todo = todo
                 this.time = time
