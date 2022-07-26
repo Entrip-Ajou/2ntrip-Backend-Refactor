@@ -42,9 +42,9 @@ class PlannersController (
 //        return sendResponseHttpByJson("Planner is saved well", returnDto)
 //    }
 
-    @PostMapping("/api/v1/planners/{planner_id}")
-    public fun save (@PathVariable planner_id: String) : ResponseEntity<Messages> {
-        val requestDto : PlannersSaveRequestDto = PlannersSaveRequestDto(planner_id)
+    @PostMapping("/api/v1/planners/{user_id}")
+    public fun save (@PathVariable user_id: String) : ResponseEntity<Messages> {
+        val requestDto : PlannersSaveRequestDto = PlannersSaveRequestDto(user_id)
         val savedPlannerId : Long? = plannersService.save(requestDto)
         val responseDto = plannersService.findByPlannerId(savedPlannerId!!)
         val returnDto = PlannersReturnDto(responseDto)
