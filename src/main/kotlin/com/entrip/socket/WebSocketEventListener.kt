@@ -8,7 +8,10 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 import org.springframework.web.socket.messaging.SessionConnectedEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 
-class WebSocketEventListener(private val messagingTemplate : SimpMessageSendingOperations?) {
+class WebSocketEventListener(
+    private val messagingTemplate : SimpMessageSendingOperations?,
+
+    ) {
     private val logger : Logger = LoggerFactory.getLogger(WebSocketEventListener::class.java)
 
     //Listener function when connected
@@ -29,4 +32,16 @@ class WebSocketEventListener(private val messagingTemplate : SimpMessageSendingO
             messagingTemplate!!.convertAndSend("topic/public", chatMessage)
         }
     }
+
+//    @EventListener
+//    fun handleEntityCRUDListener (event : CRUDEvents) {
+//        logger.info("Listen CRUD Events")
+//        val crudNotification : ChatMessage = ChatMessage(
+//            MessageType.JOIN,
+//            event.events,
+//            "server",
+//            event.planner_id)
+//
+//        chatController.sendMessage(crudNotification)
+//    }
 }
