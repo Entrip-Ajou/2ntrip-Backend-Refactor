@@ -100,4 +100,16 @@ class PlannersController (
         val isExist : Boolean = plannersService.userIsExistWithPlanner(planner_id, user_id)
         return sendResponseHttpByJson("Check if user : $user_id is exist at planner : $planner_id", isExist)
     }
+
+    @DeleteMapping("api/v1/planners/{planner_id}/{user_id}/delete")
+    public fun deleteWithExit (@PathVariable planner_id: Long, @PathVariable user_id: String) : ResponseEntity<Messages> {
+        val long = plannersService.deleteWithExit(planner_id, user_id)
+        return sendResponseHttpByJson("Delete planner ${planner_id}", planner_id)
+    }
+
+    @DeleteMapping("api/v1/planners/{planner_id}/{user_id}/exit")
+    public fun exitPlanner (@PathVariable planner_id: Long, @PathVariable user_id: String) : ResponseEntity<Messages> {
+        val response : Boolean = plannersService.exitPlanner(planner_id, user_id)
+        return sendResponseHttpByJson("User ${user_id} exit planner ${planner_id}", response)
+    }
 }

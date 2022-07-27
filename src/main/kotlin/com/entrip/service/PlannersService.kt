@@ -10,12 +10,13 @@ import com.entrip.domain.dto.Users.UsersReturnDto
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Plans
 import com.entrip.domain.entity.Users
+import com.entrip.events.CrudEvent
 import com.entrip.repository.PlannersRepository
 import com.entrip.repository.PlansRepository
 import com.entrip.repository.UsersRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
-import sun.security.ec.point.ProjectivePoint.Mutable
 import javax.transaction.Transactional
 
 @Service
@@ -32,8 +33,12 @@ class PlannersService (
     private val plansService : PlansService,
 
     @Autowired
-    private val commentsService: CommentsService
-    ) {
+    private val commentsService: CommentsService,
+
+    @Autowired
+    private val eventPublisher: ApplicationEventPublisher
+
+) {
     private fun findPlanners(planner_id: Long) : Planners {
         val planners : Planners = plannersRepository.findById(planner_id!!).orElseThrow {
             IllegalArgumentException("Error raise at PlannersRepository.findById$planner_id")
@@ -55,7 +60,9 @@ class PlannersService (
         planners.setComment_timeStamp()
         users.addPlanners(planners)
         planners.addUsers(users)
-        return plannersRepository.save(planners).planner_id
+        plannersRepository.save(planners).planner_id
+        eventPublisher.publishEvent(CrudEvent("save", planners.planner_id!!))
+        return planners.planner_id
     }
 
     @Transactional
@@ -158,5 +165,34 @@ class PlannersService (
         val users = findUsers(user_id)
         if (planners.users.contains(users)) return true;
         return false;
+    }
+
+    @Transactional
+    public fun deleteWithExit (planner_id: Long, user_id: String) : Long{
+        val planners = findPlanners(planner_id)
+        val users = findUsers(user_id)
+        if (planners.users.contains(users)) throw Exception()
+        delete(planner_id)
+        return planner_id
+    }
+
+    @Transactional
+    public fun exitPlanner (planner_id: Long, user_id: String) : Boolean {
+        val planners = findPlanners(planner_id)
+        val users = findUsers(user_id)
+
+        if (planners.plans != null) {
+            for (plans in planners.plans!!) {
+                for (comments in plans.comments) {
+                    if (comments.author == users.user_id) commentsService.delete(comments.comment_id!!)
+                }
+            }
+        }
+
+        users.planners.remove(planners)
+        planners.users.remove(users)
+
+        if (planners.users.isEmpty()) this.delete(planner_id)
+        return true
     }
 }
