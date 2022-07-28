@@ -5,11 +5,12 @@ import com.entrip.domain.dto.Plans.PlansSaveRequestDto
 import com.entrip.domain.dto.Plans.PlansUpdateRequestDto
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Plans
-import com.entrip.domain.entity.Users
+import com.entrip.events.CrudEvent
 import com.entrip.repository.CommentsRepository
 import com.entrip.repository.PlannersRepository
 import com.entrip.repository.PlansRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import javax.transaction.Transactional
@@ -25,7 +26,10 @@ class PlansService (
     val commentsRepository: CommentsRepository,
 
     @Autowired
-    val commentsService: CommentsService
+    val commentsService: CommentsService,
+
+    @Autowired
+    val eventPublisher : ApplicationEventPublisher
         ){
     private fun findPlanners(planner_id: Long) : Planners {
         val planners : Planners = plannersRepository.findById(planner_id!!).orElseThrow {
@@ -41,6 +45,10 @@ class PlansService (
         return plans
     }
 
+    private fun publishCrudEvents(message : String, planner_id : Long) {
+        eventPublisher.publishEvent(CrudEvent(message, planner_id))
+    }
+
     @Transactional
     public fun save (requestDto : PlansSaveRequestDto) : Long? {
         val planner_id : Long = requestDto.planner_id
@@ -50,6 +58,7 @@ class PlansService (
         planners.setTimeStamp(LocalDateTime.now())
 
         plans.setPlanners(planners)
+        publishCrudEvents("Plans Save", planner_id)
         return plansRepository.save(plans).plan_id
     }
 
@@ -58,6 +67,7 @@ class PlansService (
         val plans = findPlans(plan_id)
         plans.planners!!.setTimeStamp(LocalDateTime.now())
         plans.update(requestDto.date, requestDto.todo, requestDto.time, requestDto.location, requestDto.rgb)
+        publishCrudEvents("Plans Update", plans.planners!!.planner_id!!)
         return plan_id
     }
 
@@ -82,6 +92,8 @@ class PlansService (
         planners?.plans?.remove(plans)
         planners?.setTimeStamp(LocalDateTime.now())
         plansRepository.delete(plans)
+
+        publishCrudEvents("Plans Deleted", planners!!.planner_id!!)
         return plan_id
     }
 }

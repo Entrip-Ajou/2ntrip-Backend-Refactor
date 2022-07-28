@@ -12,10 +12,8 @@ class EventHandler (
     @Autowired
     val chatController: ChatController
 ){
-
     @EventListener
     public fun crudEventHandler (crudEvent: CrudEvent) {
-        System.out.println(crudEvent.message)
         chatController.sendMessage(ChatMessage(
             MessageType.CHAT,
             crudEvent.message,

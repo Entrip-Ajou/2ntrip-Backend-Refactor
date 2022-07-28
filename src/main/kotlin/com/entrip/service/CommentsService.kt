@@ -5,11 +5,13 @@ import com.entrip.domain.entity.Comments
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Plans
 import com.entrip.domain.entity.Users
+import com.entrip.events.CrudEvent
 import com.entrip.repository.CommentsRepository
 import com.entrip.repository.PlannersRepository
 import com.entrip.repository.PlansRepository
 import com.entrip.repository.UsersRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import sun.security.ec.point.ProjectivePoint.Mutable
 import java.util.Collections
@@ -21,13 +23,16 @@ class CommentsService (
     final val commentsRepository: CommentsRepository,
 
     @Autowired
-    val plannersRepository: PlannersRepository,
+    private val plannersRepository: PlannersRepository,
 
     @Autowired
-    val plansRepository: PlansRepository,
+    private val plansRepository: PlansRepository,
 
     @Autowired
-    val usersRepository: UsersRepository
+    private val usersRepository: UsersRepository,
+
+    @Autowired
+    private val eventPublisher: ApplicationEventPublisher
         ){
 
     private fun findUsers(user_id : String?) : Users {
@@ -57,6 +62,10 @@ class CommentsService (
         return comments
     }
 
+    private fun publishCrudEvents(message : String, planner_id : Long) {
+        eventPublisher.publishEvent(CrudEvent(message, planner_id))
+    }
+
     public fun getAllCommentsWithPlanId (plan_id : Long) : MutableList<CommentsReturnDto> {
         val plans = findPlans(plan_id)
         val commentsSet : MutableSet<Comments> = plans.comments
@@ -82,6 +91,7 @@ class CommentsService (
         plans.comments.add(comments)
         plans.planners?.setComment_timeStamp()
 
+        publishCrudEvents("Comments Save", plans.planners!!.planner_id!!)
         return getAllCommentsWithPlanId(requestDto.plans_id)
     }
 
@@ -97,6 +107,7 @@ class CommentsService (
         return CommentsResponseDto(comments)
     }
 
+    @Transactional
     public fun delete (comment_id: Long) : MutableList<CommentsReturnDto> {
         val comments = findComments(comment_id)
         val plan_id = comments.plans?.plan_id
@@ -104,6 +115,7 @@ class CommentsService (
         comments.plans?.comments?.remove(comments)
         comments.users?.comments?.remove(comments)
         commentsRepository.delete(comments)
+        publishCrudEvents("Delete Comments", comments.plans!!.planners!!.planner_id!!)
         return getAllCommentsWithPlanId(plan_id!!)
     }
 }

@@ -53,6 +53,10 @@ class PlannersService (
         return users
     }
 
+    private fun publishCrudEvents(message : String, planner_id : Long) {
+        eventPublisher.publishEvent(CrudEvent(message, planner_id))
+    }
+
     @Transactional
     public fun save (requestDto : PlannersSaveRequestDto) : Long? {
         val users = findUsers(requestDto.user_id)
@@ -61,7 +65,8 @@ class PlannersService (
         users.addPlanners(planners)
         planners.addUsers(users)
         plannersRepository.save(planners).planner_id
-        eventPublisher.publishEvent(CrudEvent("save", planners.planner_id!!))
+        //eventPublisher.publishEvent(CrudEvent("save", planners.planner_id!!))
+        publishCrudEvents("Planner Save", planners.planner_id!!)
         return planners.planner_id
     }
 
@@ -69,6 +74,7 @@ class PlannersService (
     public fun update (planner_id : Long, requestDto: PlannersUpdateRequestDto) : Long? {
         val planners = findPlanners(planner_id)
         planners.update(requestDto.title!!, requestDto.start_date!!, requestDto.end_date!!)
+        publishCrudEvents("Planner Update", planners.planner_id!!)
         return planner_id
     }
 
@@ -147,6 +153,7 @@ class PlannersService (
             users.planners.remove(planners)
         }
         plannersRepository.delete(planners)
+        publishCrudEvents("Planner Delete", planners.planner_id!!)
         return planner_id
     }
 
@@ -157,6 +164,7 @@ class PlannersService (
         if (planners.users!!.contains(friends)) return "이미 planner에 등록되어있는 회원입니다."
         planners.addUsers(friends)
         friends.planners.add(planners)
+        publishCrudEvents("Add Friend To Planner", planners.planner_id!!)
         return "$planner_id 번 플래너에 $user_id 사용자 등록 완료."
     }
 
@@ -193,6 +201,7 @@ class PlannersService (
         planners.users.remove(users)
 
         if (planners.users.isEmpty()) this.delete(planner_id)
+        publishCrudEvents("User ${user_id} exit Planner", planners.planner_id!!)
         return true
     }
 }
