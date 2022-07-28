@@ -33,15 +33,4 @@ class WebSocketEventListener(
         }
     }
 
-//    @EventListener
-//    fun handleEntityCRUDListener (event : CRUDEvents) {
-//        logger.info("Listen CRUD Events")
-//        val crudNotification : ChatMessage = ChatMessage(
-//            MessageType.JOIN,
-//            event.events,
-//            "server",
-//            event.planner_id)
-//
-//        chatController.sendMessage(crudNotification)
-//    }
 }
