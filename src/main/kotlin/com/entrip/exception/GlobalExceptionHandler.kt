@@ -71,6 +71,19 @@ class GlobalExceptionHandler {
         return ResponseEntity<Messages>(messages, headers, HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
+    @ExceptionHandler(NotAcceptedException::class)
+    fun handleNotAcceptedException (e : NotAcceptedException) : ResponseEntity<Messages> {
+        val messages : Messages = Messages(
+            202,
+            "202Error\n",
+            e.message!!
+        )
+        val headers : HttpHeaders = HttpHeaders()
+        headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
+        logger.error(e.message)
+        return ResponseEntity<Messages>(messages, headers, HttpStatus.ACCEPTED)
+    }
+
     @ExceptionHandler(Exception::class)
     fun handleException (e : Exception) : ResponseEntity<Messages> {
         val messages : Messages = Messages(

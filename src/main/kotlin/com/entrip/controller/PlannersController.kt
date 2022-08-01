@@ -8,6 +8,7 @@ import com.entrip.domain.dto.Plans.PlansReturnDto
 import com.entrip.domain.dto.Users.UsersReturnDto
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Plans
+import com.entrip.exception.NotAcceptedException
 import com.entrip.service.PlannersService
 import com.sun.org.apache.xpath.internal.operations.Bool
 import org.springframework.data.repository.config.RepositoryNameSpaceHandler
@@ -110,19 +111,19 @@ class PlannersController (
     @GetMapping("api/v1/planners/{planner_id}/{user_id}/exist")
     public fun userIsExistWithPlanner (@PathVariable planner_id : Long, @PathVariable user_id : String) : ResponseEntity<Messages> {
         val isExist : Boolean = plannersService.userIsExistWithPlanner(planner_id, user_id)
-        //if (!isExist) throw Exception("userIsExistWithPlanner")
-        ///Customizing
-        if (!isExist) {
-            val messages : Messages = Messages(
-                httpStatus = 202,
-                message = "Message",
-                data = isExist
-            )
-            val headers : HttpHeaders = HttpHeaders()
-            headers.contentType = MediaType ("application", "json", Charset.forName("UTF-8"))
-            return ResponseEntity<Messages>(messages, headers, HttpStatus.OK)
-        }
-        ///
+        if (!isExist) throw NotAcceptedException("userIsNotExistWithPlanner")
+//        ///Customizing
+//        if (!isExist) {
+//            val messages : Messages = Messages(
+//                httpStatus = 202,
+//                message = "Message",
+//                data = isExist
+//            )
+//            val headers : HttpHeaders = HttpHeaders()
+//            headers.contentType = MediaType ("application", "json", Charset.forName("UTF-8"))
+//            return ResponseEntity<Messages>(messages, headers, HttpStatus.OK)
+//        }
+//        ///
         return sendResponseHttpByJson("Check if user : $user_id is exist at planner : $planner_id", isExist)
     }
 
