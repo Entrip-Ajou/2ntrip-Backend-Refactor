@@ -75,6 +75,18 @@ class PlannersController (
     @GetMapping("api/v1/planners/{planner_id}/exist")
     public fun plannerIsExistWithId (@PathVariable planner_id: Long) : ResponseEntity<Messages> {
         val isExist : Boolean = plannersService.plannerIsExistWithId(planner_id)
+//        ///Customizing
+//        if (!isExist) {
+//            val messages : Messages = Messages(
+//                httpStatus = 202,
+//                message = "Message",
+//                data = isExist
+//            )
+//            val headers : HttpHeaders = HttpHeaders()
+//            headers.contentType = MediaType ("application", "json", Charset.forName("UTF-8"))
+//            return ResponseEntity<Messages>(messages, headers, HttpStatus.OK)
+//        }
+//        ///
         return sendResponseHttpByJson("Find if planner is exist with specific planner id : $planner_id", isExist)
     }
 
@@ -98,7 +110,19 @@ class PlannersController (
     @GetMapping("api/v1/planners/{planner_id}/{user_id}/exist")
     public fun userIsExistWithPlanner (@PathVariable planner_id : Long, @PathVariable user_id : String) : ResponseEntity<Messages> {
         val isExist : Boolean = plannersService.userIsExistWithPlanner(planner_id, user_id)
-        if (!isExist) throw Exception("userIsExistWithPlanner")
+        //if (!isExist) throw Exception("userIsExistWithPlanner")
+        ///Customizing
+        if (!isExist) {
+            val messages : Messages = Messages(
+                httpStatus = 202,
+                message = "Message",
+                data = isExist
+            )
+            val headers : HttpHeaders = HttpHeaders()
+            headers.contentType = MediaType ("application", "json", Charset.forName("UTF-8"))
+            return ResponseEntity<Messages>(messages, headers, HttpStatus.OK)
+        }
+        ///
         return sendResponseHttpByJson("Check if user : $user_id is exist at planner : $planner_id", isExist)
     }
 

@@ -83,4 +83,6 @@ class GlobalExceptionHandler {
         logger.error(e.message)
         return ResponseEntity<Messages>(messages, headers, HttpStatus.SERVICE_UNAVAILABLE)
     }
+
+
 }
