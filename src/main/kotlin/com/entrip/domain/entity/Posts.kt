@@ -1,17 +1,8 @@
 package com.entrip.domain.entity
 
-import apple.laf.JRSUIUtils.Tree
 import com.entrip.domain.BaseTimeEntity
-import sun.security.ec.point.ProjectivePoint.Mutable
 import java.util.*
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.FetchType
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.ManyToOne
-import javax.persistence.OneToMany
+import javax.persistence.*
 
 @Entity
 class Posts (
@@ -25,10 +16,10 @@ class Posts (
         var content : String = "",
 
         @ManyToOne (fetch = FetchType.EAGER)
-        var author : Users,
+        var author : Users? = null,
 
         @OneToMany (mappedBy = "posts", fetch = FetchType.EAGER)
-        var photoSet : MutableSet<Photos> = TreeSet()
+        var photoSet : MutableSet<Photos>? = TreeSet()
 
         // var createdDate
         // var timeStamp

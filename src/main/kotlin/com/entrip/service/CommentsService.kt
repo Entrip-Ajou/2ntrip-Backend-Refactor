@@ -63,7 +63,7 @@ class CommentsService (
     }
 
     private fun publishCrudEvents(message : String, planner_id : Long) {
-        eventPublisher.publishEvent(CrudEvent(message, planner_id))
+        //eventPublisher.publishEvent(CrudEvent(message, planner_id))
     }
 
     public fun getAllCommentsWithPlanId (plan_id : Long) : MutableList<CommentsReturnDto> {

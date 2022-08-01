@@ -98,6 +98,7 @@ class PlannersController (
     @GetMapping("api/v1/planners/{planner_id}/{user_id}/exist")
     public fun userIsExistWithPlanner (@PathVariable planner_id : Long, @PathVariable user_id : String) : ResponseEntity<Messages> {
         val isExist : Boolean = plannersService.userIsExistWithPlanner(planner_id, user_id)
+        if (!isExist) throw Exception("userIsExistWithPlanner")
         return sendResponseHttpByJson("Check if user : $user_id is exist at planner : $planner_id", isExist)
     }
 

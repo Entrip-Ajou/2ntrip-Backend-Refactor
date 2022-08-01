@@ -1,6 +1,8 @@
 package com.entrip.service
 
+import com.entrip.domain.dto.Posts.PostsSaveRequestDto
 import com.entrip.domain.entity.Photos
+import com.entrip.domain.entity.Posts
 import com.entrip.domain.entity.Users
 import com.entrip.repository.PhotosRepository
 import com.entrip.repository.PostsRepository
@@ -31,5 +33,17 @@ class PostsService (
             IllegalArgumentException("Error raise at photosRepository.findById${photo_id}")
         }
         return photos
+    }
+
+    public fun save (requestDto : PostsSaveRequestDto) : Long {
+        var posts : Posts = requestDto.toEntity()
+        posts.author = findUsers(requestDto.author)
+        for (photoId : Long in requestDto.photoIdList) {
+            val photos : Photos = findPhotos(photoId)
+            photos.posts = posts
+            posts.photoSet!!.add(photos)
+        }
+        postsRepository.save(posts)
+        return posts.post_id!!
     }
 }

@@ -46,7 +46,7 @@ class PlansService (
     }
 
     private fun publishCrudEvents(message : String, planner_id : Long) {
-        eventPublisher.publishEvent(CrudEvent(message, planner_id))
+        //eventPublisher.publishEvent(CrudEvent(message, planner_id))
     }
 
     @Transactional

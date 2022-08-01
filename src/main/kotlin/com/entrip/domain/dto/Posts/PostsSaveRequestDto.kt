@@ -1,9 +1,17 @@
 package com.entrip.domain.dto.Posts
 
+import com.entrip.domain.entity.Posts
+
 class PostsSaveRequestDto (
-    val user_id : String,
     val title : String,
     val content : String,
-
+    val author : String,
+    val photoIdList: MutableList<Long>
         ){
+    public fun toEntity() : Posts {
+        return Posts(
+            title = title,
+            content = content
+        )
+    }
 }
