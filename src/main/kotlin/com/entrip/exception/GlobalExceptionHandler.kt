@@ -74,14 +74,14 @@ class GlobalExceptionHandler {
     @ExceptionHandler(NotAcceptedException::class)
     fun handleNotAcceptedException (e : NotAcceptedException) : ResponseEntity<Messages> {
         val messages : Messages = Messages(
-            204,
-            "204Error\n",
+            202,
+            "NotAcceptedException\n",
             e.message!!
         )
         val headers : HttpHeaders = HttpHeaders()
         headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
         logger.error(e.message)
-        return ResponseEntity<Messages>(messages, headers, HttpStatus.NO_CONTENT)
+        return ResponseEntity<Messages>(messages, headers, HttpStatus.ACCEPTED)
     }
 
     @ExceptionHandler(Exception::class)
