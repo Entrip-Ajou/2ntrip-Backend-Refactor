@@ -57,6 +57,9 @@ class PlannersService (
         //eventPublisher.publishEvent(CrudEvent(message, planner_id))
     }
 
+    private fun fixDate(date : String) : String
+    = "${date.subSequence(0,4)}/${date.subSequence(4,6)}/${date.subSequence(6,8)}"
+
     @Transactional
     public fun save (requestDto : PlannersSaveRequestDto) : Long? {
         val users = findUsers(requestDto.user_id)
@@ -88,9 +91,11 @@ class PlannersService (
         val plansSet : MutableSet<Plans>? = planners.plans
         val plansList : MutableList<PlansReturnDto> = ArrayList<PlansReturnDto>()
         val iterator = plansSet!!.iterator()
+        val fixedDate : String = fixDate(date)
+
         while(iterator.hasNext()) {
             val plans = iterator.next()
-            if (plans.date == date) {
+            if (plans.date == fixedDate) {
                 val responseDto = PlansResponseDto(plans)
                 val returnDto = PlansReturnDto(responseDto)
                 plansList.add(returnDto)

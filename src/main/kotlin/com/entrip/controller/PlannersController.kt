@@ -115,4 +115,10 @@ class PlannersController (
         val response : Boolean = plannersService.exitPlanner(planner_id, user_id)
         return sendResponseHttpByJson("User ${user_id} exit planner ${planner_id}", response)
     }
+
+    @GetMapping("api/v1/planners/{planner_id}/{date}/find")
+    public fun findByPlannerIdWithDate (@PathVariable planner_id: Long, @PathVariable date : String) : ResponseEntity<Messages> {
+        val response : MutableList<PlansReturnDto> = plannersService.findByPlannerIdWithDate(planner_id, date)
+        return sendResponseHttpByJson("Get all plans with specific date $date, planner_id $planner_id", response)
+    }
 }

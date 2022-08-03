@@ -27,7 +27,7 @@ class WebSocketEventListener(
         val username = headerAccessor.sessionAttributes!!["username"] as String?
         if (username != null) {
             logger.info("User Disconnected : $username")
-            val chatMessage = ChatMessage (MessageType.LEAVE,"", username)
+            val chatMessage = ChatMessage (MessageType.LEAVE,-1, username)
 
             messagingTemplate!!.convertAndSend("topic/public", chatMessage)
         }
