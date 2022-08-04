@@ -6,7 +6,7 @@ class PostsSaveRequestDto (
     val title : String,
     val content : String,
     val author : String,
-    val photoIdList: MutableList<Long>
+    val photoIdList: MutableList<Long> = ArrayList<Long>()
         ){
     public fun toEntity() : Posts {
         return Posts(

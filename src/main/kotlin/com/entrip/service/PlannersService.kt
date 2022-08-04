@@ -53,6 +53,12 @@ class PlannersService (
         return users
     }
 
+    private fun findUsersWithNickname (nickname : String) : Users {
+        val usersList = usersRepository.findAll()
+        for (users in usersList) if (users.nickname == nickname) return users
+        throw IllegalArgumentException("Error raise at usersRepository.findByNickname : $nickname")
+    }
+
     private fun publishCrudEvents(message : String, planner_id : Long) {
         //eventPublisher.publishEvent(CrudEvent(message, planner_id))
     }
@@ -173,11 +179,18 @@ class PlannersService (
         return "$planner_id 번 플래너에 $user_id 사용자 등록 완료."
     }
 
-    public fun userIsExistWithPlanner (planner_id: Long, user_id : String) : Boolean {
+    public fun userIsExistInPlannerWithUserId (planner_id: Long, user_id : String) : Boolean {
         val planners = findPlanners(planner_id)
         val users = findUsers(user_id)
-        if (planners.users.contains(users)) return true;
-        return false;
+        if (planners.users.contains(users)) return true
+        return false
+    }
+
+    public fun userIsExistInPlannerWithNickname (planner_id: Long, nickname : String) : Boolean {
+        val planners = findPlanners(planner_id)
+        val users = findUsersWithNickname(nickname)
+        if (planners.users.contains(users)) return true
+        return false
     }
 
     @Transactional

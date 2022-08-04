@@ -46,4 +46,5 @@ class PostsService (
         postsRepository.save(posts)
         return posts.post_id!!
     }
+
 }

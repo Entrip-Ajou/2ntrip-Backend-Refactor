@@ -98,10 +98,17 @@ class PlannersController (
     }
 
     @GetMapping("api/v1/planners/{planner_id}/{user_id}/exist")
-    public fun userIsExistWithPlanner (@PathVariable planner_id : Long, @PathVariable user_id : String) : ResponseEntity<Messages> {
-        val isExist : Boolean = plannersService.userIsExistWithPlanner(planner_id, user_id)
+    public fun userIsExistInPlannerWithUserId (@PathVariable planner_id : Long, @PathVariable user_id : String) : ResponseEntity<Messages> {
+        val isExist : Boolean = plannersService.userIsExistInPlannerWithUserId(planner_id, user_id)
         if (!isExist) throw NotAcceptedException("User $user_id is not exist in planner $planner_id")
         return sendResponseHttpByJson("Check if user : $user_id is exist at planner : $planner_id", isExist)
+    }
+
+    @GetMapping("api/v1/planners/{planner_id}/{nickname}/exist/nickname")
+    public fun userIsExistInPlannerWithNickname(@PathVariable planner_id: Long, @PathVariable nickname : String) : ResponseEntity<Messages> {
+        val isExist : Boolean = plannersService.userIsExistInPlannerWithNickname(planner_id, nickname)
+        if (!isExist) throw NotAcceptedException("User $nickname is not exist in planner $planner_id")
+        return sendResponseHttpByJson("Check if user : $nickname is exist at planner : $planner_id", isExist)
     }
 
     @DeleteMapping("api/v1/planners/{planner_id}/{user_id}/delete")
