@@ -34,7 +34,11 @@ dependencies {
 	runtimeOnly("mysql:mysql-connector-java")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	implementation("io.awspring.cloud:spring-cloud-starter-aws:2.4.2")
+	implementation("org.json:json:20220320")
+
 }
+
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions {

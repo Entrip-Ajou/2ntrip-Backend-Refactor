@@ -2,6 +2,7 @@ package com.entrip.exception
 
 import com.entrip.domain.Messages
 import com.entrip.socket.WebSocketEventListener
+import org.json.JSONObject
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
@@ -76,7 +77,7 @@ class GlobalExceptionHandler {
         val messages : Messages = Messages(
             202,
             "NotAcceptedException\n",
-            e.message!!
+            JSONObject(e.message!!)
         )
         val headers : HttpHeaders = HttpHeaders()
         headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
