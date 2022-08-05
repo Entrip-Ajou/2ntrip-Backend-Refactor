@@ -20,6 +20,9 @@ class GlobalExceptionHandler {
 
     val logger : Logger = LoggerFactory.getLogger(WebSocketEventListener::class.java)
 
+    class dummy(val e : String){
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleMethodArgumentNotValidException (e : MethodArgumentNotValidException) : ResponseEntity<Messages> {
         val messages : Messages = Messages(
@@ -74,10 +77,11 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(NotAcceptedException::class)
     fun handleNotAcceptedException (e : NotAcceptedException) : ResponseEntity<Messages> {
+        val jsonData = JSONObject()
         val messages : Messages = Messages(
             202,
             "NotAcceptedException\n",
-            JSONObject(e.message!!)
+            dummy(e.message!!)
         )
         val headers : HttpHeaders = HttpHeaders()
         headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
