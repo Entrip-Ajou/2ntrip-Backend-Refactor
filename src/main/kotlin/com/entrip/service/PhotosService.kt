@@ -13,4 +13,12 @@ class PhotosService (
         IllegalArgumentException("Error raise at photoRepository.findById")
     }
 
+    public fun save(photoUrl : String) : Long? {
+        val photos : Photos = Photos (
+            photoUrl = photoUrl
+                )
+        photosRepository.save(photos)
+        return photos.photo_id
+    }
+
 }

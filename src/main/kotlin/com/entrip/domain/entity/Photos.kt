@@ -15,7 +15,7 @@ class Photos (
 
         @ManyToOne(fetch = FetchType.EAGER)
         @JoinColumn (name = "POST_ID")
-        var posts: Posts
+        var posts: Posts? = null
 
         // var createdDate
         // var timeStamp
