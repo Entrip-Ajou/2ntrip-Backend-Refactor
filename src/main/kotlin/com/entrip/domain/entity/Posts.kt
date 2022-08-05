@@ -26,5 +26,9 @@ class Posts (
         // is included with BaseTimeEntity
 
 ) : BaseTimeEntity() {
-        // Have to make functions
+        fun update (title : String, content : String) : Unit {
+                this.title = title
+                this.content = content
+        }
+
 }

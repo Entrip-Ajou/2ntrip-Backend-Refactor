@@ -1,6 +1,7 @@
 package com.entrip.service
 
 import com.entrip.domain.dto.Posts.PostsSaveRequestDto
+import com.entrip.domain.dto.Posts.PostsUpdateRequestDto
 import com.entrip.domain.entity.Photos
 import com.entrip.domain.entity.Posts
 import com.entrip.domain.entity.Users
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class PostsService (
-    final val postsRepository: PostsRepository,
+    private final val postsRepository: PostsRepository,
 
     @Autowired
     val usersRepository: UsersRepository,
@@ -35,6 +36,11 @@ class PostsService (
         return photos
     }
 
+    private fun findPosts(post_id : Long) : Posts
+    = postsRepository.findById(post_id).orElseThrow {
+        IllegalArgumentException("Error raise at postsRepository.findById $post_id")
+    }
+
     public fun save (requestDto : PostsSaveRequestDto) : Long {
         var posts : Posts = requestDto.toEntity()
         posts.author = findUsers(requestDto.author)
@@ -45,6 +51,12 @@ class PostsService (
         }
         postsRepository.save(posts)
         return posts.post_id!!
+    }
+
+    public fun update (post_id: Long, requestDto : PostsUpdateRequestDto) : Long? {
+        val posts : Posts = findPosts(post_id)
+        posts.update(requestDto.title, requestDto.content)
+        return posts.post_id
     }
 
 }
