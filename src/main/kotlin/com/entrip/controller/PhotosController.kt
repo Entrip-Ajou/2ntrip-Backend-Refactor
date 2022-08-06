@@ -8,19 +8,18 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.nio.charset.Charset
 
 @RestController
-class S3Controller (
-    final val s3Uploader: S3Uploader,
+class PhotosController (
+    final val photosService: PhotosService,
 
     @Autowired
-    val photosService: PhotosService
-) {
+    final val s3Uploader: S3Uploader,
+        ){
+
     private fun sendResponseHttpByJson (message : String, data : Any) : ResponseEntity<Messages> {
         val messages : Messages = Messages(
             httpStatus = 200,
@@ -33,9 +32,15 @@ class S3Controller (
     }
 
     @PostMapping("api/v1/photos")
-    public fun upload (@RequestParam("photos") multipartFile: MultipartFile) : ResponseEntity<Messages> {
-        val uploadedPhotoUrl : String = s3Uploader.upload(multipartFile, "static")
-        val savedPhotoId = photosService.save(uploadedPhotoUrl)
-        return sendResponseHttpByJson("Photo is saved well", savedPhotoId!!)
-    }
+    public fun upload (@RequestParam("photos") multipartFile: MultipartFile) : ResponseEntity<Messages>
+    = sendResponseHttpByJson("Photo is saved well", photosService.uploadAtS3(multipartFile)!!)
+
+    @PutMapping("api/v1/photos/{photo_id}/{post_id}/addPosts")
+    public fun addPostsToPhotos (@PathVariable photo_id : Long, @PathVariable post_id : Long) : ResponseEntity<Messages>
+    = sendResponseHttpByJson("Add photos $photo_id to posts $post_id", photosService.addPostsToPhotos(photo_id, post_id))
+
+    @DeleteMapping("api/v1/photos/{photo_id}")
+    public fun delete (@PathVariable photo_id : Long) : ResponseEntity<Messages>
+    = sendResponseHttpByJson("Delete photos $photo_id", photosService.delete(photo_id))
+
 }

@@ -1,24 +1,106 @@
 package com.entrip.service
 
+import com.amazonaws.services.s3.AmazonS3Client
+import com.amazonaws.services.s3.model.DeleteObjectRequest
+import com.entrip.common.S3Uploader
+import com.entrip.common.UploadedPhotoInformation
 import com.entrip.domain.entity.Photos
+import com.entrip.domain.entity.Posts
 import com.entrip.repository.PhotosRepository
+import com.entrip.repository.PostsRepository
+import com.entrip.socket.WebSocketEventListener
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
 
 @Service
 class PhotosService (
-    final val photosRepository : PhotosRepository
+    final val photosRepository : PhotosRepository,
+
+    @Autowired
+    final val amazonS3Client: AmazonS3Client,
+
+    @Autowired
+    val postsRepository: PostsRepository,
+
+    @Autowired
+    final val s3Uploader: S3Uploader,
+
+    @Value("#{awsS3['cloud.aws.s3.bucket']}")
+    private val bucket: String
+
     ) {
+    private val logger : Logger = LoggerFactory.getLogger(PhotosService::class.java)
+
     private fun findPhotos(photo_id : Long) : Photos
     = photosRepository.findById(photo_id).orElseThrow {
         IllegalArgumentException("Error raise at photoRepository.findById")
     }
 
-    public fun save(photoUrl : String) : Long? {
+    private fun findPosts(post_id : Long) : Posts
+    = postsRepository.findById(post_id).orElseThrow {
+        IllegalArgumentException("Error raise at postsRepsotiroy.findById $post_id")
+    }
+
+
+    public fun save(photoUrl : String, fileName : String) : Long? {
         val photos : Photos = Photos (
-            photoUrl = photoUrl
+            photoUrl = photoUrl,
+            fileName = fileName
                 )
         photosRepository.save(photos)
         return photos.photo_id
     }
 
+    public fun uploadAtS3(multipartFile: MultipartFile) : Long? {
+        val uploadedPhotoInformation : UploadedPhotoInformation= s3Uploader.upload(multipartFile, "static")
+        val savedPhotoId = save(uploadedPhotoInformation.uploadImageUrl, uploadedPhotoInformation.uploadFileName)
+        return savedPhotoId
+    }
+
+    public fun addPostsToPhotos (photo_id : Long, post_id : Long) : Boolean {
+        val photos = findPhotos(photo_id)
+        val posts = findPosts(post_id)
+        posts.photoSet!!.add(photos)
+        photos.posts = posts
+        return true
+    }
+
+    public fun delete (photo_id: Long) : Long {
+        val photo = findPhotos(photo_id)
+        val photoUrl = photo.photoUrl
+        val fileName : String = photo.fileName
+
+        logger.info(photoUrl)
+        logger.info(bucket)
+        logger.info(fileName)
+        logger.info("$bucket/$fileName")
+
+        deletePhotosInS3(fileName)
+        disconnectPhotoAndPosts(photo)
+        deletePhotosInDataBase(photo)
+
+        return photo_id
+    }
+
+    private fun deletePhotosInS3 (fileName: String)
+    = amazonS3Client.deleteObject(DeleteObjectRequest(bucket, fileName))
+
+
+    private fun disconnectPhotoAndPosts (targetPhotos : Photos) {
+        val posts = targetPhotos.posts
+        for (photos in posts!!.photoSet!!) {
+            if (photos == targetPhotos) {
+                posts!!.photoSet!!.remove(photos)
+                return
+            }
+        }
+        throw Exception("Fail to disconnect photos and posts!")
+    }
+
+    private fun deletePhotosInDataBase (photos: Photos)
+    = photosRepository.delete(photos)
 }

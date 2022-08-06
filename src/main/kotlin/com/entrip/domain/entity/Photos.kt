@@ -12,6 +12,7 @@ class Photos (
 
         @Column
         val photoUrl : String,
+        val fileName : String,
 
         @ManyToOne(fetch = FetchType.EAGER)
         @JoinColumn (name = "POST_ID")

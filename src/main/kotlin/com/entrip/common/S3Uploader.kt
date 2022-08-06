@@ -37,18 +37,18 @@ class S3Uploader (
         return Optional.empty()
     }
 
-    public fun upload (multipartFile : MultipartFile, dirName : String) : String {
+    public fun upload (multipartFile : MultipartFile, dirName : String) : UploadedPhotoInformation {
         val uploadFile : File = convert(multipartFile).orElseThrow {
             IllegalArgumentException("Error : MultipartFile -> File convert fail")
         }
         return upload (uploadFile, dirName)
     }
 
-    public fun upload (uploadFile : File, dirName : String) : String {
+    public fun upload (uploadFile : File, dirName : String) : UploadedPhotoInformation {
         val filename : String = dirName + "/" + UUID.randomUUID() + uploadFile.name
         val uploadImageUrl : String = putS3 (uploadFile, filename)
         removeNewFile(uploadFile)
-        return uploadImageUrl
+        return UploadedPhotoInformation(uploadImageUrl, filename)
     }
 
     public fun putS3 (uploadFile : File, fileName : String) : String {
