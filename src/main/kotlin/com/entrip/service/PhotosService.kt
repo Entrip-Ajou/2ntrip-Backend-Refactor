@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import javax.transaction.Transactional
 
 @Service
 class PhotosService (
@@ -46,6 +47,7 @@ class PhotosService (
     }
 
 
+    @Transactional
     public fun save(photoUrl : String, fileName : String) : Long? {
         val photos : Photos = Photos (
             photoUrl = photoUrl,
@@ -69,6 +71,7 @@ class PhotosService (
         return true
     }
 
+    @Transactional
     public fun delete (photo_id: Long) : Long {
         val photo = findPhotos(photo_id)
         val photoUrl = photo.photoUrl
@@ -92,6 +95,7 @@ class PhotosService (
 
     private fun disconnectPhotoAndPosts (targetPhotos : Photos) {
         val posts = targetPhotos.posts
+        if (posts == null) return
         for (photos in posts!!.photoSet!!) {
             if (photos == targetPhotos) {
                 posts!!.photoSet!!.remove(photos)
