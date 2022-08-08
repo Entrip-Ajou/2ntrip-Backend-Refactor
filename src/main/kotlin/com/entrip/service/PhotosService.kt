@@ -78,13 +78,7 @@ class PhotosService (
         val photoUrl = photo.photoUrl
         val fileName : String = photo.fileName
 
-        logger.info(photoUrl)
-        logger.info(bucket)
-        logger.info(fileName)
-        logger.info("$bucket/$fileName")
-
         deletePhotosInS3(fileName)
-        disconnectPhotoAndPosts(photo)
         deletePhotosInDataBase(photo)
 
         return photo_id
@@ -93,18 +87,6 @@ class PhotosService (
     private fun deletePhotosInS3 (fileName: String)
     = amazonS3Client.deleteObject(DeleteObjectRequest(bucket, fileName))
 
-
-    private fun disconnectPhotoAndPosts (targetPhotos : Photos) {
-        val posts = targetPhotos.posts
-        if (posts == null) return
-        for (photos in posts!!.photoSet!!) {
-            if (photos == targetPhotos) {
-                posts!!.photoSet!!.remove(photos)
-                return
-            }
-        }
-        throw Exception("Fail to disconnect photos and posts!")
-    }
 
     private fun deletePhotosInDataBase (photos: Photos)
     = photosRepository.delete(photos)

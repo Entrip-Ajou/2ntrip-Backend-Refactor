@@ -25,7 +25,6 @@ class S3Uploader (
     private val logger : Logger = LoggerFactory.getLogger(S3Uploader::class.java)
 
     private fun convert (file : MultipartFile) : Optional<File> {
-        logger.info("Convert")
         val convertFile : File = File(System.getProperty("user.dir") + "/" + file.originalFilename)
         if (convertFile.createNewFile()) {
             try {
@@ -60,9 +59,7 @@ class S3Uploader (
 
     private fun removeNewFile (targetFile : File) : Unit {
         if (targetFile.delete()) {
-            logger.info("File delete success")
             return
         }
-        logger.info("File delete fail")
     }
 }

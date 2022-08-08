@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -36,4 +37,8 @@ class PostsController (
     @GetMapping("api/v1/posts/{post_id}")
     public fun findById (@PathVariable post_id : Long) : ResponseEntity<Messages>
     = sendResponseHttpByJson("Get posts with id : $post_id", postsService.findById(post_id))
+
+    @DeleteMapping("api/v1/posts/{post_id}")
+    public fun delete (@PathVariable post_id : Long) : ResponseEntity<Messages>
+    = sendResponseHttpByJson("Delete posts with id : $post_id", postsService.delete(post_id))
 }

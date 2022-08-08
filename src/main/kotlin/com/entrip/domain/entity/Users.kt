@@ -1,6 +1,7 @@
 package com.entrip.domain.entity
 
 import com.entrip.domain.BaseTimeEntity
+import org.springframework.cache.annotation.CachePut
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import java.util.*
 import javax.persistence.*
@@ -20,6 +21,11 @@ class Users(
     @OneToMany (mappedBy = "users", fetch = FetchType.EAGER, orphanRemoval = true)
     //Check "orphanRemoval = true" is possible
     var comments : MutableSet<Comments> = TreeSet(),
+
+    @Column
+    @OneToMany (mappedBy = "author", fetch = FetchType.EAGER, orphanRemoval = true)
+    var posts : MutableSet<Posts> = TreeSet(),
+
 
     @Column
     val nickname: String,
