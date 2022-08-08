@@ -16,7 +16,9 @@ class Photos (
 
         @ManyToOne(fetch = FetchType.EAGER)
         @JoinColumn (name = "POST_ID")
-        var posts: Posts? = null
+        var posts: Posts? = null,
+
+        var priority : Long = 1
 
         // var createdDate
         // var timeStamp

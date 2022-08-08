@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.time.LocalDateTime
 import java.util.*
 
 @Component
@@ -45,7 +46,8 @@ class S3Uploader (
     }
 
     public fun upload (uploadFile : File, dirName : String) : UploadedPhotoInformation {
-        val filename : String = dirName + "/" + UUID.randomUUID() + uploadFile.name
+        //val filename : String = dirName + "/" + UUID.randomUUID() + uploadFile.name
+        val filename : String = dirName + "/" + uploadFile.name
         val uploadImageUrl : String = putS3 (uploadFile, filename)
         removeNewFile(uploadFile)
         return UploadedPhotoInformation(uploadImageUrl, filename)
