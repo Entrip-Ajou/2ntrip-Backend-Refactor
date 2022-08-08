@@ -1,5 +1,7 @@
 package com.entrip.service
 
+import com.entrip.domain.dto.Posts.PostsRequestDto
+import com.entrip.domain.dto.Posts.PostsReturnDto
 import com.entrip.domain.dto.Posts.PostsSaveRequestDto
 import com.entrip.domain.dto.Posts.PostsUpdateRequestDto
 import com.entrip.domain.entity.Photos
@@ -8,6 +10,9 @@ import com.entrip.domain.entity.Users
 import com.entrip.repository.PhotosRepository
 import com.entrip.repository.PostsRepository
 import com.entrip.repository.UsersRepository
+import com.entrip.socket.WebSocketEventListener
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -21,6 +26,8 @@ class PostsService (
     @Autowired
     val photosRepository: PhotosRepository
         ) {
+
+    private val logger : Logger = LoggerFactory.getLogger(PostsService::class.java)
 
     private fun findUsers(user_id : String?) : Users {
         val users : Users = usersRepository.findById(user_id!!).orElseThrow {
@@ -57,6 +64,12 @@ class PostsService (
         val posts : Posts = findPosts(post_id)
         posts.update(requestDto.title, requestDto.content)
         return posts.post_id
+    }
+
+    public fun findById(post_id: Long): PostsReturnDto {
+        val postsRequestDto = PostsRequestDto(findPosts(post_id))
+        postsRequestDto.sortPhotoListWithPriority()
+        return PostsReturnDto(postsRequestDto)
     }
 
 }

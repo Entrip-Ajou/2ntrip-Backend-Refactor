@@ -48,18 +48,19 @@ class PhotosService (
 
 
     @Transactional
-    public fun save(photoUrl : String, fileName : String) : Long? {
+    public fun save(photoUrl : String, fileName : String, priority : Long) : Long? {
         val photos : Photos = Photos (
             photoUrl = photoUrl,
-            fileName = fileName
+            fileName = fileName,
+            priority = priority
                 )
         photosRepository.save(photos)
         return photos.photo_id
     }
 
-    public fun uploadAtS3(multipartFile: MultipartFile) : Long? {
+    public fun uploadAtS3(multipartFile: MultipartFile, priority : Long) : Long? {
         val uploadedPhotoInformation : UploadedPhotoInformation= s3Uploader.upload(multipartFile, "static")
-        val savedPhotoId = save(uploadedPhotoInformation.uploadImageUrl, uploadedPhotoInformation.uploadFileName)
+        val savedPhotoId = save(uploadedPhotoInformation.uploadImageUrl, uploadedPhotoInformation.uploadFileName, priority)
         return savedPhotoId
     }
 

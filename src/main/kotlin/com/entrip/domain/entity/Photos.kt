@@ -18,11 +18,17 @@ class Photos (
         @JoinColumn (name = "POST_ID")
         var posts: Posts? = null,
 
+        @Column
         var priority : Long = 1
 
         // var createdDate
         // var timeStamp
         // is included with BaseTimeEntity
-) : BaseTimeEntity() {
+) : BaseTimeEntity(), Comparable<Photos> {
+        public override fun compareTo(other: Photos): Int {
+                if (this.priority > other.priority) return 1
+                if (this.priority < other.priority) return -1
+                return 0
+        }
         // Have to make functions
 }

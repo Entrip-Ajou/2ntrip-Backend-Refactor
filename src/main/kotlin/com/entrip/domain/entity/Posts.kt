@@ -26,9 +26,17 @@ class Posts (
         // is included with BaseTimeEntity
 
 ) : BaseTimeEntity() {
-        fun update (title : String, content : String) : Unit {
+        public fun update (title : String, content : String) : Unit {
                 this.title = title
                 this.content = content
+        }
+
+        public fun getPhotoListFromEntity (photoSet : MutableSet<Photos>?) : MutableList<Photos> {
+                var photoList : MutableList<Photos> = ArrayList<Photos>()
+                if (photoSet != null) {
+                        for (photo in photoSet) photoList.add(photo)
+                }
+                return photoList
         }
 
 }

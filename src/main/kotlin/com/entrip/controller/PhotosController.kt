@@ -31,9 +31,9 @@ class PhotosController (
         return ResponseEntity<Messages>(messages, headers, HttpStatus.OK)
     }
 
-    @PostMapping("api/v1/photos")
-    public fun upload (@RequestParam("photos") multipartFile: MultipartFile) : ResponseEntity<Messages>
-    = sendResponseHttpByJson("Photo is saved well", photosService.uploadAtS3(multipartFile)!!)
+    @PostMapping("api/v1/photos/{priority}")
+    public fun upload (@RequestParam("photos") multipartFile: MultipartFile, @PathVariable priority : Long = 1) : ResponseEntity<Messages>
+    = sendResponseHttpByJson("Photo is saved well", photosService.uploadAtS3(multipartFile, priority)!!)
 
     @PutMapping("api/v1/photos/{photo_id}/{post_id}/addPosts")
     public fun addPostsToPhotos (@PathVariable photo_id : Long, @PathVariable post_id : Long) : ResponseEntity<Messages>
