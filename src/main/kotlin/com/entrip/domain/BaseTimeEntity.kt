@@ -12,11 +12,12 @@ import javax.persistence.MappedSuperclass
 abstract class BaseTimeEntity {
 
     @CreatedDate
-    var createdDate : LocalDateTime = LocalDateTime.now()
-    @LastModifiedDate
-    var timestamp : LocalDateTime = LocalDateTime.now()
+    var createdDate: LocalDateTime = LocalDateTime.now()
 
-    fun setTimeStamp(localDateTime: LocalDateTime) : Unit {
+    @LastModifiedDate
+    var timestamp: LocalDateTime = LocalDateTime.now()
+
+    fun setTimeStamp(localDateTime: LocalDateTime): Unit {
         timestamp = localDateTime
     }
 }

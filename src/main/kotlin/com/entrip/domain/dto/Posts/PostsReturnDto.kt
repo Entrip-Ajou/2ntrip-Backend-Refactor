@@ -8,9 +8,9 @@ class PostsReturnDto(
     val content: String,
     val author: String?,
     val photoList: MutableList<String> = ArrayList<String>()
-        ) {
+) {
 
-    constructor(postsRequestDto: PostsRequestDto) : this (
+    constructor(postsRequestDto: PostsRequestDto) : this(
         post_id = postsRequestDto.post_id,
         title = postsRequestDto.title,
         content = postsRequestDto.content,

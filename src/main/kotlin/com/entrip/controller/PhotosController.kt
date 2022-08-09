@@ -13,34 +13,40 @@ import org.springframework.web.multipart.MultipartFile
 import java.nio.charset.Charset
 
 @RestController
-class PhotosController (
+class PhotosController(
     final val photosService: PhotosService,
 
     @Autowired
     final val s3Uploader: S3Uploader,
-        ){
+) {
 
-    private fun sendResponseHttpByJson (message : String, data : Any) : ResponseEntity<Messages> {
-        val messages : Messages = Messages(
+    private fun sendResponseHttpByJson(message: String, data: Any): ResponseEntity<Messages> {
+        val messages: Messages = Messages(
             httpStatus = 200,
             message = message,
             data = data
         )
-        val headers : HttpHeaders = HttpHeaders()
-        headers.contentType = MediaType ("application", "json", Charset.forName("UTF-8"))
+        val headers: HttpHeaders = HttpHeaders()
+        headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
         return ResponseEntity<Messages>(messages, headers, HttpStatus.OK)
     }
 
     @PostMapping("api/v1/photos/{priority}")
-    public fun upload (@RequestParam("photos") multipartFile: MultipartFile, @PathVariable priority : Long = 1) : ResponseEntity<Messages>
-    = sendResponseHttpByJson("Photo is saved well", photosService.uploadAtS3(multipartFile, priority)!!)
+    public fun upload(
+        @RequestParam("photos") multipartFile: MultipartFile,
+        @PathVariable priority: Long = 1
+    ): ResponseEntity<Messages> =
+        sendResponseHttpByJson("Photo is saved well", photosService.uploadAtS3(multipartFile, priority)!!)
 
     @PutMapping("api/v1/photos/{photo_id}/{post_id}/addPosts")
-    public fun addPostsToPhotos (@PathVariable photo_id : Long, @PathVariable post_id : Long) : ResponseEntity<Messages>
-    = sendResponseHttpByJson("Add photos $photo_id to posts $post_id", photosService.addPostsToPhotos(photo_id, post_id))
+    public fun addPostsToPhotos(@PathVariable photo_id: Long, @PathVariable post_id: Long): ResponseEntity<Messages> =
+        sendResponseHttpByJson(
+            "Add photos $photo_id to posts $post_id",
+            photosService.addPostsToPhotos(photo_id, post_id)
+        )
 
     @DeleteMapping("api/v1/photos/{photo_id}")
-    public fun delete (@PathVariable photo_id : Long) : ResponseEntity<Messages>
-    = sendResponseHttpByJson("Delete photos $photo_id", photosService.delete(photo_id))
+    public fun delete(@PathVariable photo_id: Long): ResponseEntity<Messages> =
+        sendResponseHttpByJson("Delete photos $photo_id", photosService.delete(photo_id))
 
 }

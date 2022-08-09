@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service
 import javax.transaction.Transactional
 
 @Service
-class PostsService (
+class PostsService(
     private final val postsRepository: PostsRepository,
 
     @Autowired
@@ -29,36 +29,35 @@ class PostsService (
 
     @Autowired
     val photosService: PhotosService
-        ) {
+) {
 
-    private val logger : Logger = LoggerFactory.getLogger(PostsService::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(PostsService::class.java)
 
-    private fun findUsers(user_id : String?) : Users {
-        val users : Users = usersRepository.findById(user_id!!).orElseThrow {
+    private fun findUsers(user_id: String?): Users {
+        val users: Users = usersRepository.findById(user_id!!).orElseThrow {
             IllegalArgumentException("Error raise at usersRepository.findById$user_id")
         }
         return users
     }
 
-    private fun findPhotos(photo_id : Long) : Photos {
-        val photos : Photos = photosRepository.findById(photo_id).orElseThrow {
+    private fun findPhotos(photo_id: Long): Photos {
+        val photos: Photos = photosRepository.findById(photo_id).orElseThrow {
             IllegalArgumentException("Error raise at photosRepository.findById${photo_id}")
         }
         return photos
     }
 
-    private fun findPosts(post_id : Long) : Posts
-    = postsRepository.findById(post_id).orElseThrow {
+    private fun findPosts(post_id: Long): Posts = postsRepository.findById(post_id).orElseThrow {
         IllegalArgumentException("Error raise at postsRepository.findById $post_id")
     }
 
     @Transactional
-    public fun save (requestDto : PostsSaveRequestDto) : Long {
-        var posts : Posts = requestDto.toEntity()
+    public fun save(requestDto: PostsSaveRequestDto): Long {
+        var posts: Posts = requestDto.toEntity()
         posts.author = findUsers(requestDto.author)
         posts.author!!.posts.add(posts)
-        for (photoId : Long in requestDto.photoIdList) {
-            val photos : Photos = findPhotos(photoId)
+        for (photoId: Long in requestDto.photoIdList) {
+            val photos: Photos = findPhotos(photoId)
             photos.posts = posts
             posts.photoSet!!.add(photos)
         }
@@ -67,8 +66,8 @@ class PostsService (
     }
 
     @Transactional
-    public fun update (post_id: Long, requestDto : PostsUpdateRequestDto) : Long? {
-        val posts : Posts = findPosts(post_id)
+    public fun update(post_id: Long, requestDto: PostsUpdateRequestDto): Long? {
+        val posts: Posts = findPosts(post_id)
         posts.update(requestDto.title, requestDto.content)
         return posts.post_id
     }
@@ -80,12 +79,12 @@ class PostsService (
     }
 
     @Transactional
-    public fun delete (post_id : Long) : Long {
+    public fun delete(post_id: Long): Long {
         val posts = findPosts(post_id)
 
         if (posts.photoSet != null) {
             val iterator = posts.photoSet!!.iterator()
-            while(iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 val photos = iterator.next()
                 iterator.remove()
                 photosService.delete(photos.photo_id!!)

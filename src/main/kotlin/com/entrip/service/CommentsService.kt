@@ -19,7 +19,7 @@ import java.util.IllegalFormatCodePointException
 import javax.transaction.Transactional
 
 @Service
-class CommentsService (
+class CommentsService(
     final val commentsRepository: CommentsRepository,
 
     @Autowired
@@ -33,45 +33,46 @@ class CommentsService (
 
     @Autowired
     private val eventPublisher: ApplicationEventPublisher
-        ){
+) {
 
-    private fun findUsers(user_id : String?) : Users {
+    private fun findUsers(user_id: String?): Users {
         val users = usersRepository.findById(user_id!!).orElseThrow {
             IllegalArgumentException("Error raise at usersRepository.findById$user_id")
         }
         return users
     }
-    private fun findPlanners(planner_id: Long) : Planners {
-        val planners : Planners = plannersRepository.findById(planner_id!!).orElseThrow {
+
+    private fun findPlanners(planner_id: Long): Planners {
+        val planners: Planners = plannersRepository.findById(planner_id!!).orElseThrow {
             IllegalArgumentException("Error raise at PlannersRepository.findById$planner_id")
         }
         return planners
     }
 
-    private fun findPlans(plan_id : Long) : Plans {
-        val plans : Plans = plansRepository.findById(plan_id!!).orElseThrow {
+    private fun findPlans(plan_id: Long): Plans {
+        val plans: Plans = plansRepository.findById(plan_id!!).orElseThrow {
             IllegalArgumentException("Error raise at plansRepository.findById$plan_id")
         }
         return plans
     }
 
-    private fun findComments(comment_id : Long) : Comments {
-        val comments : Comments = commentsRepository.findById(comment_id!!).orElseThrow {
+    private fun findComments(comment_id: Long): Comments {
+        val comments: Comments = commentsRepository.findById(comment_id!!).orElseThrow {
             IllegalArgumentException("Error raise at commentsRepository.findById$comment_id")
         }
         return comments
     }
 
-    private fun publishCrudEvents(message : String, planner_id : Long) {
+    private fun publishCrudEvents(message: String, planner_id: Long) {
         //eventPublisher.publishEvent(CrudEvent(message, planner_id))
     }
 
-    public fun getAllCommentsWithPlanId (plan_id : Long) : MutableList<CommentsReturnDto> {
+    public fun getAllCommentsWithPlanId(plan_id: Long): MutableList<CommentsReturnDto> {
         val plans = findPlans(plan_id)
-        val commentsSet : MutableSet<Comments> = plans.comments
-        val commentsList : MutableList<CommentsReturnDto> = ArrayList<CommentsReturnDto>()
+        val commentsSet: MutableSet<Comments> = plans.comments
+        val commentsList: MutableList<CommentsReturnDto> = ArrayList<CommentsReturnDto>()
         val commentsIterator = commentsSet.iterator()
-        while(commentsIterator.hasNext()) {
+        while (commentsIterator.hasNext()) {
             val comments = commentsIterator.next()
             val responseDto = CommentsResponseDto(comments)
             val returnDto = CommentsReturnDto(responseDto)
@@ -82,7 +83,7 @@ class CommentsService (
     }
 
     @Transactional
-    public fun save (requestDto : CommentsSaveRequestDto) : MutableList<CommentsReturnDto> {
+    public fun save(requestDto: CommentsSaveRequestDto): MutableList<CommentsReturnDto> {
         val plans = findPlans(requestDto.plans_id)
         val users = findUsers(requestDto.author)
         val comments = requestDto.toEntity()
@@ -96,20 +97,20 @@ class CommentsService (
         return getAllCommentsWithPlanId(requestDto.plans_id)
     }
 
-    public fun update (comment_id: Long, requestDto: CommentsUpdateRequestDto) : MutableList<CommentsReturnDto> {
+    public fun update(comment_id: Long, requestDto: CommentsUpdateRequestDto): MutableList<CommentsReturnDto> {
         val comments = findComments(comment_id)
         comments.update(requestDto.author, requestDto.content)
         comments.plans?.planners?.setComment_timeStamp()
         return getAllCommentsWithPlanId(requestDto.plans_id)
     }
 
-    public fun findById (comment_id : Long) : CommentsResponseDto {
+    public fun findById(comment_id: Long): CommentsResponseDto {
         val comments = findComments(comment_id)
         return CommentsResponseDto(comments)
     }
 
     @Transactional
-    public fun delete (comment_id: Long) : MutableList<CommentsReturnDto> {
+    public fun delete(comment_id: Long): MutableList<CommentsReturnDto> {
         val comments = findComments(comment_id)
         val plan_id = comments.plans?.plan_id
         comments.plans?.planners?.setComment_timeStamp()

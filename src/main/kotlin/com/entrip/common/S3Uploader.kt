@@ -15,49 +15,56 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Component
-class S3Uploader (
+class S3Uploader(
     final val amazonS3Client: AmazonS3Client,
 
     @Value("#{awsS3['cloud.aws.s3.bucket']}")
     private val bucket: String
-        ){
+) {
 
-    private val logger : Logger = LoggerFactory.getLogger(S3Uploader::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(S3Uploader::class.java)
 
-    private fun convert (file : MultipartFile) : Optional<File> {
-        val convertFile : File = File(System.getProperty("user.dir") + "/" + file.originalFilename)
+    private fun convert(file: MultipartFile): Optional<File> {
+        val convertFile: File = File(System.getProperty("user.dir") + "/" + file.originalFilename)
         if (convertFile.createNewFile()) {
             try {
-                val fos : FileOutputStream = FileOutputStream(convertFile)
+                val fos: FileOutputStream = FileOutputStream(convertFile)
                 fos.write(file.bytes)
 
-            } catch (e : IOException) {}
+            } catch (e: IOException) {
+            }
             return Optional.of(convertFile)
         }
         return Optional.empty()
     }
 
-    public fun upload (multipartFile : MultipartFile, dirName : String) : UploadedPhotoInformation {
-        val uploadFile : File = convert(multipartFile).orElseThrow {
+    public fun upload(multipartFile: MultipartFile, dirName: String): UploadedPhotoInformation {
+        val uploadFile: File = convert(multipartFile).orElseThrow {
             IllegalArgumentException("Error : MultipartFile -> File convert fail")
         }
-        return upload (uploadFile, dirName)
+        return upload(uploadFile, dirName)
     }
 
-    public fun upload (uploadFile : File, dirName : String) : UploadedPhotoInformation {
+    public fun upload(uploadFile: File, dirName: String): UploadedPhotoInformation {
         //val filename : String = dirName + "/" + UUID.randomUUID() + uploadFile.name
-        val filename : String = dirName + "/" + uploadFile.name
-        val uploadImageUrl : String = putS3 (uploadFile, filename)
+        val filename: String = dirName + "/" + uploadFile.name
+        val uploadImageUrl: String = putS3(uploadFile, filename)
         removeNewFile(uploadFile)
         return UploadedPhotoInformation(uploadImageUrl, filename)
     }
 
-    public fun putS3 (uploadFile : File, fileName : String) : String {
-        amazonS3Client.putObject(PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead))
+    public fun putS3(uploadFile: File, fileName: String): String {
+        amazonS3Client.putObject(
+            PutObjectRequest(
+                bucket,
+                fileName,
+                uploadFile
+            ).withCannedAcl(CannedAccessControlList.PublicRead)
+        )
         return amazonS3Client.getUrl(bucket, fileName).toString()
     }
 
-    private fun removeNewFile (targetFile : File) : Unit {
+    private fun removeNewFile(targetFile: File): Unit {
         if (targetFile.delete()) {
             return
         }

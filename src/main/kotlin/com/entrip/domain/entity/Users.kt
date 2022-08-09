@@ -13,32 +13,33 @@ class Users(
     val user_id: String? = null,
 
     @Column
-    @ManyToMany (fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "PLANNERS_USERS")
-    var planners : MutableSet<Planners> = TreeSet(),
+    var planners: MutableSet<Planners> = TreeSet(),
 
     @Column
-    @OneToMany (mappedBy = "users", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "users", fetch = FetchType.EAGER, orphanRemoval = true)
     //Check "orphanRemoval = true" is possible
-    var comments : MutableSet<Comments> = TreeSet(),
+    var comments: MutableSet<Comments> = TreeSet(),
 
     @Column
-    @OneToMany (mappedBy = "author", fetch = FetchType.EAGER, orphanRemoval = true)
-    var posts : MutableSet<Posts> = TreeSet(),
+    @OneToMany(mappedBy = "author", fetch = FetchType.EAGER, orphanRemoval = true)
+    var posts: MutableSet<Posts> = TreeSet(),
 
 
     @Column
     val nickname: String,
-    var gender : Int? = null,
-    var photoUrl : String? = null,
-    var token : String? = null
+    var gender: Int? = null,
+    var photoUrl: String? = null,
+    var token: String? = null
 
-): BaseTimeEntity(), Comparable<Users> {
-    public fun addPlanners(planners : Planners) : Long? {
+) : BaseTimeEntity(), Comparable<Users> {
+    public fun addPlanners(planners: Planners): Long? {
         this.planners.add(planners)
         return planners.planner_id
     }
-    public fun updateToken(token: String) : String {
+
+    public fun updateToken(token: String): String {
         this.token = token
         return token
     }

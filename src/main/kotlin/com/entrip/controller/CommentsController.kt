@@ -17,14 +17,14 @@ class CommentsController(
     final val commentsService: CommentsService
 ) {
 
-    private fun sendResponseHttpByJson (message : String, data : Any) : ResponseEntity<Messages> {
-        val messages : Messages = Messages(
+    private fun sendResponseHttpByJson(message: String, data: Any): ResponseEntity<Messages> {
+        val messages: Messages = Messages(
             httpStatus = 200,
             message = message,
             data = data
         )
-        val headers : HttpHeaders = HttpHeaders()
-        headers.contentType = MediaType ("application", "json", Charset.forName("UTF-8"))
+        val headers: HttpHeaders = HttpHeaders()
+        headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
         return ResponseEntity<Messages>(messages, headers, HttpStatus.OK)
     }
 

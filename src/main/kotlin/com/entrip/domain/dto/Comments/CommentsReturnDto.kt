@@ -7,13 +7,13 @@ class CommentsReturnDto(
     val plan_id: Long?,
     val photoUrl: String?,
     val nickname: String?
-        ){
-    constructor(responseDto: CommentsResponseDto) : this (
+) {
+    constructor(responseDto: CommentsResponseDto) : this(
         responseDto.comment_id,
         responseDto.author,
         responseDto.content,
         responseDto.plans?.plan_id,
         responseDto.users?.photoUrl,
         responseDto.users?.nickname
-            )
+    )
 }

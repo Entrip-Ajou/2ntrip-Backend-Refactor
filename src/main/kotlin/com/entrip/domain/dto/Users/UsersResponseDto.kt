@@ -11,7 +11,7 @@ class UsersResponseDto(
     var gender: Int?,
     var photoUrl: String?,
     var token: String?
-    ) {
+) {
     constructor(entity: Users) : this(
         entity.user_id,
         entity.planners,

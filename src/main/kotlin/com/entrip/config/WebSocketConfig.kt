@@ -12,9 +12,7 @@ class WebSocketConfig : WebSocketMessageBrokerConfigurer {
 
     //Endpoint for connecting websocket
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
-        registry.addEndpoint("/ws")
-            .setAllowedOrigins("http://localhost:8080")
-            .setAllowedOrigins("http://2ntrip.com")
+        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:8080").setAllowedOrigins("http://2ntrip.com")
             .withSockJS()
     }
     //Current connect url : ws://2ntrip.com/websocket

@@ -10,9 +10,9 @@ import org.springframework.core.io.ClassPathResource
 @Configuration
 class PropertiesConfig {
     @Bean(name = arrayOf("awsS3"))
-    public fun propertiesFactoryBean() : PropertiesFactoryBean {
-        val propertiesFactoryBean : PropertiesFactoryBean = PropertiesFactoryBean()
-        val classPathResource : ClassPathResource = ClassPathResource("application-aws-s3.properties")
+    public fun propertiesFactoryBean(): PropertiesFactoryBean {
+        val propertiesFactoryBean: PropertiesFactoryBean = PropertiesFactoryBean()
+        val classPathResource: ClassPathResource = ClassPathResource("application-aws-s3.properties")
 
         propertiesFactoryBean.setLocation(classPathResource)
         return propertiesFactoryBean

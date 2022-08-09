@@ -10,8 +10,8 @@ class CommentsResponseDto(
     val content: String,
     val plans: Plans?,
     val users: Users?
-        ) {
-    constructor(entity : Comments) : this(
+) {
+    constructor(entity: Comments) : this(
         entity.comment_id,
         entity.author,
         entity.content,

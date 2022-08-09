@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController
 class WebController {
 
     @RequestMapping("/chat")
-    public fun main() : String {
+    public fun main(): String {
         return "index"
     }
 }

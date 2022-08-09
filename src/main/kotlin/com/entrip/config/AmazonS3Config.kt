@@ -24,8 +24,8 @@ class AmazonS3Config(
     private val region: String
 ) {
     @Bean
-    public fun amazonS3() : AmazonS3  {
-        val basicAWSCredentials : BasicAWSCredentials = BasicAWSCredentials(accessKey, secretKey)
+    public fun amazonS3(): AmazonS3 {
+        val basicAWSCredentials: BasicAWSCredentials = BasicAWSCredentials(accessKey, secretKey)
         return AmazonS3ClientBuilder.standard()
             .withRegion(region)
             .withCredentials(AWSStaticCredentialsProvider(basicAWSCredentials))
@@ -33,8 +33,8 @@ class AmazonS3Config(
     }
 
     @Bean
-    public fun amazonS3Client() : AmazonS3Client {
-        val basicAWSCredentials : BasicAWSCredentials = BasicAWSCredentials(accessKey, secretKey)
+    public fun amazonS3Client(): AmazonS3Client {
+        val basicAWSCredentials: BasicAWSCredentials = BasicAWSCredentials(accessKey, secretKey)
         return AmazonS3ClientBuilder.standard()
             .withCredentials(AWSStaticCredentialsProvider(basicAWSCredentials))
             .withRegion(region)

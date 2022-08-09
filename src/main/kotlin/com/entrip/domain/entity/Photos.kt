@@ -4,31 +4,31 @@ import com.entrip.domain.BaseTimeEntity
 import javax.persistence.*
 
 @Entity
-class Photos (
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "PHOTO_ID")
-        val photo_id : Long? = null,
+class Photos(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "PHOTO_ID")
+    val photo_id: Long? = null,
 
-        @Column
-        val photoUrl : String,
-        val fileName : String,
+    @Column
+    val photoUrl: String,
+    val fileName: String,
 
-        @ManyToOne(fetch = FetchType.EAGER)
-        @JoinColumn (name = "POST_ID")
-        var posts: Posts? = null,
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "POST_ID")
+    var posts: Posts? = null,
 
-        @Column
-        var priority : Long = 1
+    @Column
+    var priority: Long = 1
 
-        // var createdDate
-        // var timeStamp
-        // is included with BaseTimeEntity
+    // var createdDate
+    // var timeStamp
+    // is included with BaseTimeEntity
 ) : BaseTimeEntity(), Comparable<Photos> {
-        public override fun compareTo(other: Photos): Int {
-                if (this.priority > other.priority) return 1
-                if (this.priority < other.priority) return -1
-                return 0
-        }
-        // Have to make functions
+    public override fun compareTo(other: Photos): Int {
+        if (this.priority > other.priority) return 1
+        if (this.priority < other.priority) return -1
+        return 0
+    }
+    // Have to make functions
 }

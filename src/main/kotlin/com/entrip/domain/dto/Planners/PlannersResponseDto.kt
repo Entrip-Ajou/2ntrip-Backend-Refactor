@@ -14,8 +14,8 @@ class PlannersResponseDto(
     val users: MutableSet<Users>? = TreeSet(),
     val time_stamp: String,
     val comment_timeStamp: String
-        ){
-    constructor(entity : Planners) : this (
+) {
+    constructor(entity: Planners) : this(
         entity.planner_id!!,
         entity.title,
         entity.start_date,

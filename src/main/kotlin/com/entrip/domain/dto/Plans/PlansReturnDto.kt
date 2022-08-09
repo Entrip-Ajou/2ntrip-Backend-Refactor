@@ -9,8 +9,8 @@ class PlansReturnDto(
     val rgb: Long,
     val planner_id: Long?,
     val isExistComments: Boolean
-        ){
-    constructor(responseDto: PlansResponseDto) : this (
+) {
+    constructor(responseDto: PlansResponseDto) : this(
         responseDto.plan_id,
         responseDto.date,
         responseDto.todo,
