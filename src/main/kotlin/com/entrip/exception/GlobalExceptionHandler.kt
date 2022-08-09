@@ -81,6 +81,19 @@ class GlobalExceptionHandler {
         val messages: Messages = Messages(
             202,
             "NotAcceptedException\n",
+            e.data
+        )
+        val headers: HttpHeaders = HttpHeaders()
+        headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
+        logger.error(e.message)
+        return ResponseEntity<Messages>(messages, headers, HttpStatus.ACCEPTED)
+    }
+
+    @ExceptionHandler(FailToFindNicknameOrIdException::class)
+    fun handleFailToFindNicknameOrIdException(e: FailToFindNicknameOrIdException): ResponseEntity<Messages> {
+        val messages: Messages = Messages(
+            202,
+            "NotAcceptedException\n",
             dummy(e.message!!)
         )
         val headers: HttpHeaders = HttpHeaders()
@@ -88,6 +101,7 @@ class GlobalExceptionHandler {
         logger.error(e.message)
         return ResponseEntity<Messages>(messages, headers, HttpStatus.ACCEPTED)
     }
+
 
     @ExceptionHandler(Exception::class)
     fun handleException(e: Exception): ResponseEntity<Messages> {

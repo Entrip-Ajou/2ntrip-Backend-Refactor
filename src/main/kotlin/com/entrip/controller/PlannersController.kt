@@ -79,7 +79,7 @@ class PlannersController(
     @GetMapping("api/v1/planners/{planner_id}/exist")
     public fun plannerIsExistWithId(@PathVariable planner_id: Long): ResponseEntity<Messages> {
         val isExist: Boolean = plannersService.plannerIsExistWithId(planner_id)
-        if (!isExist) throw NotAcceptedException("Planner $planner_id is not exist")
+        if (!isExist) throw NotAcceptedException(false)
         return sendResponseHttpByJson("Find if planner is exist with specific planner id : $planner_id", isExist)
     }
 
@@ -109,7 +109,7 @@ class PlannersController(
         @PathVariable user_id: String
     ): ResponseEntity<Messages> {
         val isExist: Boolean = plannersService.userIsExistInPlannerWithUserId(planner_id, user_id)
-        if (!isExist) throw NotAcceptedException("User $user_id is not exist in planner $planner_id")
+        if (!isExist) throw NotAcceptedException(false)
         return sendResponseHttpByJson("Check if user : $user_id is exist at planner : $planner_id", isExist)
     }
 
@@ -119,7 +119,7 @@ class PlannersController(
         @PathVariable nickname: String
     ): ResponseEntity<Messages> {
         val isExist: Boolean = plannersService.userIsExistInPlannerWithNickname(planner_id, nickname)
-        if (!isExist) throw NotAcceptedException("User $nickname is not exist in planner $planner_id")
+        if (!isExist) throw NotAcceptedException(false)
         return sendResponseHttpByJson("Check if user : $nickname is exist at planner : $planner_id", isExist)
     }
 

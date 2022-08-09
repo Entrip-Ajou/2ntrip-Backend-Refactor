@@ -59,14 +59,14 @@ class UsersController(
     @GetMapping("api/v1/users/{nickname}/nickname/exist")
     public fun isExistNickname(@PathVariable nickname: String): ResponseEntity<Messages> {
         val isExist: Boolean = usersService.isExistNickname(nickname)
-        if (!isExist) throw NotAcceptedException("User $nickname is not exist")
+        if (!isExist) throw NotAcceptedException(false)
         return sendResponseHttpByJson("Check if nickname $nickname is Exist", isExist)
     }
 
     @GetMapping("api/v1/users/{user_id}/user_id/exist")
     public fun isExistUserId(@PathVariable user_id: String): ResponseEntity<Messages> {
         val isExist: Boolean = usersService.isExistUserId(user_id)
-        if (!isExist) throw NotAcceptedException("User $user_id is not exist")
+        if (!isExist) throw NotAcceptedException(false)
         return sendResponseHttpByJson("Check if user_id $user_id is Exist", isExist)
     }
 
@@ -87,7 +87,6 @@ class UsersController(
     @GetMapping("api/v1/users/findUserWithNicknameOrUserId/{nicknameOrUserId}")
     public fun findUserWithNicknameOrUserId(@PathVariable nicknameOrUserId: String): ResponseEntity<Messages> {
         val targetUserId = usersService.findUserWithNicknameOrUserId(nicknameOrUserId)
-            ?: throw NotAcceptedException("User $nicknameOrUserId is not exist at UsersRepository")
         val responseDto: UsersResponseDto = usersService.findByUserId(targetUserId)
         val returnDto: UsersReturnDto = UsersReturnDto(responseDto)
         return sendResponseHttpByJson("Get user with nicknameOrUserId : $nicknameOrUserId", returnDto)

@@ -5,6 +5,7 @@ import com.entrip.domain.dto.Planners.PlannersReturnDto
 import com.entrip.domain.entity.Users
 import com.entrip.domain.dto.Users.UsersResponseDto
 import com.entrip.domain.dto.Users.UsersSaveRequestDto
+import com.entrip.exception.FailToFindNicknameOrIdException
 import com.entrip.exception.NotAcceptedException
 import com.entrip.repository.PlannersRepository
 import com.entrip.repository.UsersRepository
@@ -122,7 +123,7 @@ class UsersService(
             if (users.user_id == nicknameOrUserId || users.nickname == nicknameOrUserId)
                 return users.user_id
         }
-        return null
+        throw FailToFindNicknameOrIdException("Fail To Find Nickname Or Id matched Users!")
     }
 }
 
