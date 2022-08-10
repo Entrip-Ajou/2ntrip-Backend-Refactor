@@ -12,7 +12,9 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.util.*
 import javax.transaction.Transactional
+import kotlin.collections.ArrayList
 
 @Service
 class PostsCommentsService(
@@ -57,6 +59,20 @@ class PostsCommentsService(
 
     public fun findById(postComment_id: Long): PostsCommentsReturnDto =
         PostsCommentsReturnDto(findPostsComments(postComment_id))
+
+    public fun getAllCommentsWithPostId(post_id: Long): MutableList<PostsCommentsReturnDto> {
+        val posts = findPosts(post_id)
+        val postsCommentsSet: MutableSet<PostsComments> = posts.postsCommentsSet!!
+        val postsCommentsList: MutableList<PostsCommentsReturnDto> = ArrayList<PostsCommentsReturnDto>()
+        val iterator = postsCommentsSet.iterator()
+        while (iterator.hasNext()) {
+            val postsComments = iterator.next()
+            val returnDto = PostsCommentsReturnDto(postsComments)
+            postsCommentsList.add(returnDto)
+        }
+        postsCommentsList.sort()
+        return postsCommentsList
+    }
 
     public fun delete(postComment_id: Long): Long {
         var postsComments = findPostsComments(postComment_id)

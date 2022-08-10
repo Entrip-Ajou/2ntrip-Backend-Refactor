@@ -47,4 +47,11 @@ class PostsCommentsController(
             "Delete PostsComments with id : $postComment_id",
             postsCommentsService.delete(postComment_id)
         )
+
+    @GetMapping("api/v1/postsComments/{post_id}/all")
+    public fun getAllCommentsWithPostId(@PathVariable post_id: Long): ResponseEntity<Messages> =
+        sendResponseHttpByJson(
+            "Get all comments with post id : $post_id",
+            postsCommentsService.getAllCommentsWithPostId(post_id)
+        )
 }
