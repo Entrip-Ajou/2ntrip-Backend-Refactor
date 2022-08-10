@@ -26,6 +26,9 @@ class Users(
     @OneToMany(mappedBy = "author", fetch = FetchType.EAGER, orphanRemoval = true)
     var posts: MutableSet<Posts> = TreeSet(),
 
+    @Column
+    @OneToMany(mappedBy = "author", fetch = FetchType.EAGER, orphanRemoval = true)
+    var postsComments: MutableSet<PostsComments> = TreeSet(),
 
     @Column
     val nickname: String,

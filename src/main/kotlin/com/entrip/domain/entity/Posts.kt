@@ -16,10 +16,14 @@ class Posts(
     var content: String = "",
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "USER_ID")
     var author: Users? = null,
 
     @OneToMany(mappedBy = "posts", fetch = FetchType.EAGER)
-    var photoSet: MutableSet<Photos>? = TreeSet()
+    var photoSet: MutableSet<Photos>? = TreeSet(),
+
+    @OneToMany(mappedBy = "posts", fetch = FetchType.EAGER)
+    var postsCommentsSet: MutableSet<PostsComments>? = TreeSet(),
 
     // var createdDate
     // var timeStamp
