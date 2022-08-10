@@ -1,7 +1,5 @@
 package com.entrip.domain.dto.Posts
 
-import com.entrip.domain.entity.Posts
-
 class PostsReturnDto(
     val post_id: Long?,
     val title: String,

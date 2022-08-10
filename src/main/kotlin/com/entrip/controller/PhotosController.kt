@@ -45,6 +45,10 @@ class PhotosController(
             photosService.addPostsToPhotos(photo_id, post_id)
         )
 
+    @GetMapping("api/v1/photos/{photo_id}")
+    public fun findById(@PathVariable photo_id: Long): ResponseEntity<Messages> =
+        sendResponseHttpByJson("Get photos with id : $photo_id", photosService.findById(photo_id))
+
     @DeleteMapping("api/v1/photos/{photo_id}")
     public fun delete(@PathVariable photo_id: Long): ResponseEntity<Messages> =
         sendResponseHttpByJson("Delete photos $photo_id", photosService.delete(photo_id))

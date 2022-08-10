@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.DeleteObjectRequest
 import com.entrip.common.S3Uploader
 import com.entrip.common.UploadedPhotoInformation
+import com.entrip.domain.dto.Photos.PhotosReturnDto
 import com.entrip.domain.entity.Photos
 import com.entrip.domain.entity.Posts
 import com.entrip.repository.PhotosRepository
@@ -82,6 +83,8 @@ class PhotosService(
 
         return photo_id
     }
+
+    public fun findById(photo_id: Long): PhotosReturnDto = PhotosReturnDto(findPhotos(photo_id))
 
     private fun deletePhotosInS3(fileName: String) = amazonS3Client.deleteObject(DeleteObjectRequest(bucket, fileName))
 
