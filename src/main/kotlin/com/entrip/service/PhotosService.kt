@@ -14,6 +14,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import javax.transaction.Transactional
@@ -43,6 +44,18 @@ class PhotosService(
 
     private fun findPosts(post_id: Long): Posts = postsRepository.findById(post_id).orElseThrow {
         IllegalArgumentException("Error raise at postsRepsotiroy.findById $post_id")
+    }
+
+    @Scheduled(cron = "* 1 * * * *")
+    protected fun deleteOrphanPhotos() {
+        var photosList = photosRepository.findAll()
+        var iterator = photosList.iterator()
+
+        while (iterator.hasNext()) {
+            val photos = iterator.next()
+            if (photos.posts == null) delete(photos.photo_id!!)
+        }
+        logger.info("deleteOrphanPhotos!")
     }
 
 
@@ -87,7 +100,6 @@ class PhotosService(
     public fun findById(photo_id: Long): PhotosReturnDto = PhotosReturnDto(findPhotos(photo_id))
 
     private fun deletePhotosInS3(fileName: String) = amazonS3Client.deleteObject(DeleteObjectRequest(bucket, fileName))
-
 
     private fun deletePhotosInDataBase(photos: Photos) = photosRepository.delete(photos)
 }

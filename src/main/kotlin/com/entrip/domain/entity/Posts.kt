@@ -22,7 +22,7 @@ class Posts(
     @OneToMany(mappedBy = "posts", fetch = FetchType.EAGER)
     var photoSet: MutableSet<Photos>? = TreeSet(),
 
-    @OneToMany(mappedBy = "posts", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "posts", fetch = FetchType.EAGER, orphanRemoval = true)
     var postsCommentsSet: MutableSet<PostsComments>? = TreeSet(),
 
     // var createdDate
@@ -30,6 +30,7 @@ class Posts(
     // is included with BaseTimeEntity
 
 ) : BaseTimeEntity() {
+
     public fun update(title: String, content: String): Unit {
         this.title = title
         this.content = content
