@@ -1,7 +1,5 @@
 package com.entrip.domain
 
-import com.entrip.common.MessageType
-
 //Domain model for chat
 data class SocketMessages(
     var type: MessageType,

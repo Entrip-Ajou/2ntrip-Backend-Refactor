@@ -1,5 +1,6 @@
 package com.entrip.common
 
+import com.entrip.domain.MessageType
 import com.entrip.domain.SocketMessages
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

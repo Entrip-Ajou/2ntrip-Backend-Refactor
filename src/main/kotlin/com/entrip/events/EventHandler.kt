@@ -2,7 +2,7 @@
 //
 //import com.entrip.controller.ChatController
 //import com.entrip.domain.ChatMessage
-//import com.entrip.common.MessageType
+//import com.entrip.domain.MessageType
 //import org.springframework.beans.factory.annotation.Autowired
 //import org.springframework.context.event.EventListener
 //import org.springframework.stereotype.Component

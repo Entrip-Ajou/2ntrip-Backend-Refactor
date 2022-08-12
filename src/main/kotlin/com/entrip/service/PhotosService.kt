@@ -45,7 +45,7 @@ class PhotosService(
         IllegalArgumentException("Error raise at postsRepsotiroy.findById $post_id")
     }
 
-    @Scheduled(cron = "* 1 * * * *")
+    @Scheduled(fixedDelay = 1000000)
     protected fun deleteOrphanPhotos() {
         var photosList = photosRepository.findAll()
         var iterator = photosList.iterator()
