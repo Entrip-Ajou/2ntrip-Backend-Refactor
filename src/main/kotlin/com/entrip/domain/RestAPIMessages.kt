@@ -3,7 +3,7 @@ package com.entrip.domain
 import lombok.Data
 
 @Data
-class Messages(
+class RestAPIMessages(
     val httpStatus: Int,
     val message: String,
     val data: Any

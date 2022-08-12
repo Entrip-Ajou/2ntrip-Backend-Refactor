@@ -1,6 +1,6 @@
 package com.entrip.controller
 
-import com.entrip.domain.Messages
+import com.entrip.domain.RestAPIMessages
 import com.entrip.domain.dto.Posts.PostsSaveRequestDto
 import com.entrip.service.PostsService
 import org.springframework.http.HttpHeaders
@@ -19,26 +19,26 @@ import java.nio.charset.Charset
 class PostsController(
     final val postsService: PostsService
 ) {
-    private fun sendResponseHttpByJson(message: String, data: Any): ResponseEntity<Messages> {
-        val messages: Messages = Messages(
+    private fun sendResponseHttpByJson(message: String, data: Any): ResponseEntity<RestAPIMessages> {
+        val restAPIMessages: RestAPIMessages = RestAPIMessages(
             httpStatus = 200,
             message = message,
             data = data
         )
         val headers: HttpHeaders = HttpHeaders()
         headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
-        return ResponseEntity<Messages>(messages, headers, HttpStatus.OK)
+        return ResponseEntity<RestAPIMessages>(restAPIMessages, headers, HttpStatus.OK)
     }
 
     @PostMapping("api/v1/posts")
-    public fun save(@RequestBody requestDto: PostsSaveRequestDto): ResponseEntity<Messages> =
+    public fun save(@RequestBody requestDto: PostsSaveRequestDto): ResponseEntity<RestAPIMessages> =
         sendResponseHttpByJson("Posts is saved well", postsService.save(requestDto))
 
     @GetMapping("api/v1/posts/{post_id}")
-    public fun findById(@PathVariable post_id: Long): ResponseEntity<Messages> =
+    public fun findById(@PathVariable post_id: Long): ResponseEntity<RestAPIMessages> =
         sendResponseHttpByJson("Get posts with id : $post_id", postsService.findById(post_id))
 
     @DeleteMapping("api/v1/posts/{post_id}")
-    public fun delete(@PathVariable post_id: Long): ResponseEntity<Messages> =
+    public fun delete(@PathVariable post_id: Long): ResponseEntity<RestAPIMessages> =
         sendResponseHttpByJson("Delete posts with id : $post_id", postsService.delete(post_id))
 }
