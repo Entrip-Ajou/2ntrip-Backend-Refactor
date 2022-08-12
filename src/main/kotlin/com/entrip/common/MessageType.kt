@@ -1,4 +1,4 @@
-package com.entrip.socket
+package com.entrip.common
 
 //enum for chat which is used at ChatMessage (Chat Model)
 enum class MessageType {

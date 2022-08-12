@@ -1,5 +1,6 @@
-package com.entrip.socket
+package com.entrip.common
 
+import com.entrip.domain.SocketMessages
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
@@ -27,9 +28,9 @@ class WebSocketEventListener(
         val username = headerAccessor.sessionAttributes!!["username"] as String?
         if (username != null) {
             logger.info("User Disconnected : $username")
-            val chatMessage = ChatMessage(MessageType.LEAVE, -1, username)
+            val socketMessages = SocketMessages(MessageType.LEAVE, -1, username)
 
-            messagingTemplate!!.convertAndSend("topic/public", chatMessage)
+            messagingTemplate!!.convertAndSend("topic/public", socketMessages)
         }
     }
 
