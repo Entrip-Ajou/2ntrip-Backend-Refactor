@@ -15,7 +15,7 @@ class PostsCommentsController(
     final val postsCommentsService: PostsCommentsService
 ) {
     private fun sendResponseHttpByJson(message: String, data: Any): ResponseEntity<RestAPIMessages> {
-        val restAPIMessages: RestAPIMessages = RestAPIMessages(
+        val restAPIMessages = RestAPIMessages(
             httpStatus = 200,
             message = message,
             data = data

@@ -1,5 +1,6 @@
 package com.entrip.domain.entity
 
+import com.entrip.domain.BaseTimeEntity
 import javax.persistence.*
 
 @Entity
@@ -19,15 +20,15 @@ class PostsNestedComments(
     @ManyToOne(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST])
     @JoinColumn(name = "POST_COMMENT_ID")
     var postsComments: PostsComments? = null
-) {
+) : BaseTimeEntity() {
 
     public fun setAuthorWithJoin(users: Users) {
         this.author = users
         author!!.postsNestedComments.add(this)
     }
 
-    public fun setPostsCommentsWithJoin(postsComments: PostsComments?) {
+    public fun setPostsCommentsWithJoin(postsComments: PostsComments) {
         this.postsComments = postsComments
-        postsComments!!.postsNestedComments.add(this)
+        postsComments!!.postsNestedComments!!.add(this)
     }
 }

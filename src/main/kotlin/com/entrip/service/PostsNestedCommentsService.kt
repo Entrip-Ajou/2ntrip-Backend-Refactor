@@ -1,5 +1,8 @@
 package com.entrip.service
 
+import com.entrip.domain.dto.PostsComments.PostsCommentsReturnDto
+import com.entrip.domain.dto.PostsNestedComments.PostsNestedCommentsReturnDto
+import com.entrip.domain.dto.PostsNestedComments.PostsNestedCommentsSaveRequestDto
 import com.entrip.domain.entity.PostsComments
 import com.entrip.domain.entity.PostsNestedComments
 import com.entrip.domain.entity.Users
@@ -10,6 +13,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import sun.security.ec.point.ProjectivePoint.Mutable
+import javax.transaction.Transactional
 
 @Service
 class PostsNestedCommentsService(
@@ -45,5 +50,45 @@ class PostsNestedCommentsService(
         return users
     }
     //CRUD Method
+
+    @Transactional
+    public fun save(requestDto: PostsNestedCommentsSaveRequestDto): Long {
+        var postsNestedComments: PostsNestedComments = requestDto.toEntity()
+        val users = findUsers(requestDto.author)
+        val postsComments = findPostsComments(requestDto.postComment_id)
+        postsNestedComments.setAuthorWithJoin(users)
+        postsNestedComments.setPostsCommentsWithJoin(postsComments)
+        postsNestedCommentsRepository.save(postsNestedComments)
+        return postsNestedComments.postNestedComment_id!!
+    }
+
+    public fun findById(postNestedComment_id: Long): PostsNestedCommentsReturnDto =
+        PostsNestedCommentsReturnDto(findPostsNestedComments(postNestedComment_id))
+
+    public fun getAllNestedCommentsWithPostCommentId(postComment_id: Long): MutableList<PostsNestedCommentsReturnDto> {
+        val postsComments = findPostsComments(postComment_id)
+        val postsNestedCommentsSet: MutableSet<PostsNestedComments> = postsComments.postsNestedComments!!
+        val postsNestedCommentsList: MutableList<PostsNestedCommentsReturnDto> =
+            ArrayList<PostsNestedCommentsReturnDto>()
+        val iterator = postsNestedCommentsSet.iterator()
+        while (iterator.hasNext()) {
+            val postsNestedComments = iterator.next()
+            val returnDto = PostsNestedCommentsReturnDto(postsNestedComments)
+            postsNestedCommentsList.add(returnDto)
+        }
+        postsNestedCommentsList.sort()
+        return postsNestedCommentsList
+    }
+
+    @Transactional
+    public fun delete(postNestedComment_id: Long): Long {
+        var postsNestedComments = findPostsNestedComments(postNestedComment_id)
+        var users = postsNestedComments.author!!
+        var postsComments = postsNestedComments.postsComments!!
+        users.postsNestedComments.remove(postsNestedComments)
+        postsComments.postsNestedComments!!.remove(postsNestedComments)
+        postsNestedCommentsRepository.delete(postsNestedComments)
+        return postNestedComment_id
+    }
 
 }

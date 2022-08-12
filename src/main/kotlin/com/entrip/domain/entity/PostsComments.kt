@@ -22,9 +22,8 @@ class PostsComments(
     @JoinColumn(name = "POST_ID")
     var posts: Posts? = null,
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "POST_NESTED_COMMENT_ID")
-    var postsNestedComments: MutableSet<PostsNestedComments> = TreeSet()
+    @OneToMany(mappedBy = "postsComments", fetch = FetchType.EAGER, orphanRemoval = true)
+    var postsNestedComments: MutableSet<PostsNestedComments>? = TreeSet()
 
 ) : BaseTimeEntity() {
 
