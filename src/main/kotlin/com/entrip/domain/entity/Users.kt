@@ -1,6 +1,7 @@
 package com.entrip.domain.entity
 
 import com.entrip.domain.BaseTimeEntity
+import org.hibernate.annotations.Fetch
 import org.springframework.cache.annotation.CachePut
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import java.util.*
@@ -29,6 +30,10 @@ class Users(
     @Column
     @OneToMany(mappedBy = "author", fetch = FetchType.EAGER, orphanRemoval = true)
     var postsComments: MutableSet<PostsComments> = TreeSet(),
+
+    @Column
+    @OneToMany(mappedBy = "author", fetch = FetchType.EAGER, orphanRemoval = true)
+    var postsNestedComments: MutableSet<PostsNestedComments> = TreeSet(),
 
     @Column
     val nickname: String,

@@ -1,6 +1,7 @@
 package com.entrip.domain.entity
 
 import com.entrip.domain.BaseTimeEntity
+import java.util.*
 import javax.persistence.*
 
 @Entity
@@ -19,7 +20,12 @@ class PostsComments(
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "POST_ID")
-    var posts: Posts? = null
+    var posts: Posts? = null,
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "POST_NESTED_COMMENT_ID")
+    var postsNestedComments: MutableSet<PostsNestedComments> = TreeSet()
+
 ) : BaseTimeEntity() {
 
     public fun setAuthorWithJoin(users: Users) {
