@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import java.time.LocalDateTime
 import javax.transaction.Transactional
 
 @Service
@@ -52,7 +53,9 @@ class PhotosService(
 
         while (iterator.hasNext()) {
             val photos = iterator.next()
-            if (photos.posts == null) delete(photos.photo_id!!)
+            val createdDate = photos.createdDate
+            val currentDate = LocalDateTime.now()
+            if (createdDate.plusMinutes(10).isBefore(currentDate) && photos.posts == null) delete(photos.photo_id!!)
         }
         logger.info("deleteOrphanPhotos!")
     }
