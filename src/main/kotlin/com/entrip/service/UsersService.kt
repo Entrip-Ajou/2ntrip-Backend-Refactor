@@ -2,19 +2,16 @@ package com.entrip.service
 
 import com.entrip.domain.dto.Planners.PlannersResponseDto
 import com.entrip.domain.dto.Planners.PlannersReturnDto
-import com.entrip.domain.entity.Users
 import com.entrip.domain.dto.Users.UsersResponseDto
 import com.entrip.domain.dto.Users.UsersSaveRequestDto
+import com.entrip.domain.entity.Planners
+import com.entrip.domain.entity.Users
 import com.entrip.exception.FailToFindNicknameOrIdException
-import com.entrip.exception.NotAcceptedException
 import com.entrip.repository.PlannersRepository
 import com.entrip.repository.UsersRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import sun.security.ec.point.ProjectivePoint.Mutable
 import javax.transaction.Transactional
-import com.entrip.domain.entity.Planners as Planners
-import com.entrip.exception.NicknameOrUserIdNotValidException as NicknameOrUserIdNotValidException
 
 @Service
 class UsersService(

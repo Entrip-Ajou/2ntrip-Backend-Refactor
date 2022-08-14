@@ -7,6 +7,7 @@ import com.entrip.domain.dto.Posts.PostsUpdateRequestDto
 import com.entrip.domain.entity.Photos
 import com.entrip.domain.entity.Posts
 import com.entrip.domain.entity.Users
+import com.entrip.exception.NotAcceptedException
 import com.entrip.repository.PhotosRepository
 import com.entrip.repository.PostsRepository
 import com.entrip.repository.UsersRepository
@@ -14,6 +15,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.lang.Exception
 import javax.transaction.Transactional
 
 @Service
@@ -93,6 +95,25 @@ class PostsService(
         posts.author!!.posts.remove(posts)
         postsRepository.delete(posts)
         return post_id
+    }
+
+    public fun getPostsListWithPageNumber(pageNumber: Long) : MutableList<PostsReturnDto> {
+        val postsList = postsRepository.findAll()
+        postsList.reverse()
+        val iterator = postsList.iterator()
+        val returnPostsList : MutableList<PostsReturnDto> = ArrayList<PostsReturnDto>()
+        for (i in 1..(pageNumber-1)*15) {
+            iterator.next()
+            if (!iterator.hasNext()) throw NotAcceptedException("Page number is not valid!")
+        }
+        for (i in 1..15) {
+            val posts = iterator.next()
+            val requestDto = PostsRequestDto(posts)
+            val returnDto = PostsReturnDto (requestDto)
+            returnPostsList.add(returnDto)
+            if (!iterator.hasNext()) break;
+        }
+        return returnPostsList
     }
 
 }

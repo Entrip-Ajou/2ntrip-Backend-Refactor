@@ -41,4 +41,9 @@ class PostsController(
     @DeleteMapping("api/v1/posts/{post_id}")
     public fun delete(@PathVariable post_id: Long): ResponseEntity<RestAPIMessages> =
         sendResponseHttpByJson("Delete posts with id : $post_id", postsService.delete(post_id))
+
+    @GetMapping("api/v1/posts/{pageNumber}/all")
+    public fun getPostsListWithPageNumber (@PathVariable pageNumber : Long) : ResponseEntity<RestAPIMessages> =
+        sendResponseHttpByJson("Get list of posts with page number : $pageNumber", postsService.getPostsListWithPageNumber(pageNumber))
+
 }

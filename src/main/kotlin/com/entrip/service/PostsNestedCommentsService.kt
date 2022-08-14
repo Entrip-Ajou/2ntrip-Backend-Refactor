@@ -1,6 +1,5 @@
 package com.entrip.service
 
-import com.entrip.domain.dto.PostsComments.PostsCommentsReturnDto
 import com.entrip.domain.dto.PostsNestedComments.PostsNestedCommentsReturnDto
 import com.entrip.domain.dto.PostsNestedComments.PostsNestedCommentsSaveRequestDto
 import com.entrip.domain.entity.PostsComments
@@ -13,7 +12,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import sun.security.ec.point.ProjectivePoint.Mutable
 import javax.transaction.Transactional
 
 @Service
