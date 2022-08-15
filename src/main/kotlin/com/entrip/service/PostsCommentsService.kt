@@ -52,6 +52,7 @@ class PostsCommentsService(
         postsComments.setAuthorWithJoin(users)
         postsComments.setPostsWithJoin(posts)
         postsCommentsRepository.save(postsComments)
+        posts.raiseCommentsNumber()
         return postsComments.postComment_id!!
     }
 

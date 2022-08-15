@@ -57,6 +57,7 @@ class PostsNestedCommentsService(
         postsNestedComments.setAuthorWithJoin(users)
         postsNestedComments.setPostsCommentsWithJoin(postsComments)
         postsNestedCommentsRepository.save(postsNestedComments)
+        postsComments.posts!!.raiseCommentsNumber()
         return postsNestedComments.postNestedComment_id!!
     }
 

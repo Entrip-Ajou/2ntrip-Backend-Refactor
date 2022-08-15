@@ -10,6 +10,8 @@ class PostsRequestDto(
     val title: String,
     val content: String,
     val author: String?,
+    val likeNumber : Long,
+    val commentsNumber : Long,
     var photoList: MutableList<Photos>? = ArrayList<Photos>()
 ) {
     constructor(entity: Posts) : this(
@@ -17,6 +19,8 @@ class PostsRequestDto(
         title = entity.title,
         content = entity.content,
         author = entity.author!!.user_id,
+        likeNumber = entity.likeNumber,
+        commentsNumber = entity.commentsNumber,
         photoList = entity.getPhotoListFromEntity(entity.photoSet)
     )
 

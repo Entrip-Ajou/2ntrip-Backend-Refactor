@@ -74,7 +74,8 @@ class PostsService(
     }
 
     public fun findById(post_id: Long): PostsReturnDto {
-        val postsRequestDto = PostsRequestDto(findPosts(post_id))
+        val posts = findPosts(post_id)
+        val postsRequestDto = PostsRequestDto(posts)
         postsRequestDto.sortPhotoListWithPriority()
         return PostsReturnDto(postsRequestDto)
     }
@@ -114,6 +115,11 @@ class PostsService(
             if (!iterator.hasNext()) break;
         }
         return returnPostsList
+    }
+
+    @Transactional
+    public fun raiseLikeNumber(post_id: Long) : Long {
+        TODO("raise like Number method with new join")
     }
 
 }

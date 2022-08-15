@@ -14,6 +14,8 @@ class Posts(
     @Column
     var title: String = "제목 없음",
     var content: String = "",
+    var likeNumber: Long = 0L,
+    var commentsNumber: Long = 0L,
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "USER_ID")
@@ -43,5 +45,11 @@ class Posts(
         }
         return photoList
     }
+
+    public fun raiseLikeNumber(): Long =
+        ++likeNumber
+
+    public fun raiseCommentsNumber(): Long =
+        ++commentsNumber
 
 }

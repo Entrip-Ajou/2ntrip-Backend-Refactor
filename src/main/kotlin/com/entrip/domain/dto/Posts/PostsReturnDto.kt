@@ -5,6 +5,8 @@ class PostsReturnDto(
     val title: String,
     val content: String,
     val author: String?,
+    val likeNumber : Long,
+    val commentsNumber : Long,
     val photoList: MutableList<String> = ArrayList<String>()
 ) {
 
@@ -13,6 +15,8 @@ class PostsReturnDto(
         title = postsRequestDto.title,
         content = postsRequestDto.content,
         author = postsRequestDto.author,
+        likeNumber = postsRequestDto.likeNumber,
+        commentsNumber = postsRequestDto.commentsNumber,
         photoList = postsRequestDto.getPhotoListFromPostsRequestDto()
     )
 
