@@ -58,4 +58,7 @@ class Posts(
     public fun raiseCommentsNumber(): Long =
         ++commentsNumber
 
+    public fun decreaseCommentsNumber() : Long =
+        --commentsNumber
+
 }

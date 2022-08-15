@@ -16,7 +16,7 @@ import javax.transaction.Transactional
 
 @Service
 class PostsCommentsService(
-    final val postsCommentsRepository: PostsCommentsRepository,
+    val postsCommentsRepository: PostsCommentsRepository,
 
     @Autowired
     val usersRepository: UsersRepository,
@@ -45,8 +45,8 @@ class PostsCommentsService(
     }
 
     @Transactional
-    public fun save(requestDto: PostsCommentsSaveRequestDto): Long {
-        var postsComments: PostsComments = requestDto.toEntity()
+    fun save(requestDto: PostsCommentsSaveRequestDto): Long {
+        val postsComments: PostsComments = requestDto.toEntity()
         val users = findUsers(requestDto.author)
         val posts = findPosts(requestDto.post_id)
         postsComments.setAuthorWithJoin(users)
@@ -56,30 +56,58 @@ class PostsCommentsService(
         return postsComments.postComment_id!!
     }
 
-    public fun findById(postComment_id: Long): PostsCommentsReturnDto =
-        PostsCommentsReturnDto(findPostsComments(postComment_id))
+    fun findById(postComment_id: Long): PostsCommentsReturnDto =
+        makePostsCommentsReturnDto(findPostsComments(postComment_id))
 
-    public fun getAllCommentsWithPostId(post_id: Long): MutableList<PostsCommentsReturnDto> {
+    fun getAllCommentsWithPostId(post_id: Long): MutableList<PostsCommentsReturnDto> {
         val posts = findPosts(post_id)
         val postsCommentsSet: MutableSet<PostsComments> = posts.postsCommentsSet!!
         val postsCommentsList: MutableList<PostsCommentsReturnDto> = ArrayList<PostsCommentsReturnDto>()
         val iterator = postsCommentsSet.iterator()
         while (iterator.hasNext()) {
             val postsComments = iterator.next()
-            val returnDto = PostsCommentsReturnDto(postsComments)
+            val returnDto = makePostsCommentsReturnDto(postsComments)
             postsCommentsList.add(returnDto)
         }
         postsCommentsList.sort()
         return postsCommentsList
     }
 
-    public fun delete(postComment_id: Long): Long {
-        var postsComments = findPostsComments(postComment_id)
-        var users = postsComments.author
-        var posts = postsComments.posts
-        users!!.postsComments.remove(postsComments)
-        posts!!.postsCommentsSet!!.remove(postsComments)
-        postsCommentsRepository.delete(postsComments)
-        return postComment_id
+    private fun makePostsCommentsReturnDto(postsComments: PostsComments) : PostsCommentsReturnDto =
+        if (checkValidComments(postsComments)) PostsCommentsReturnDto(postsComments)
+        else createDummyComments(postsComments)
+
+
+    private fun checkValidComments(postsComments: PostsComments) : Boolean =
+        postsComments.author!=null
+
+    private fun createDummyComments(postsComments: PostsComments) : PostsCommentsReturnDto =
+        PostsCommentsReturnDto(
+            postComment_id = postsComments.postComment_id!!,
+            content = "",
+            author = "",
+            nickname = ""
+        )
+
+    @Transactional
+    fun delete(postComment_id: Long): Long {
+        val postsComments = findPostsComments(postComment_id)
+        val users = postsComments.author
+        val posts = postsComments.posts
+        return if (postsComments.postsNestedComments!!.isEmpty()) {
+            users!!.postsComments.remove(postsComments)
+            posts!!.postsCommentsSet!!.remove(postsComments)
+            postsCommentsRepository.delete(postsComments)
+            posts.decreaseCommentsNumber()
+            postComment_id
+        } else makeCommentsEmpty(postsComments)
     }
+
+    private fun makeCommentsEmpty(postsComments : PostsComments) : Long {
+        postsComments.author = null
+        postsComments.content = ""
+        postsComments.posts!!.decreaseCommentsNumber()
+        return postsComments.postComment_id!!
+    }
+
 }

@@ -87,6 +87,7 @@ class PostsNestedCommentsService(
         users.postsNestedComments.remove(postsNestedComments)
         postsComments.postsNestedComments!!.remove(postsNestedComments)
         postsNestedCommentsRepository.delete(postsNestedComments)
+        postsComments.posts!!.decreaseCommentsNumber()
         return postNestedComment_id
     }
 
