@@ -36,6 +36,10 @@ class Users(
     var postsNestedComments: MutableSet<PostsNestedComments> = TreeSet(),
 
     @Column
+    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
+    var likePosts: MutableSet<Posts> = TreeSet(),
+
+    @Column
     val nickname: String,
     var gender: Int? = null,
     var photoUrl: String? = null,

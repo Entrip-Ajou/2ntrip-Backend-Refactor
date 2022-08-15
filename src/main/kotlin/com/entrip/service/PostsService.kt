@@ -118,8 +118,25 @@ class PostsService(
     }
 
     @Transactional
-    public fun raiseLikeNumber(post_id: Long) : Long {
-        TODO("raise like Number method with new join")
+    public fun raiseLikeNumber(post_id: Long, user_id: String) : Long {
+        val posts = findPosts(post_id)
+        val users = findUsers(user_id)
+        if (posts.likeUsers.contains(users) || users.likePosts.contains(posts)) throw NotAcceptedException("Users $user_id is already like post $post_id !")
+        users.likePosts.add(posts)
+        posts.likeUsers.add(users)
+        posts.raiseLikeNumber()
+        return posts.likeNumber
+    }
+
+    @Transactional
+    public fun decreaseLikeNumber(post_id: Long, user_id : String) : Long {
+        val posts = findPosts(post_id)
+        val users = findUsers(user_id)
+        if (!posts.likeUsers.contains(users) || !users.likePosts.contains(posts)) throw NotAcceptedException("Users $user_id is already dislike post $post_id !")
+        users.likePosts.remove(posts)
+        posts.likeUsers.remove(users)
+        posts.decreaseLikeNumber()
+        return posts.likeNumber
     }
 
 }

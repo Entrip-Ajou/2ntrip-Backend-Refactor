@@ -27,6 +27,9 @@ class Posts(
     @OneToMany(mappedBy = "posts", fetch = FetchType.EAGER, orphanRemoval = true)
     var postsCommentsSet: MutableSet<PostsComments>? = TreeSet(),
 
+    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
+    var likeUsers: MutableSet<Users> = TreeSet()
+
     // var createdDate
     // var timeStamp
     // is included with BaseTimeEntity
@@ -48,6 +51,9 @@ class Posts(
 
     public fun raiseLikeNumber(): Long =
         ++likeNumber
+
+    public fun decreaseLikeNumber() : Long=
+        --likeNumber
 
     public fun raiseCommentsNumber(): Long =
         ++commentsNumber
