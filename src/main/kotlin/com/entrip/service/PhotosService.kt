@@ -2,8 +2,8 @@ package com.entrip.service
 
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.DeleteObjectRequest
-import com.entrip.common.S3Uploader
-import com.entrip.common.UploadedPhotoInformation
+import com.entrip.s3.S3Uploader
+import com.entrip.domain.UploadedPhotoInformation
 import com.entrip.domain.dto.Photos.PhotosReturnDto
 import com.entrip.domain.entity.Photos
 import com.entrip.domain.entity.Posts

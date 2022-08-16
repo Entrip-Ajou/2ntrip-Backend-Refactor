@@ -18,7 +18,6 @@ import javax.transaction.Transactional
 class PostsCommentsService(
     val postsCommentsRepository: PostsCommentsRepository,
 
-    @Autowired
     val usersRepository: UsersRepository,
 
     @Autowired

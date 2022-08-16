@@ -1,6 +1,6 @@
 package com.entrip.controller
 
-import com.entrip.common.S3Uploader
+import com.entrip.s3.S3Uploader
 import com.entrip.domain.RestAPIMessages
 import com.entrip.service.PhotosService
 import org.springframework.beans.factory.annotation.Autowired

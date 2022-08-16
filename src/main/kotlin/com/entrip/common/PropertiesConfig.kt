@@ -1,4 +1,4 @@
-package com.entrip.config
+package com.entrip.common
 
 import org.springframework.beans.factory.config.PropertiesFactoryBean
 import org.springframework.context.annotation.Bean

@@ -36,6 +36,9 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	implementation("io.awspring.cloud:spring-cloud-starter-aws:2.4.2")
 	implementation("org.json:json:20220320")
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.springframework.security:spring-security-test")
+	implementation("io.jsonwebtoken:jjwt:0.9.1")
 
 }
 

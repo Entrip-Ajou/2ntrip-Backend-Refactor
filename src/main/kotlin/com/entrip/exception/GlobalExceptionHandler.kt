@@ -1,7 +1,7 @@
 package com.entrip.exception
 
 import com.entrip.domain.RestAPIMessages
-import com.entrip.common.WebSocketEventListener
+import com.entrip.socket.WebSocketEventListener
 import org.json.JSONObject
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

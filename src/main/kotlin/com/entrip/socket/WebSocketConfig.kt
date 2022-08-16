@@ -1,4 +1,4 @@
-package com.entrip.config
+package com.entrip.socket
 
 import com.entrip.Application
 import org.slf4j.Logger

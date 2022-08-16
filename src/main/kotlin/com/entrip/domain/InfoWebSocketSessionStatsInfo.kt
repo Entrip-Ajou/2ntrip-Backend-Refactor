@@ -1,4 +1,4 @@
-package com.entrip.common
+package com.entrip.domain
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

@@ -1,4 +1,4 @@
-package com.entrip.common
+package com.entrip.domain
 
 class UploadedPhotoInformation(
     val uploadImageUrl: String,
