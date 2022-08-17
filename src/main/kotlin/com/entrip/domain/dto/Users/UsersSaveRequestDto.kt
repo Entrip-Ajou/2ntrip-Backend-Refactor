@@ -6,14 +6,16 @@ class UsersSaveRequestDto(
     val user_id: String,
     val nickname: String,
     val gender: Int,
-    val photoUrl: String? = null
+    val photoUrl: String? = null,
+    var password : String
 ) {
     fun toEntity(): Users {
         return Users(
             user_id = user_id,
             nickname = nickname,
             gender = gender,
-            photoUrl = photoUrl
+            photoUrl = photoUrl,
+            m_password = password
         )
     }
 }

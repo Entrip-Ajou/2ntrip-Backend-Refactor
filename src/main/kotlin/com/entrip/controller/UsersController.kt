@@ -2,6 +2,7 @@ package com.entrip.controller
 
 import com.entrip.domain.RestAPIMessages
 import com.entrip.domain.dto.Planners.PlannersReturnDto
+import com.entrip.domain.dto.Users.UsersLoginRequestDto
 import com.entrip.domain.dto.Users.UsersResponseDto
 import com.entrip.domain.dto.Users.UsersReturnDto
 import com.entrip.domain.dto.Users.UsersSaveRequestDto
@@ -11,12 +12,15 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
 import java.nio.charset.Charset
+import kotlin.system.exitProcess
 
 @RestController
 class UsersController(
-    final val usersService: UsersService
+    private final val usersService: UsersService,
+    private val passwordEncoder: PasswordEncoder
 ) {
     private fun sendResponseHttpByJson(message: String, data: Any): ResponseEntity<RestAPIMessages> {
         val restAPIMessages: RestAPIMessages = RestAPIMessages(
@@ -29,8 +33,9 @@ class UsersController(
         return ResponseEntity<RestAPIMessages>(restAPIMessages, headers, HttpStatus.OK)
     }
 
-    @PostMapping("/api/v1/users")
+    @PostMapping("/api/v2/users")
     public fun save(@RequestBody requestDto: UsersSaveRequestDto): ResponseEntity<RestAPIMessages> {
+        requestDto.password = passwordEncoder.encode(requestDto.password)
         val user_id: String? = usersService.save(requestDto)
         val responseDto: UsersResponseDto = usersService.findByUserId(user_id)
         val returnDto: UsersReturnDto = UsersReturnDto(responseDto = responseDto)
@@ -93,5 +98,11 @@ class UsersController(
         val responseDto: UsersResponseDto = usersService.findByUserId(targetUserId)
         val returnDto: UsersReturnDto = UsersReturnDto(responseDto)
         return sendResponseHttpByJson("Get user with nicknameOrUserId : $nicknameOrUserId", returnDto)
+    }
+
+    @PostMapping("api/v2/users/login")
+    public fun login (@RequestBody requestDto : UsersLoginRequestDto) : ResponseEntity<RestAPIMessages> {
+        val usersLoginResReturnDto = usersService.login(requestDto)
+        return sendResponseHttpByJson("Success to Login!", usersLoginResReturnDto)
     }
 }

@@ -1,9 +1,9 @@
 package com.entrip.domain.entity
 
 import com.entrip.domain.BaseTimeEntity
-import org.hibernate.annotations.Fetch
-import org.springframework.cache.annotation.CachePut
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 import java.util.*
 import javax.persistence.*
 
@@ -43,9 +43,10 @@ class Users(
     val nickname: String,
     var gender: Int? = null,
     var photoUrl: String? = null,
-    var token: String? = null
+    var token: String? = null,
+    var m_password: String
 
-) : BaseTimeEntity(), Comparable<Users> {
+) : BaseTimeEntity(), Comparable<Users>, UserDetails {
     public fun addPlanners(planners: Planners): Long? {
         this.planners.add(planners)
         return planners.planner_id
@@ -59,5 +60,33 @@ class Users(
     public override fun compareTo(other: Users): Int {
         if (this.user_id!! >= other.user_id!!) return 1;
         return -1;
+    }
+
+    public override fun getAuthorities(): MutableCollection<out GrantedAuthority>? {
+        return null
+    }
+
+    override fun getPassword(): String {
+        return m_password
+    }
+
+    override fun getUsername(): String {
+        return user_id!!
+    }
+
+    override fun isAccountNonExpired(): Boolean {
+        return true
+    }
+
+    override fun isAccountNonLocked(): Boolean {
+        return true
+    }
+
+    override fun isCredentialsNonExpired(): Boolean {
+        return true
+    }
+
+    override fun isEnabled(): Boolean {
+        return true
     }
 }

@@ -1,16 +1,22 @@
 package com.entrip.service
 
+import com.entrip.auth.JwtTokenProvider
 import com.entrip.domain.dto.Planners.PlannersResponseDto
 import com.entrip.domain.dto.Planners.PlannersReturnDto
+import com.entrip.domain.dto.Users.UsersLoginRequestDto
+import com.entrip.domain.dto.Users.UsersLoginResReturnDto
 import com.entrip.domain.dto.Users.UsersResponseDto
 import com.entrip.domain.dto.Users.UsersSaveRequestDto
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Users
 import com.entrip.exception.FailToFindNicknameOrIdException
+import com.entrip.exception.NotAcceptedException
 import com.entrip.repository.PlannersRepository
 import com.entrip.repository.UsersRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.util.IllegalFormatCodePointException
 import javax.transaction.Transactional
 
 @Service
@@ -18,12 +24,15 @@ class UsersService(
     private final val usersRepository: UsersRepository,
 
     @Autowired
-    private val plannersRepository: PlannersRepository
+    private val plannersRepository: PlannersRepository,
+
+    private val jwtTokenProvider: JwtTokenProvider,
+    private val passwordEncoder: PasswordEncoder
 ) {
 
     private fun findUsers(user_id: String?): Users {
         val users = usersRepository.findById(user_id!!).orElseThrow {
-            IllegalArgumentException("Error raise at usersRepository.findById$user_id")
+            IllegalArgumentException("Error raise at UsersRepository.findById$user_id")
         }
         return users
     }
@@ -36,13 +45,15 @@ class UsersService(
     }
 
 
+
     @Transactional
     public fun save(requestDto: UsersSaveRequestDto): String? {
         val users: Users = Users(
             user_id = requestDto.user_id,
             photoUrl = requestDto.photoUrl,
             gender = requestDto.gender,
-            nickname = requestDto.nickname
+            nickname = requestDto.nickname,
+            m_password = requestDto.password
         )
         val user_id: String? = usersRepository.save(users).user_id
         return user_id
@@ -52,6 +63,7 @@ class UsersService(
         val entity: Users = findUsers(user_id)
         return UsersResponseDto(entity)
     }
+
 
     @Transactional
     public fun delete(user_id: String): String? {
@@ -121,6 +133,17 @@ class UsersService(
                 return users.user_id
         }
         throw FailToFindNicknameOrIdException("Fail To Find Nickname Or Id matched Users!")
+    }
+
+    public fun isExistsUser (email : String) : Boolean =
+        usersRepository.existsById(email)
+
+    public fun login (usersLoginRequestDto: UsersLoginRequestDto) : UsersLoginResReturnDto {
+        if (!isExistsUser(usersLoginRequestDto.user_id)) throw NotAcceptedException("Email is not valid.")
+        val users = findUsers(usersLoginRequestDto.user_id)
+        if (!passwordEncoder.matches(usersLoginRequestDto.password, users.password)) throw NotAcceptedException("Password is not valid.")
+        val token : String = jwtTokenProvider.createToken(usersLoginRequestDto.user_id)
+        return UsersLoginResReturnDto(usersLoginRequestDto.user_id, token)
     }
 }
 

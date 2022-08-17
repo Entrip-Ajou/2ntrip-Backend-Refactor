@@ -13,6 +13,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.client.HttpClientErrorException.Forbidden
 import java.nio.charset.Charset
 
 @ControllerAdvice
@@ -102,6 +103,18 @@ class GlobalExceptionHandler {
         return ResponseEntity<RestAPIMessages>(restAPIMessages, headers, HttpStatus.ACCEPTED)
     }
 
+    @ExceptionHandler(Forbidden::class)
+    fun handleForbidden (e: Forbidden) : ResponseEntity<RestAPIMessages> {
+        val restAPIMessages: RestAPIMessages = RestAPIMessages(
+            404,
+            "Forbidden",
+            e.message!!
+        )
+        val headers: HttpHeaders = HttpHeaders()
+        headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
+        logger.error(e.message)
+        return ResponseEntity<RestAPIMessages>(restAPIMessages, headers, HttpStatus.ACCEPTED)
+    }
 
     @ExceptionHandler(Exception::class)
     fun handleException(e: Exception): ResponseEntity<RestAPIMessages> {
@@ -115,6 +128,5 @@ class GlobalExceptionHandler {
         logger.error(e.message)
         return ResponseEntity<RestAPIMessages>(restAPIMessages, headers, HttpStatus.SERVICE_UNAVAILABLE)
     }
-
 
 }
