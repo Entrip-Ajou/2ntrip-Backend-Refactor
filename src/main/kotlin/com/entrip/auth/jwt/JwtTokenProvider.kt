@@ -1,6 +1,5 @@
-package com.entrip.auth
+package com.entrip.auth.jwt
 
-import com.entrip.service.UsersService
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm

@@ -1,4 +1,4 @@
-package com.entrip.auth
+package com.entrip.auth.jwt
 
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.GenericFilterBean

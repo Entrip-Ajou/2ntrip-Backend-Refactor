@@ -30,5 +30,4 @@ class Photos(
         if (this.priority < other.priority) return -1
         return 0
     }
-    // Have to make functions
 }

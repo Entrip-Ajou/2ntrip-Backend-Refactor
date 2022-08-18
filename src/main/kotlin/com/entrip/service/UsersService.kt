@@ -1,6 +1,6 @@
 package com.entrip.service
 
-import com.entrip.auth.JwtTokenProvider
+import com.entrip.auth.jwt.JwtTokenProvider
 import com.entrip.domain.dto.Planners.PlannersResponseDto
 import com.entrip.domain.dto.Planners.PlannersReturnDto
 import com.entrip.domain.dto.Users.UsersLoginRequestDto
@@ -16,7 +16,6 @@ import com.entrip.repository.UsersRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import java.util.IllegalFormatCodePointException
 import javax.transaction.Transactional
 
 @Service
