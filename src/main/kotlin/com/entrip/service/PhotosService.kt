@@ -7,6 +7,7 @@ import com.entrip.domain.UploadedPhotoInformation
 import com.entrip.domain.dto.Photos.PhotosReturnDto
 import com.entrip.domain.entity.Photos
 import com.entrip.domain.entity.Posts
+import com.entrip.domain.entity.isCommunity
 import com.entrip.repository.PhotosRepository
 import com.entrip.repository.PostsRepository
 import org.slf4j.Logger
@@ -55,7 +56,9 @@ class PhotosService(
             val photos = iterator.next()
             val createdDate = photos.createdDate
             val currentDate = LocalDateTime.now()
-            if (createdDate.plusMinutes(10).isBefore(currentDate) && photos.posts == null) delete(photos.photo_id!!)
+            if (createdDate.plusMinutes(10)
+                    .isBefore(currentDate) && photos.posts == null && photos.isCommunity()
+            ) delete(photos.photo_id!!)
         }
         logger.info("deleteOrphanPhotos!")
     }

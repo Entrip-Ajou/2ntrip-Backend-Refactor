@@ -1,6 +1,7 @@
 package com.entrip.domain.entity
 
 import com.entrip.domain.BaseTimeEntity
+import com.sun.org.apache.xpath.internal.operations.Bool
 import javax.persistence.*
 
 @Entity
@@ -30,4 +31,7 @@ class Photos(
         if (this.priority < other.priority) return -1
         return 0
     }
+
 }
+
+fun Photos.isCommunity(): Boolean = !(this.priority == -1L)
