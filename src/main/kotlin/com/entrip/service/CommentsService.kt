@@ -7,6 +7,7 @@ import com.entrip.domain.entity.Comments
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Plans
 import com.entrip.domain.entity.Users
+import com.entrip.exception.NotAcceptedException
 import com.entrip.repository.CommentsRepository
 import com.entrip.repository.PlannersRepository
 import com.entrip.repository.PlansRepository
@@ -118,6 +119,7 @@ class CommentsService(
     }
 
     @Transactional
+
     public fun delete(comment_id: Long): CommentsWithPlanReturnDto {
         val comments = findComments(comment_id)
         val plan_id = comments.plans?.plan_id
