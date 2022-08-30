@@ -129,7 +129,7 @@ class PostsService(
     }
 
     @Transactional
-    public fun decreaseLikeNumber(post_id: Long, user_id : String) : Long {
+    public fun decreaseLikeNumber(post_id: Long, user_id: String): Long {
         val posts = findPosts(post_id)
         val users = findUsers(user_id)
         if (!posts.likeUsers.contains(users) || !users.likePosts.contains(posts)) throw NotAcceptedException("Users $user_id is already dislike post $post_id !")
@@ -137,6 +137,15 @@ class PostsService(
         posts.likeUsers.remove(users)
         posts.decreaseLikeNumber()
         return posts.likeNumber
+    }
+
+    public fun getOnePhotoUrlFromPosts(post_id: Long): String {
+        val posts = findPosts(post_id)
+        val defaultPhotoUrl =
+            "https://user-images.githubusercontent.com/84431962/187360732-ed3917a8-49c6-41de-b030-e22172889f4b.png"
+        if (posts.photoSet.isNullOrEmpty()) return defaultPhotoUrl
+        val iterator = posts.photoSet!!.iterator()
+        return iterator.next().photoUrl
     }
 
 }

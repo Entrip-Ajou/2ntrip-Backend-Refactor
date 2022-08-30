@@ -45,14 +45,32 @@ class PostsController(
 
     @GetMapping("api/v1/posts/{pageNumber}/all")
     public fun getPostsListWithPageNumber (@PathVariable pageNumber : Long) : ResponseEntity<RestAPIMessages> =
-        sendResponseHttpByJson("Get list of posts with page number : $pageNumber", postsService.getPostsListWithPageNumber(pageNumber))
+        sendResponseHttpByJson(
+            "Get list of posts with page number : $pageNumber",
+            postsService.getPostsListWithPageNumber(pageNumber)
+        )
 
     @PutMapping("api/v1/posts/{post_id}/{user_id}/like")
-    public fun raiseLikeNumber (@PathVariable post_id: Long, @PathVariable user_id : String) : ResponseEntity<RestAPIMessages> =
-        sendResponseHttpByJson("$user_id raise posts $post_id 's like number", postsService.raiseLikeNumber(post_id,user_id))
+    public fun raiseLikeNumber(
+        @PathVariable post_id: Long,
+        @PathVariable user_id: String
+    ): ResponseEntity<RestAPIMessages> =
+        sendResponseHttpByJson(
+            "$user_id raise posts $post_id 's like number",
+            postsService.raiseLikeNumber(post_id, user_id)
+        )
 
     @PutMapping("api/v1/posts/{post_id}/{user_id}/dislike")
-    public fun decreaseLikeNumber (@PathVariable post_id: Long, @PathVariable user_id : String) : ResponseEntity<RestAPIMessages> =
-        sendResponseHttpByJson("$user_id raise posts $post_id 's like number", postsService.decreaseLikeNumber(post_id,user_id))
+    public fun decreaseLikeNumber(
+        @PathVariable post_id: Long,
+        @PathVariable user_id: String
+    ): ResponseEntity<RestAPIMessages> =
+        sendResponseHttpByJson(
+            "$user_id raise posts $post_id 's like number",
+            postsService.decreaseLikeNumber(post_id, user_id)
+        )
 
+    @GetMapping("api/v1/posts/{post_id}/getOnePhotoUrlFromPosts")
+    public fun getOnePhotoUrlFromPosts(@PathVariable post_id: Long): ResponseEntity<RestAPIMessages> =
+        sendResponseHttpByJson("Get one photoUrl from posts' $post_id", postsService.getOnePhotoUrlFromPosts(post_id))
 }

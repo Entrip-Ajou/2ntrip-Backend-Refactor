@@ -6,9 +6,11 @@ import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.web.bind.annotation.RestController
+import sun.reflect.annotation.ExceptionProxy
 
 @RestController
 class ChatController(final val template: SimpMessagingTemplate) {
+
 
 //    //Endpoint from client to server "/chat.sendMessage
 //    @MessageMapping("/chat.sendMessage")
@@ -23,6 +25,7 @@ class ChatController(final val template: SimpMessagingTemplate) {
     //Publish chat message to subscribing client
     fun sendMessage(@Payload socketMessages: SocketMessages): SocketMessages? {
         template.convertAndSend("/topic/public/${socketMessages.planner_id}", socketMessages)
+
         return socketMessages
     }
 

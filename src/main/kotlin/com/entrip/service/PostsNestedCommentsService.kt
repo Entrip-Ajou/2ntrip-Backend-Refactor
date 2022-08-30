@@ -47,7 +47,6 @@ class PostsNestedCommentsService(
         }
         return users
     }
-    //CRUD Method
 
     @Transactional
     public fun save(requestDto: PostsNestedCommentsSaveRequestDto): Long {

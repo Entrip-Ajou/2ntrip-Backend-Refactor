@@ -5,6 +5,7 @@ import com.entrip.domain.entity.Comments
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Plans
 import com.entrip.domain.entity.Users
+import com.entrip.exception.NotAcceptedException
 import com.entrip.repository.CommentsRepository
 import com.entrip.repository.PlannersRepository
 import com.entrip.repository.PlansRepository
@@ -81,7 +82,10 @@ class CommentsService(
 
     @Transactional
     public fun save(requestDto: CommentsSaveRequestDto): MutableList<CommentsReturnDto> {
-        val plans = findPlans(requestDto.plans_id)
+        //val plans = findPlans(requestDto.plans_id)
+        val plans: Plans = plansRepository.findById(requestDto.plans_id).orElseThrow {
+            NotAcceptedException("Error raise at plansRepository.findById ${requestDto.plans_id}")
+        }
         val users = findUsers(requestDto.author)
         val comments = requestDto.toEntity()
         comments.plans = plans
@@ -108,7 +112,10 @@ class CommentsService(
 
     @Transactional
     public fun delete(comment_id: Long): MutableList<CommentsReturnDto> {
-        val comments = findComments(comment_id)
+        //val comments = findComments(comment_id)
+        val comments: Comments = commentsRepository.findById(comment_id!!).orElseThrow {
+            NotAcceptedException("Error raise at commentsRepository.findById$comment_id")
+        }
         val plan_id = comments.plans?.plan_id
         comments.plans?.planners?.setComment_timeStamp()
         comments.plans?.comments?.remove(comments)
