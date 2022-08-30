@@ -4,6 +4,7 @@ import com.entrip.domain.RestAPIMessages
 import com.entrip.domain.dto.Comments.CommentsReturnDto
 import com.entrip.domain.dto.Comments.CommentsSaveRequestDto
 import com.entrip.domain.dto.Comments.CommentsUpdateRequestDto
+import com.entrip.domain.dto.Comments.CommentsWithPlanReturnDto
 import com.entrip.service.CommentsService
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -30,7 +31,7 @@ class CommentsController(
 
     @PostMapping("/api/v1/comments")
     public fun save(@RequestBody requestDto: CommentsSaveRequestDto): ResponseEntity<RestAPIMessages> {
-        val returnDtoList: MutableList<CommentsReturnDto> = commentsService.save(requestDto)
+        val returnDtoList: CommentsWithPlanReturnDto = commentsService.save(requestDto)
         return sendResponseHttpByJson("Comments is saved well", returnDtoList)
     }
 
@@ -52,7 +53,7 @@ class CommentsController(
 
     @DeleteMapping("/api/v1/comments/{comment_id}")
     public fun delete(@PathVariable comment_id: Long): ResponseEntity<RestAPIMessages> {
-        val returnDtoList: MutableList<CommentsReturnDto> = commentsService.delete(comment_id)
+        val returnDtoList: CommentsWithPlanReturnDto = commentsService.delete(comment_id)
         return sendResponseHttpByJson("Delete comments with id : $comment_id", returnDtoList)
     }
 
