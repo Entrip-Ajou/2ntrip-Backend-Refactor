@@ -1,6 +1,8 @@
 package com.entrip.service
 
 import com.entrip.domain.dto.Comments.*
+import com.entrip.domain.dto.Plans.PlansResponseDto
+import com.entrip.domain.dto.Plans.PlansReturnDto
 import com.entrip.domain.entity.Comments
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Plans
@@ -29,7 +31,7 @@ class CommentsService(
     private val usersRepository: UsersRepository,
 
     @Autowired
-    private val eventPublisher: ApplicationEventPublisher
+    private val eventPublisher: ApplicationEventPublisher,
 ) {
 
     private fun findUsers(user_id: String?): Users {
@@ -79,8 +81,17 @@ class CommentsService(
         return commentsList
     }
 
+    fun getAllCommentsAndPlanWithPlanId(plan_id: Long) : CommentsWithPlanReturnDto {
+        val plans = findPlans(plan_id)
+        val plansResponseDto = PlansResponseDto(plans)
+        val planReturnDto = PlansReturnDto(plansResponseDto)
+        val commentsList : MutableList<CommentsReturnDto> = getAllCommentsWithPlanId(plan_id)
+
+        return CommentsWithPlanReturnDto(planReturnDto, commentsList)
+    }
+
     @Transactional
-    public fun save(requestDto: CommentsSaveRequestDto): MutableList<CommentsReturnDto> {
+    public fun save(requestDto: CommentsSaveRequestDto): CommentsWithPlanReturnDto {
         val plans = findPlans(requestDto.plans_id)
         val users = findUsers(requestDto.author)
         val comments = requestDto.toEntity()
@@ -91,7 +102,7 @@ class CommentsService(
         plans.planners?.setComment_timeStamp()
 
         publishCrudEvents("Comments Save", plans.planners!!.planner_id!!)
-        return getAllCommentsWithPlanId(requestDto.plans_id)
+        return getAllCommentsAndPlanWithPlanId(requestDto.plans_id)
     }
 
     public fun update(comment_id: Long, requestDto: CommentsUpdateRequestDto): MutableList<CommentsReturnDto> {
@@ -107,7 +118,7 @@ class CommentsService(
     }
 
     @Transactional
-    public fun delete(comment_id: Long): MutableList<CommentsReturnDto> {
+    public fun delete(comment_id: Long): CommentsWithPlanReturnDto {
         val comments = findComments(comment_id)
         val plan_id = comments.plans?.plan_id
         comments.plans?.planners?.setComment_timeStamp()
@@ -115,6 +126,6 @@ class CommentsService(
         comments.users?.comments?.remove(comments)
         commentsRepository.delete(comments)
         publishCrudEvents("Delete Comments", comments.plans!!.planners!!.planner_id!!)
-        return getAllCommentsWithPlanId(plan_id!!)
+        return getAllCommentsAndPlanWithPlanId(plan_id!!)
     }
 }
