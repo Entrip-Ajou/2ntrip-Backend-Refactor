@@ -23,7 +23,7 @@ bin/
 *.iws
 *.iml
 *.ipr
-application.properties
+application.propgerties
 application-aws-s3.properties
 out/
 !**/src/main/**/out/
