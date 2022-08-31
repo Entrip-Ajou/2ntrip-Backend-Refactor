@@ -6,7 +6,6 @@ import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.web.bind.annotation.RestController
-import sun.reflect.annotation.ExceptionProxy
 
 @RestController
 class ChatController(final val template: SimpMessagingTemplate) {
