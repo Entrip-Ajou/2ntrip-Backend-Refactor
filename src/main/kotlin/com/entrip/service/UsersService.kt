@@ -142,7 +142,7 @@ class UsersService(
         val users = findUsers(usersLoginRequestDto.user_id)
         if (!passwordEncoder.matches(usersLoginRequestDto.password, users.password)) throw NotAcceptedException("Password is not valid.")
         val token : String = jwtTokenProvider.createToken(usersLoginRequestDto.user_id)
-        return UsersLoginResReturnDto(usersLoginRequestDto.user_id, token)
+        return UsersLoginResReturnDto(users.user_id!!, token, users.nickname)
     }
 }
 
