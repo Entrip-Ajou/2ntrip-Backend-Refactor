@@ -2,6 +2,7 @@ package com.entrip.auth
 
 import com.entrip.domain.RestAPIMessages
 import com.entrip.exception.ExpiredJwtCustomException
+import io.jsonwebtoken.SignatureException
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
@@ -19,10 +20,11 @@ class ExceptionHandlerFilter() : OncePerRequestFilter() {
         response: HttpServletResponse,
         chain: FilterChain
     ) {
-        logger.info("ExceptionHandlerFilter()")
         try {
             chain.doFilter(request, response)
         } catch (e: ExpiredJwtCustomException) {
+            setErrorResponse(HttpStatus.BAD_REQUEST, response, e)
+        } catch (e: SignatureException) {
             setErrorResponse(HttpStatus.BAD_REQUEST, response, e)
         }
     }
@@ -42,6 +44,5 @@ class ExceptionHandlerFilter() : OncePerRequestFilter() {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-        logger.info("setErrorResponse")
     }
 }

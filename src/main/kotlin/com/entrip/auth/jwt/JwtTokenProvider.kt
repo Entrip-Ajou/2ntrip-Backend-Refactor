@@ -1,11 +1,7 @@
 package com.entrip.auth.jwt
 
 import com.entrip.exception.ExpiredJwtCustomException
-import com.entrip.exception.NotAcceptedException
-import io.jsonwebtoken.Claims
-import io.jsonwebtoken.ExpiredJwtException
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
+import io.jsonwebtoken.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -22,8 +18,8 @@ class JwtTokenProvider (private val userDetailsService : UserDetailsService) {
 
     private var secretKey = "2ntrip.com"
 
-    // 토큰 유효 시간 : 1분
-    private val tokenValidTime = 1 * 60 * 1000L
+    // 토큰 유효 시간 : 30분
+    private val tokenValidTime = 30 * 60 * 1000L
 
     // 객체 초기화. secretKey를 Base64로 인코딩
     @PostConstruct
@@ -70,6 +66,8 @@ class JwtTokenProvider (private val userDetailsService : UserDetailsService) {
             !claims.body.expiration.before(Date())
         } catch (e: ExpiredJwtException) {
             throw ExpiredJwtCustomException("Token was expired!")
+        } catch (e: SignatureException) {
+            throw SignatureException("Token is not valid!")
         }
     }
 

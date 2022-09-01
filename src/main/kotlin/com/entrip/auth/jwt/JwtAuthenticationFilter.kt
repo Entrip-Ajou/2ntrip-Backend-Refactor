@@ -1,9 +1,7 @@
 package com.entrip.auth.jwt
 
 import com.entrip.exception.ExpiredJwtCustomException
-import com.entrip.exception.NotAcceptedException
-import com.entrip.s3.S3Uploader
-import io.jsonwebtoken.ExpiredJwtException
+import io.jsonwebtoken.SignatureException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
@@ -35,6 +33,8 @@ class JwtAuthenticationFilter(private val jwtTokenProvider: JwtTokenProvider): G
             }
         } catch (e: ExpiredJwtCustomException) {
             throw ExpiredJwtCustomException("Token was expired!")
+        } catch (e: io.jsonwebtoken.SignatureException) {
+            throw SignatureException("Token is not valid!")
         }
         chain.doFilter(request, response)
     }
