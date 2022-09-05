@@ -1,4 +1,4 @@
-package com.entrip.s3
+package com.entrip.config
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider
 import com.amazonaws.auth.BasicAWSCredentials

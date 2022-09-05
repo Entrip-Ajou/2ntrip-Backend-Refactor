@@ -134,15 +134,25 @@ class UsersService(
         throw FailToFindNicknameOrIdException("Fail To Find Nickname Or Id matched Users!")
     }
 
-    public fun isExistsUser (email : String) : Boolean =
+    public fun isExistsUser(email: String): Boolean =
         usersRepository.existsById(email)
 
-    public fun login (usersLoginRequestDto: UsersLoginRequestDto) : UsersLoginResReturnDto {
+    public fun login(usersLoginRequestDto: UsersLoginRequestDto): UsersLoginResReturnDto {
         if (!isExistsUser(usersLoginRequestDto.user_id)) throw NotAcceptedException("Email is not valid.")
         val users = findUsers(usersLoginRequestDto.user_id)
-        if (!passwordEncoder.matches(usersLoginRequestDto.password, users.password)) throw NotAcceptedException("Password is not valid.")
-        val token : String = jwtTokenProvider.createToken(usersLoginRequestDto.user_id)
-        return UsersLoginResReturnDto(users.user_id!!, token, users.nickname)
+        if (!passwordEncoder.matches(
+                usersLoginRequestDto.password,
+                users.password
+            )
+        ) throw NotAcceptedException("Password is not valid.")
+        val accessToken: String = jwtTokenProvider.createAccessToken(usersLoginRequestDto.user_id)
+        val refreshToken: String = jwtTokenProvider.createRefreshToken(usersLoginRequestDto.user_id)
+        return UsersLoginResReturnDto(users.user_id!!, accessToken, users.nickname, refreshToken)
+    }
+
+    public fun reIssue(user_id: String, refreshToken: String): String {
+        if (!isExistUserId(user_id)) throw NotAcceptedException("User_id is not valid !")
+        return jwtTokenProvider.reIssue(user_id, refreshToken)
     }
 }
 

@@ -1,5 +1,6 @@
-package com.entrip.auth
+package com.entrip.config
 
+import com.entrip.auth.ExceptionHandlerFilter
 import com.entrip.auth.jwt.JwtAuthenticationFilter
 import com.entrip.auth.jwt.JwtTokenProvider
 import org.springframework.context.annotation.Bean

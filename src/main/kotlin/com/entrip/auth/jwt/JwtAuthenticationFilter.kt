@@ -1,6 +1,7 @@
 package com.entrip.auth.jwt
 
-import com.entrip.exception.ExpiredJwtCustomException
+import com.entrip.exception.ExpiredAccessTokenException
+import com.entrip.exception.ExpiredRefreshTokenException
 import io.jsonwebtoken.SignatureException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -17,24 +18,30 @@ class JwtAuthenticationFilter(private val jwtTokenProvider: JwtTokenProvider): G
 
     private val logger: Logger = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
 
-    @Throws(IOException::class, ServletException::class, ExpiredJwtCustomException::class)
+    @Throws(
+        IOException::class,
+        ServletException::class,
+        ExpiredAccessTokenException::class,
+        ExpiredRefreshTokenException::class,
+        SignatureException::class
+    )
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
 
-        logger.info("JwtAuthenticationFilter")
         // 헤더에서 JWT 를 받아옵니다.
-        val token: String? = jwtTokenProvider.resolveToken((request as HttpServletRequest))
-        // 유효한 토큰인지 확인합니다.
+        val accessToken: String? = jwtTokenProvider.resolveAccessToken((request as HttpServletRequest))
+
+        // Check Access Token is valid
         try {
-            if (token != null && jwtTokenProvider.validateToken(token)) {
+            if (accessToken != null && jwtTokenProvider.validateAccessToken(accessToken)) {
                 // 토큰이 유효하면 토큰으로부터 유저 정보를 받아옵니다.
-                val authentication = jwtTokenProvider.getAuthentication(token)
+                val authentication = jwtTokenProvider.getAuthentication(accessToken)
                 // SecurityContext 에 Authentication 객체를 저장합니다.
                 SecurityContextHolder.getContext().authentication = authentication
             }
-        } catch (e: ExpiredJwtCustomException) {
-            throw ExpiredJwtCustomException("Token was expired!")
-        } catch (e: io.jsonwebtoken.SignatureException) {
-            throw SignatureException("Token is not valid!")
+        } catch (e: ExpiredAccessTokenException) {
+            throw ExpiredAccessTokenException("Access Token was expired!")
+        } catch (e: SignatureException) {
+            throw SignatureException("Access Token is not valid!")
         }
         chain.doFilter(request, response)
     }
