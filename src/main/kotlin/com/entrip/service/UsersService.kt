@@ -150,10 +150,8 @@ class UsersService(
         return UsersLoginResReturnDto(users.user_id!!, accessToken, users.nickname, refreshToken)
     }
 
-    public fun reIssue(user_id: String, refreshToken: String): String {
-        if (!isExistUserId(user_id)) throw NotAcceptedException("User_id is not valid !")
-        return jwtTokenProvider.reIssue(user_id, refreshToken)
-    }
+    public fun reIssue(refreshToken: String): String =
+        jwtTokenProvider.reIssue(refreshToken)
 }
 
 

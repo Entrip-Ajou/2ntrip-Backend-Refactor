@@ -106,12 +106,11 @@ class UsersController(
         return sendResponseHttpByJson("Success to Login!", usersLoginResReturnDto)
     }
 
-    @GetMapping("api/v2/users/reIssue/{user_id}/{refreshToken}")
+    @GetMapping("api/v2/users/reIssue/{refreshToken}")
     public fun reIssue(
-        @PathVariable user_id: String,
         @PathVariable refreshToken: String
     ): ResponseEntity<RestAPIMessages> {
-        val newAccessToken: String = usersService.reIssue(user_id, refreshToken)
-        return sendResponseHttpByJson("Change user $user_id 's Access Token", newAccessToken)
+        val newAccessToken: String = usersService.reIssue(refreshToken)
+        return sendResponseHttpByJson("Change Access Token", newAccessToken)
     }
 }

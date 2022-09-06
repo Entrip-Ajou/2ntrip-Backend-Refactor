@@ -122,7 +122,6 @@ class CommentsService(
     }
 
     @Transactional
-
     public fun delete(comment_id: Long): CommentsWithPlanReturnDto {
         val comments: Comments = commentsRepository.findById(comment_id!!).orElseThrow {
             NotAcceptedException("Error raise at commentsRepository.findById$comment_id")

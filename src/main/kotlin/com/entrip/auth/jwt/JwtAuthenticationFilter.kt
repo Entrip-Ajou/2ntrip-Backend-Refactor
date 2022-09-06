@@ -43,6 +43,7 @@ class JwtAuthenticationFilter(private val jwtTokenProvider: JwtTokenProvider): G
         } catch (e: SignatureException) {
             throw SignatureException("Access Token is not valid!")
         }
+
         chain.doFilter(request, response)
     }
 }

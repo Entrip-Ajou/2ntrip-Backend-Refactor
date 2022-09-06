@@ -82,6 +82,13 @@ class PhotosService(
         return savedPhotoId
     }
 
+    fun uploadAtS3(multipartFile: MultipartFile, priority: Long, directory: String): Long? {
+        val uploadedPhotoInformation: UploadedPhotoInformation = s3Uploader.upload(multipartFile, directory)
+        val savedPhotoId =
+            save(uploadedPhotoInformation.uploadImageUrl, uploadedPhotoInformation.uploadFileName, priority)
+        return savedPhotoId
+    }
+
     public fun addPostsToPhotos(photo_id: Long, post_id: Long): Boolean {
         val photos = findPhotos(photo_id)
         val posts = findPosts(post_id)
