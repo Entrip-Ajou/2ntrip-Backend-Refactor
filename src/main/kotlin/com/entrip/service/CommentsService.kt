@@ -95,7 +95,7 @@ class CommentsService(
     public fun save(requestDto: CommentsSaveRequestDto): CommentsWithPlanReturnDto {
         val plan_id = requestDto.plans_id
         val plans: Plans = plansRepository.findById(plan_id!!).orElseThrow {
-            NotAcceptedException("Error raise at plansRepository.findById$plan_id")
+            NotAcceptedException(CommentsWithPlanReturnDto(null, null))
         }
         val users = findUsers(requestDto.author)
         val comments = requestDto.toEntity()
@@ -124,7 +124,7 @@ class CommentsService(
     @Transactional
     public fun delete(comment_id: Long): CommentsWithPlanReturnDto {
         val comments: Comments = commentsRepository.findById(comment_id!!).orElseThrow {
-            NotAcceptedException("Error raise at commentsRepository.findById$comment_id")
+            NotAcceptedException(CommentsWithPlanReturnDto(null, null))
         }
         val plan_id = comments.plans?.plan_id
         comments.plans?.planners?.setComment_timeStamp()

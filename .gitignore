@@ -5,6 +5,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+.DS_Store
 
 ### STS ###
 .apt_generated
@@ -23,7 +24,7 @@ bin/
 *.iws
 *.iml
 *.ipr
-application.properties
+application.propgerties
 application-aws-s3.properties
 application-redis.properties
 application-security.properties

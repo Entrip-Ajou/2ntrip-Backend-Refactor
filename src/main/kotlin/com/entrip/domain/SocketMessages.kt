@@ -6,5 +6,7 @@ data class SocketMessages(
     var content: Int, //0 : Planners, 1 : Plans
     var sender: String,
     var planner_id: Long = -1,
-    var date: String? = "Planners"
+    var date: String? = "Planners",
+    val plan_id: Long = -1,
+    val isExistComments: Boolean = false
 )
