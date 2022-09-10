@@ -1,6 +1,7 @@
 package com.entrip.auth.jwt
 
 import com.entrip.exception.ExpiredAccessTokenException
+import com.entrip.exception.ExpiredRefreshTokenException
 import com.entrip.exception.ReIssueBeforeAccessTokenExpiredException
 import com.entrip.service.RedisService
 import io.jsonwebtoken.*
@@ -92,28 +93,43 @@ class JwtTokenProvider(
     }
 
     fun validateAccessToken(accessToken: String): Boolean {
-        val userPk = getUserPk(accessToken)
-        val redisRT: String = redisService.getValues(userPk + "A")
+        val userPk = getUserPk(accessToken) + "A"
+        val redisRT: String = redisService.getValues(userPk)
             ?: throw ExpiredAccessTokenException("Access token was expired. Please reissue.")
-        if (redisRT != redisService.getValues(userPk + "A")) throw SignatureException("Token is not valid!")
+        if (redisRT != redisService.getValues(userPk)) {
+            expireTokenManually(accessToken, "A")
+            throw SignatureException("Token is not valid!")
+        }
         return validateToken(accessToken)
     }
 
     fun validateRefreshToken(refreshToken: String): Boolean {
-        val userPk = getUserPk(refreshToken!!)
-        val redisRT: String? = redisService.getValues(userPk + "R")
-            ?: throw ExpiredAccessTokenException("Refresh token was expired. Please re-login.")
-        if (redisRT != redisService.getValues(userPk + "R")) throw SignatureException("Refresh Token is not valid!")
+        val userPk = getUserPk(refreshToken!!) + "R"
+        val redisRT: String? = redisService.getValues(userPk)
+            ?: throw ExpiredRefreshTokenException("Refresh token was expired. Please re-login.")
+        if (redisRT != redisService.getValues(userPk)) {
+            expireTokenManually(refreshToken, "R")
+            throw SignatureException("Refresh Token is not valid!")
+        }
         return validateToken(refreshToken)
     }
 
     fun reIssue(refreshToken: String): String {
         val user_id = getUserPk(refreshToken)
-        if (!checkAccessTokenIsExpiredInRedis(user_id)) throw ReIssueBeforeAccessTokenExpiredException("ReIssue before Access Token Expired !!!")
+        if (!checkAccessTokenIsExpiredInRedis(user_id)) {
+            expireTokenManually(refreshToken, "R")
+            throw ReIssueBeforeAccessTokenExpiredException("ReIssue before Access Token Expired !!!")
+        }
         validateRefreshToken(refreshToken)
         return createAccessToken(user_id)
     }
 
     fun checkAccessTokenIsExpiredInRedis(userPk: String): Boolean =
         redisService.getValues(userPk + "A") == null
+
+    fun expireTokenManually(token: String, flag: String) =
+        removeTokenFromRedis(getUserPk(token) + flag)
+
+    fun removeTokenFromRedis(userPk: String) =
+        redisService.deleteValues(userPk)
 }
