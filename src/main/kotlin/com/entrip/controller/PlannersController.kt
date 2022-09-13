@@ -1,6 +1,7 @@
 package com.entrip.controller
 
 import com.entrip.domain.RestAPIMessages
+import com.entrip.domain.dto.Notices.NoticesReturnDto
 import com.entrip.domain.dto.Planners.PlannersReturnDto
 import com.entrip.domain.dto.Planners.PlannersSaveRequestDto
 import com.entrip.domain.dto.Planners.PlannersUpdateRequestDto
@@ -69,6 +70,12 @@ class PlannersController(
     public fun findAllPlansWithPlannerId(@PathVariable planner_id: Long): ResponseEntity<RestAPIMessages> {
         val plansList: MutableList<PlansReturnDto> = plannersService.findAllPlansWithPlannerId(planner_id)
         return sendResponseHttpByJson("Load all plans with specific planner id : $planner_id", plansList)
+    }
+
+    @GetMapping("/api/v1/planners/{planner_id}/allNotices")
+    fun findAllNoticesWithPlannerId(@PathVariable planner_id: Long) : ResponseEntity<RestAPIMessages> {
+        val returnDtoList : MutableList<NoticesReturnDto> = plannersService.findAllNoticesWithPlannerId(planner_id)
+        return sendResponseHttpByJson("Get all notices with planner id : $planner_id", returnDtoList)
     }
 
     @GetMapping("api/v1/planners/{planner_id}/exist")
