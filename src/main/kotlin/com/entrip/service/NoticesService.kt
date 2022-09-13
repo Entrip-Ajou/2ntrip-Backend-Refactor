@@ -2,6 +2,7 @@ package com.entrip.service
 
 import com.entrip.domain.dto.Notices.NoticesReturnDto
 import com.entrip.domain.dto.Notices.NoticesSaveRequestDto
+import com.entrip.domain.dto.Notices.NoticesUpdateRequestDto
 import com.entrip.domain.entity.Notices
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Users
@@ -38,6 +39,14 @@ class NoticesService (
         author.notices.add(notices)
 
         return noticesRepository.save(notices).notice_id
+    }
+
+    @Transactional
+    fun update(notice_id: Long, requestDto: NoticesUpdateRequestDto) : Long? {
+        val notices = findNotices(notice_id)
+        notices.update(requestDto.title, requestDto.content)
+
+        return notice_id
     }
 
     private fun findUsers(user_id: String?): Users {
