@@ -181,6 +181,12 @@ class PlannersService(
             plansIterator.remove()
             plansService.delete(plans.plan_id!!)
         }
+        val noticesIterator = planners.notices.iterator()
+        while (noticesIterator.hasNext()) {
+            val notices = noticesIterator.next()
+            noticesIterator.remove()
+            noticesService.delete(notices.notice_id!!)
+        }
         val usersIterator = planners.users!!.iterator()
         while (usersIterator.hasNext()) {
             val users = usersIterator.next()
