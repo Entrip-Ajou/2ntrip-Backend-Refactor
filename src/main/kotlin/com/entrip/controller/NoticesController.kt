@@ -27,6 +27,13 @@ class NoticesController(
         return ResponseEntity<RestAPIMessages>(restAPIMessages, headers, HttpStatus.OK)
     }
 
+    // 공지 조회 리턴 NoticesReturnDto
+    @GetMapping("api/v1/notices/{notice_id}")
+    fun findById(@PathVariable notice_id: Long) : ResponseEntity<RestAPIMessages> {
+        val returnDto = noticesService.findById(notice_id)
+        return sendResponseHttpByJson("Load notices with id : $notice_id", returnDto)
+    }
+
     // 공지 작성 리턴 NoticesReturnDto
     @PostMapping("/api/v1/notices")
     fun save(@RequestBody requestDto: NoticesSaveRequestDto) : ResponseEntity<RestAPIMessages> {
