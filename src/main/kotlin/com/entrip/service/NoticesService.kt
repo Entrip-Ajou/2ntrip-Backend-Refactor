@@ -49,6 +49,19 @@ class NoticesService (
         return notice_id
     }
 
+    @Transactional
+    fun delete(notice_id: Long) : Long {
+        val notices = noticesRepository.findById(notice_id).orElseThrow {
+            NotAcceptedException(Unit)
+        }
+        val planner_id = notices.planners?.planner_id
+        notices.planners?.notices?.remove(notices)
+        notices.author?.notices?.remove(notices)
+        noticesRepository.delete(notices)
+
+        return notice_id
+    }
+
     private fun findUsers(user_id: String?): Users {
         val users = usersRepository.findById(user_id!!).orElseThrow {
             IllegalArgumentException("Error raise at usersRepository.findById$user_id")

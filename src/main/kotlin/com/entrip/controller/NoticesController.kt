@@ -42,4 +42,11 @@ class NoticesController(
         val returnDto = noticesService.findById(noticeId)
         return sendResponseHttpByJson("Notices is updated well", returnDto)
     }
+
+    // 공지 삭제 리턴 Long
+    @DeleteMapping("/api/v1/notices/{notice_id}")
+    fun delete(@PathVariable notice_id : Long) : ResponseEntity<RestAPIMessages> {
+        val noticeId = noticesService.delete(notice_id)
+        return sendResponseHttpByJson("Delete notices with id : $notice_id", noticeId)
+    }
 }
