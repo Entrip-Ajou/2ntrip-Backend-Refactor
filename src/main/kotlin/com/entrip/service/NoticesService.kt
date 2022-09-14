@@ -28,9 +28,7 @@ class NoticesService (
     @Transactional
     fun save(requestDto: NoticesSaveRequestDto) : Long? {
         val plannerId = requestDto.planner_id
-        val planners: Planners = plannersRepository.findById(plannerId).orElseThrow {
-            NotAcceptedException(Unit)
-        }
+        val planners: Planners = findPlanners(plannerId)
         val author = findUsers(requestDto.author)
         val notices = requestDto.toEntity()
         notices.author = author
@@ -51,12 +49,10 @@ class NoticesService (
 
     @Transactional
     fun delete(notice_id: Long) : Long {
-        val notices = noticesRepository.findById(notice_id).orElseThrow {
-            NotAcceptedException(Unit)
-        }
-        val planner_id = notices.planners?.planner_id
-        notices.planners?.notices?.remove(notices)
-        notices.author?.notices?.remove(notices)
+        val notices = findNotices(notice_id)
+        val planner_id = notices.planners!!.planner_id
+        notices.planners!!.notices.remove(notices)
+        notices.author!!.notices.remove(notices)
         noticesRepository.delete(notices)
 
         return notice_id
@@ -68,6 +64,16 @@ class NoticesService (
         }
         return users
     }
+
+    private fun findPlanners(plannerId: Long): Planners {
+        val planners: Planners = plannersRepository.findById(plannerId).orElseThrow {
+            IllegalArgumentException("Error raise at plannersRepository.findById$plannerId")
+        }
+        return planners
+    }
+
+//    private fun findPlanners(plannerId : Long) : Planners =
+//        plannersRepository.findById(plannerId).orElseThrow{IllegalArgumentException("Error raise at plannersRepository.findById$plannerId")}
 
     fun findById(notice_id: Long): NoticesReturnDto {
         val notices = findNotices(notice_id)

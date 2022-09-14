@@ -12,7 +12,7 @@ class NoticesReturnDto(
 ) {
     constructor(notices: Notices) : this(
         notices.notice_id,
-        notices.author?.user_id,
+        notices.author!!.user_id,
         notices.title,
         notices.content,
         notices.timestamp
