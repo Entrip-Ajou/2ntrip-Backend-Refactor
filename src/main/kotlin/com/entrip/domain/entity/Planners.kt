@@ -25,7 +25,12 @@ class Planners(
 
     @Column
     @OneToMany(mappedBy = "planners", fetch = FetchType.EAGER)
-    var plans: MutableSet<Plans>? = TreeSet()
+    var plans: MutableSet<Plans>? = TreeSet(),
+
+    @Column
+    @OneToMany(mappedBy = "planners", fetch = FetchType.EAGER)
+    var notices: MutableSet<Notices> = TreeSet()
+
 ) : BaseTimeEntity() {
 
     fun update(title: String, start_date: String, end_date: String): Unit {
