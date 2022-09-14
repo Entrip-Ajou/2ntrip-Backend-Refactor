@@ -113,4 +113,8 @@ class UsersController(
         val newAccessToken: String = usersService.reIssue(refreshToken)
         return sendResponseHttpByJson("Change Access Token", newAccessToken)
     }
+
+    @DeleteMapping("api/v1/users/{user_id}/logout")
+    fun logout(@PathVariable user_id: String): ResponseEntity<RestAPIMessages> =
+        sendResponseHttpByJson("Logout ${user_id}", usersService.logout(user_id))
 }

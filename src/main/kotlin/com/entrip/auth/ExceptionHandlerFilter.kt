@@ -2,8 +2,8 @@ package com.entrip.auth
 
 import com.entrip.auth.jwt.JwtTokenProvider
 import com.entrip.domain.RestAPIMessages
-import com.entrip.exception.ExpiredAccessTokenException
-import com.entrip.exception.ExpiredRefreshTokenException
+import com.entrip.exception.authException.ExpiredAccessTokenException
+import com.entrip.exception.authException.ExpiredRefreshTokenException
 import io.jsonwebtoken.SignatureException
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse
 
 
 @Component
-class ExceptionHandlerFilter() : OncePerRequestFilter() {
+class ExceptionHandlerFilter(val jwtTokenProvider: JwtTokenProvider) : OncePerRequestFilter() {
 
     public override fun doFilterInternal(
         request: HttpServletRequest,
@@ -25,18 +25,22 @@ class ExceptionHandlerFilter() : OncePerRequestFilter() {
         try {
             chain.doFilter(request, response)
         } catch (e: ExpiredAccessTokenException) {
-            setErrorResponse(HttpStatus.BAD_REQUEST, response, e)
+            setErrorResponse(HttpStatus.BAD_REQUEST, response, e, "ExpiredAccessTokenException")
         } catch (e: SignatureException) {
-            setErrorResponse(HttpStatus.BAD_REQUEST, response, e)
+            logger.error("SignatureException at ExceptionHandlerFilter!")
+            setErrorResponse(HttpStatus.BAD_REQUEST, response, e, "SignatureException")
         } catch (e: ExpiredRefreshTokenException) {
-            setErrorResponse(HttpStatus.BAD_REQUEST, response, e)
+            setErrorResponse(HttpStatus.BAD_REQUEST, response, e, "ExpiredRefreshTokenException")
+        } catch (e: Exception) {
+            logger.error("Exception at ExceptionHandlerFilter!")
+            setErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, response, e, "Exception")
         }
     }
 
-    public fun setErrorResponse(status: HttpStatus, response: HttpServletResponse, e: Throwable) {
+    public fun setErrorResponse(status: HttpStatus, response: HttpServletResponse, e: Throwable, eName: String) {
         val restAPIMessages = RestAPIMessages(
             status.value(),
-            e.message.toString(),
+            eName,
             e.message!!
         )
         response.status = status.value()

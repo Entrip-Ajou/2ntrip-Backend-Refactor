@@ -1,4 +1,4 @@
-package com.entrip.exception
+package com.entrip.exception.authException
 
 class ExpiredRefreshTokenException(override val message: String?) : Exception() {
 }

@@ -13,18 +13,17 @@ import com.entrip.exception.FailToFindNicknameOrIdException
 import com.entrip.exception.NotAcceptedException
 import com.entrip.repository.PlannersRepository
 import com.entrip.repository.UsersRepository
-import org.springframework.beans.factory.annotation.Autowired
+import io.jsonwebtoken.SignatureException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.security.Signature
 import javax.transaction.Transactional
 
 @Service
 class UsersService(
     private final val usersRepository: UsersRepository,
 
-    @Autowired
     private val plannersRepository: PlannersRepository,
-
     private val jwtTokenProvider: JwtTokenProvider,
     private val passwordEncoder: PasswordEncoder
 ) {
@@ -150,8 +149,17 @@ class UsersService(
         return UsersLoginResReturnDto(users.user_id!!, accessToken, users.nickname, refreshToken)
     }
 
-    public fun reIssue(refreshToken: String): String =
-        jwtTokenProvider.reIssue(refreshToken)
+    public fun reIssue(refreshToken: String): String {
+        try {
+            jwtTokenProvider.getUserPk(refreshToken)
+        } catch (e: SignatureException) {
+            throw SignatureException("Refresh token Signature is not valid.")
+        }
+        return jwtTokenProvider.reIssue(refreshToken)
+    }
+
+    public fun logout(user_id: String): String =
+        jwtTokenProvider.expireAllTokensWithUserPk(user_id)
 }
 
 

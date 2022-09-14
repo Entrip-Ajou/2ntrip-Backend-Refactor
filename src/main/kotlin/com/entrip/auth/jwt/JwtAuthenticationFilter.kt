@@ -1,7 +1,8 @@
 package com.entrip.auth.jwt
 
-import com.entrip.exception.ExpiredAccessTokenException
-import com.entrip.exception.ExpiredRefreshTokenException
+import com.entrip.exception.authException.ExpiredAccessTokenException
+import com.entrip.exception.authException.ExpiredRefreshTokenException
+import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.SignatureException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -14,7 +15,7 @@ import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
 import javax.servlet.http.HttpServletRequest
 
-class JwtAuthenticationFilter(private val jwtTokenProvider: JwtTokenProvider): GenericFilterBean() {
+class JwtAuthenticationFilter(private final val jwtTokenProvider: JwtTokenProvider) : GenericFilterBean() {
 
     private val logger: Logger = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
 
@@ -39,9 +40,11 @@ class JwtAuthenticationFilter(private val jwtTokenProvider: JwtTokenProvider): G
                 SecurityContextHolder.getContext().authentication = authentication
             }
         } catch (e: ExpiredAccessTokenException) {
-            throw ExpiredAccessTokenException("Access Token was expired!")
+            throw ExpiredAccessTokenException("Access Token was expired! Please refresh!")
         } catch (e: SignatureException) {
             throw SignatureException("Access Token is not valid!")
+        } catch (e: ExpiredJwtException) {
+            throw ExpiredAccessTokenException("Access Token was expired! Please refresh!")
         }
 
         chain.doFilter(request, response)

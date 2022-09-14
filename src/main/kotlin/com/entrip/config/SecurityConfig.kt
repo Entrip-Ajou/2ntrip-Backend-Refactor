@@ -33,7 +33,7 @@ class SecurityConfig(private val jwtTokenProvider: JwtTokenProvider) : WebSecuri
             .and()
             .authorizeRequests() // 요청에 대한 사용권한 체크
             .antMatchers("/api/v1/**").authenticated()
-            .antMatchers("/api/v2/users", "/api/v2/users/login", "/api/v2/users/logout", "/h2-console/**", "/**")
+            .antMatchers("/api/v2/**", "/h2-console/**")
             .permitAll() // 로그인, 회원가입은 누구나 접근 가능
             .and()
             .addFilterBefore(
@@ -41,7 +41,7 @@ class SecurityConfig(private val jwtTokenProvider: JwtTokenProvider) : WebSecuri
                 UsernamePasswordAuthenticationFilter::class.java
             )
             .addFilterBefore(
-                ExceptionHandlerFilter(),
+                ExceptionHandlerFilter(jwtTokenProvider),
                 JwtAuthenticationFilter(jwtTokenProvider)::class.java
             )
             .headers()
