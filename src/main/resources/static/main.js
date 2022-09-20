@@ -35,7 +35,7 @@ function connect(event) {
 //subscribe의 endpoint를 다음과 같이 변수를 붙여서 설정하고, ChatController로 이동
 function onConnected() {
     // Subscribe to the Public Topic (원래는 /topic/public)
-    stompClient.subscribe('/topic/public/1', onMessageReceived);
+    stompClient.subscribe('/topic/public/20', onMessageReceived);
 
     // Tell your username to the server
     stompClient.send("/app/chat.addUser",

@@ -99,6 +99,7 @@ class PostsService(
     }
 
     public fun getPostsListWithPageNumber(pageNumber: Long) : MutableList<PostsReturnDto> {
+        if (pageNumber <= 0) throw IllegalArgumentException("pageNumber is not valid!")
         val postsList = postsRepository.findAll()
         postsList.reverse()
         val iterator = postsList.iterator()
