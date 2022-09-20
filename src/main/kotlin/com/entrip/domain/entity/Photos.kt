@@ -1,7 +1,6 @@
 package com.entrip.domain.entity
 
 import com.entrip.domain.BaseTimeEntity
-import com.sun.org.apache.xpath.internal.operations.Bool
 import javax.persistence.*
 
 @Entity
