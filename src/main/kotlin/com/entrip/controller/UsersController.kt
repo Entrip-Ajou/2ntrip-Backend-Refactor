@@ -33,7 +33,7 @@ class UsersController(
         return ResponseEntity<RestAPIMessages>(restAPIMessages, headers, HttpStatus.OK)
     }
 
-    @PostMapping("/api/v2/users")
+    @PostMapping("/api/v1/users")
     public fun save(@RequestBody requestDto: UsersSaveRequestDto): ResponseEntity<RestAPIMessages> {
         requestDto.password = passwordEncoder.encode(requestDto.password)
         val user_id: String? = usersService.save(requestDto)
