@@ -1,5 +1,7 @@
 package com.entrip.service
 
+import com.entrip.domain.dto.Notices.NoticesReturnDto
+import com.entrip.domain.dto.Notices.NoticesReturnDtoComparator
 import com.entrip.domain.dto.Planners.PlannersResponseDto
 import com.entrip.domain.dto.Planners.PlannersSaveRequestDto
 import com.entrip.domain.dto.Planners.PlannersUpdateRequestDto
@@ -7,6 +9,7 @@ import com.entrip.domain.dto.Plans.PlansResponseDto
 import com.entrip.domain.dto.Plans.PlansReturnDto
 import com.entrip.domain.dto.Users.UsersResponseDto
 import com.entrip.domain.dto.Users.UsersReturnDto
+import com.entrip.domain.entity.Notices
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Plans
 import com.entrip.domain.entity.Users
@@ -17,7 +20,9 @@ import com.entrip.repository.UsersRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import java.util.*
 import javax.transaction.Transactional
+import kotlin.collections.ArrayList
 
 @Service
 class PlannersService(
@@ -34,6 +39,9 @@ class PlannersService(
 
     @Autowired
     private val commentsService: CommentsService,
+
+    @Autowired
+    private val noticesService: NoticesService,
 
     @Autowired
     private val eventPublisher: ApplicationEventPublisher
@@ -138,6 +146,21 @@ class PlannersService(
         return plansList
     }
 
+    fun findAllNoticesWithPlannerId(planner_id: Long): MutableList<NoticesReturnDto> {
+        val planners = findPlanners(planner_id)
+        val noticesSet : MutableSet<Notices> = planners.notices
+        val noticesList : MutableList<NoticesReturnDto> = ArrayList<NoticesReturnDto>()
+        val noticesIterator = noticesSet.iterator()
+
+        while (noticesIterator.hasNext()) {
+            val notices = noticesIterator.next()
+            val returnDto = NoticesReturnDto(notices)
+            noticesList.add(returnDto)
+        }
+        Collections.sort(noticesList, NoticesReturnDtoComparator())
+        return noticesList
+    }
+
     public fun plannerIsExistWithId(planner_id: Long): Boolean {
         return plannersRepository.existsById(planner_id)
     }
@@ -157,6 +180,12 @@ class PlannersService(
             }
             plansIterator.remove()
             plansService.delete(plans.plan_id!!)
+        }
+        val noticesIterator = planners.notices.iterator()
+        while (noticesIterator.hasNext()) {
+            val notices = noticesIterator.next()
+            noticesIterator.remove()
+            noticesService.delete(notices.notice_id!!)
         }
         val usersIterator = planners.users!!.iterator()
         while (usersIterator.hasNext()) {

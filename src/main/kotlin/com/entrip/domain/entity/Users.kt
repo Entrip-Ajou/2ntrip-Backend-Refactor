@@ -40,6 +40,10 @@ class Users(
     var likePosts: MutableSet<Posts> = TreeSet(),
 
     @Column
+    @OneToMany(mappedBy = "author", fetch = FetchType.EAGER, orphanRemoval = true)
+    var notices: MutableSet<Notices> = TreeSet(),
+
+    @Column
     val nickname: String,
     var gender: Int? = null,
     var photoUrl: String? = null,
