@@ -1,4 +1,4 @@
-package com.entrip.domain
+package com.entrip.socket
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

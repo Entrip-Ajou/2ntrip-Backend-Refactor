@@ -1,6 +1,7 @@
 package com.entrip.exception
 
 import com.entrip.domain.RestAPIMessages
+import com.entrip.exception.authException.ReIssueBeforeAccessTokenExpiredException
 import com.entrip.socket.WebSocketEventListener
 import org.json.JSONObject
 import org.slf4j.Logger
@@ -15,11 +16,12 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException.Forbidden
 import java.nio.charset.Charset
+import java.security.SignatureException
 
 @ControllerAdvice
 class GlobalExceptionHandler {
 
-    val logger: Logger = LoggerFactory.getLogger(WebSocketEventListener::class.java)
+    val logger: Logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
 
     class dummy(val e: String) {
     }
@@ -116,8 +118,23 @@ class GlobalExceptionHandler {
         return ResponseEntity<RestAPIMessages>(restAPIMessages, headers, HttpStatus.ACCEPTED)
     }
 
+    @ExceptionHandler(io.jsonwebtoken.SignatureException::class)
+    fun handleSignatureException(e: SignatureException): ResponseEntity<RestAPIMessages> {
+        val restAPIMessages: RestAPIMessages = RestAPIMessages(
+            400,
+            "SignatureException",
+            "handleSignatureException"
+            //e.message!!
+        )
+        val headers: HttpHeaders = HttpHeaders()
+        headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
+        logger.error(e.message)
+        return ResponseEntity<RestAPIMessages>(restAPIMessages, headers, HttpStatus.BAD_REQUEST)
+    }
+
     @ExceptionHandler(Exception::class)
     fun handleException(e: Exception): ResponseEntity<RestAPIMessages> {
+        logger.error(e.message, e)
         val restAPIMessages: RestAPIMessages = RestAPIMessages(
             520,
             "handleEntityNotFoundException : unknown exception\n",
@@ -127,6 +144,20 @@ class GlobalExceptionHandler {
         headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
         logger.error(e.message)
         return ResponseEntity<RestAPIMessages>(restAPIMessages, headers, HttpStatus.SERVICE_UNAVAILABLE)
+    }
+
+    @ExceptionHandler(ReIssueBeforeAccessTokenExpiredException::class)
+    fun handleReIssueBeforeAccessTokenExpiredException(e: Exception): ResponseEntity<RestAPIMessages> {
+        logger.error(e.message, e)
+        val restAPIMessages: RestAPIMessages = RestAPIMessages(
+            400,
+            "ReIssueBeforeAccessTokenExpiredException",
+            e.message!!
+        )
+        val headers: HttpHeaders = HttpHeaders()
+        headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
+        logger.error(e.message)
+        return ResponseEntity<RestAPIMessages>(restAPIMessages, headers, HttpStatus.BAD_REQUEST)
     }
 
 }

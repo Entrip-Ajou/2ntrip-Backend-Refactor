@@ -8,6 +8,7 @@ import com.entrip.domain.dto.Photos.PhotosReturnDto
 import com.entrip.domain.entity.Photos
 import com.entrip.domain.entity.Posts
 import com.entrip.domain.entity.isCommunity
+import com.entrip.exception.NotAcceptedException
 import com.entrip.repository.PhotosRepository
 import com.entrip.repository.PostsRepository
 import org.slf4j.Logger
@@ -40,11 +41,11 @@ class PhotosService(
     private val logger: Logger = LoggerFactory.getLogger(PhotosService::class.java)
 
     private fun findPhotos(photo_id: Long): Photos = photosRepository.findById(photo_id).orElseThrow {
-        IllegalArgumentException("Error raise at photoRepository.findById")
+        NotAcceptedException("Error raise at photoRepository.findById")
     }
 
     private fun findPosts(post_id: Long): Posts = postsRepository.findById(post_id).orElseThrow {
-        IllegalArgumentException("Error raise at postsRepsotiroy.findById $post_id")
+        IllegalArgumentException("Error raise at postsRepository.findById $post_id")
     }
 
     @Scheduled(fixedDelay = 1000000)
@@ -77,6 +78,13 @@ class PhotosService(
 
     public fun uploadAtS3(multipartFile: MultipartFile, priority: Long): Long? {
         val uploadedPhotoInformation: UploadedPhotoInformation = s3Uploader.upload(multipartFile, "static")
+        val savedPhotoId =
+            save(uploadedPhotoInformation.uploadImageUrl, uploadedPhotoInformation.uploadFileName, priority)
+        return savedPhotoId
+    }
+
+    fun uploadAtS3(multipartFile: MultipartFile, priority: Long, directory: String): Long? {
+        val uploadedPhotoInformation: UploadedPhotoInformation = s3Uploader.upload(multipartFile, directory)
         val savedPhotoId =
             save(uploadedPhotoInformation.uploadImageUrl, uploadedPhotoInformation.uploadFileName, priority)
         return savedPhotoId

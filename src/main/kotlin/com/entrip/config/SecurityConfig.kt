@@ -1,5 +1,6 @@
-package com.entrip.auth
+package com.entrip.config
 
+import com.entrip.auth.ExceptionHandlerFilter
 import com.entrip.auth.jwt.JwtAuthenticationFilter
 import com.entrip.auth.jwt.JwtTokenProvider
 import org.springframework.context.annotation.Bean
@@ -24,6 +25,7 @@ class SecurityConfig(private val jwtTokenProvider: JwtTokenProvider) : WebSecuri
         super.authenticationManagerBean()
 
 
+
     override fun configure(http: HttpSecurity) {
         http.httpBasic().disable() // rest api만 고려, 기본 설정 해제
             .csrf().disable() // csrf 보안 토큰 disable 처리
@@ -31,11 +33,16 @@ class SecurityConfig(private val jwtTokenProvider: JwtTokenProvider) : WebSecuri
             .and()
             .authorizeRequests() // 요청에 대한 사용권한 체크
             //.antMatchers("/api/v1/**").authenticated()
-            .antMatchers("/api/v2/users", "/api/v2/users/login", "/api/v2/users/logout", "/h2-console/**", "/**").permitAll() // 로그인, 회원가입은 누구나 접근 가능
+            .antMatchers("/api/v2/**", "/h2-console/**", "*")
+            .permitAll() // 로그인, 회원가입은 누구나 접근 가능
             .and()
             .addFilterBefore(
                 JwtAuthenticationFilter(jwtTokenProvider),
                 UsernamePasswordAuthenticationFilter::class.java
+            )
+            .addFilterBefore(
+                ExceptionHandlerFilter(jwtTokenProvider),
+                JwtAuthenticationFilter(jwtTokenProvider)::class.java
             )
             .headers()
                 .frameOptions().sameOrigin()

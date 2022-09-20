@@ -13,18 +13,17 @@ import com.entrip.exception.FailToFindNicknameOrIdException
 import com.entrip.exception.NotAcceptedException
 import com.entrip.repository.PlannersRepository
 import com.entrip.repository.UsersRepository
-import org.springframework.beans.factory.annotation.Autowired
+import io.jsonwebtoken.SignatureException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.security.Signature
 import javax.transaction.Transactional
 
 @Service
 class UsersService(
     private final val usersRepository: UsersRepository,
 
-    @Autowired
     private val plannersRepository: PlannersRepository,
-
     private val jwtTokenProvider: JwtTokenProvider,
     private val passwordEncoder: PasswordEncoder
 ) {
@@ -134,16 +133,33 @@ class UsersService(
         throw FailToFindNicknameOrIdException("Fail To Find Nickname Or Id matched Users!")
     }
 
-    public fun isExistsUser (email : String) : Boolean =
+    public fun isExistsUser(email: String): Boolean =
         usersRepository.existsById(email)
 
-    public fun login (usersLoginRequestDto: UsersLoginRequestDto) : UsersLoginResReturnDto {
+    public fun login(usersLoginRequestDto: UsersLoginRequestDto): UsersLoginResReturnDto {
         if (!isExistsUser(usersLoginRequestDto.user_id)) throw NotAcceptedException("Email is not valid.")
         val users = findUsers(usersLoginRequestDto.user_id)
-        if (!passwordEncoder.matches(usersLoginRequestDto.password, users.password)) throw NotAcceptedException("Password is not valid.")
-        val token : String = jwtTokenProvider.createToken(usersLoginRequestDto.user_id)
-        return UsersLoginResReturnDto(usersLoginRequestDto.user_id, token)
+        if (!passwordEncoder.matches(
+                usersLoginRequestDto.password,
+                users.password
+            )
+        ) throw NotAcceptedException("Password is not valid.")
+        val accessToken: String = jwtTokenProvider.createAccessToken(usersLoginRequestDto.user_id)
+        val refreshToken: String = jwtTokenProvider.createRefreshToken(usersLoginRequestDto.user_id)
+        return UsersLoginResReturnDto(users.user_id!!, accessToken, users.nickname, refreshToken)
     }
+
+    public fun reIssue(refreshToken: String): String {
+        try {
+            jwtTokenProvider.getUserPk(refreshToken)
+        } catch (e: SignatureException) {
+            throw SignatureException("Refresh token Signature is not valid.")
+        }
+        return jwtTokenProvider.reIssue(refreshToken)
+    }
+
+    public fun logout(user_id: String): String =
+        jwtTokenProvider.expireAllTokensWithUserPk(user_id)
 }
 
 

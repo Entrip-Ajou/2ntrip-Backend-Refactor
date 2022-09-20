@@ -101,8 +101,20 @@ class UsersController(
     }
 
     @PostMapping("api/v2/users/login")
-    public fun login (@RequestBody requestDto : UsersLoginRequestDto) : ResponseEntity<RestAPIMessages> {
+    public fun login(@RequestBody requestDto: UsersLoginRequestDto): ResponseEntity<RestAPIMessages> {
         val usersLoginResReturnDto = usersService.login(requestDto)
         return sendResponseHttpByJson("Success to Login!", usersLoginResReturnDto)
     }
+
+    @GetMapping("api/v2/users/reIssue/{refreshToken}")
+    public fun reIssue(
+        @PathVariable refreshToken: String
+    ): ResponseEntity<RestAPIMessages> {
+        val newAccessToken: String = usersService.reIssue(refreshToken)
+        return sendResponseHttpByJson("Change Access Token", newAccessToken)
+    }
+
+    @DeleteMapping("api/v1/users/{user_id}/logout")
+    fun logout(@PathVariable user_id: String): ResponseEntity<RestAPIMessages> =
+        sendResponseHttpByJson("Logout ${user_id}", usersService.logout(user_id))
 }
