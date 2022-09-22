@@ -1,5 +1,7 @@
 package com.entrip.domain.dto.Planners
 
+import io.swagger.annotations.ApiModelProperty
+
 class PlannersReturnDto(
     val planner_id: Long,
     val title: String,
