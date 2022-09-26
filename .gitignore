@@ -24,7 +24,7 @@ bin/
 *.iws
 *.iml
 *.ipr
-application.propgerties
+application.properties
 application-aws-s3.properties
 application-redis.properties
 application-security.properties
