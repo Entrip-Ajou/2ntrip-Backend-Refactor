@@ -1,2 +1,2 @@
 # entrip-api-kotlin
-entrip api with kotlin and springboot
+entrip api with kotlin and springboot.
