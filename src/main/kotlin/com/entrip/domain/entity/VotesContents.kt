@@ -30,10 +30,14 @@ class VotesContents (
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "VOTE_ID")
     var votes : Votes? = null
-) : BaseTimeEntity() {
+) : BaseTimeEntity(), Comparable<VotesContents> {
 
     constructor(content: String) : this(
         contents = content
     )
 
+    override fun compareTo(other: VotesContents): Int {
+        if (this.votesContent_id!! > other.votesContent_id!!) return 1
+        return -1
+    }
 }
