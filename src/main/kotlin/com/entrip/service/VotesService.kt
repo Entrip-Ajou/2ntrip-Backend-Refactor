@@ -1,6 +1,7 @@
 package com.entrip.service
 
 import com.entrip.domain.dto.Votes.VotesReturnDto
+import com.entrip.domain.dto.Votes.VotesReturnDtoComparator
 import com.entrip.domain.dto.Votes.VotesSaveRequestDto
 import com.entrip.domain.dto.VotesContents.VotesContentsReturnDto
 import com.entrip.domain.entity.Planners
@@ -12,6 +13,7 @@ import com.entrip.repository.UsersRepository
 import com.entrip.repository.VotesRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.util.Collections
 import java.util.TreeSet
 import javax.transaction.Transactional
 
@@ -64,7 +66,7 @@ class VotesService(
         return users
     }
 
-    private fun findPlanners(plannerId: Long): Planners {
+    fun findPlanners(plannerId: Long): Planners {
         val planners: Planners = plannersRepository.findById(plannerId).orElseThrow {
             IllegalArgumentException("Error raise at plannersRepository.findById$plannerId")
         }
@@ -74,7 +76,7 @@ class VotesService(
     fun findById(vote_id: Long): VotesReturnDto {
         val votes = findVotes(vote_id)
         val votesContents = votes.contents
-        var votesContentsList : MutableList<VotesContentsReturnDto> = ArrayList()
+        val votesContentsList : MutableList<VotesContentsReturnDto> = ArrayList()
         for (content in votesContents) {
             votesContentsList.add(VotesContentsReturnDto(content))
         }
@@ -87,5 +89,19 @@ class VotesService(
             IllegalArgumentException("Error raise at votesRepository.findById$vote_id")
         }
         return votes
+    }
+
+    fun findAllVotesWithPlannerID(planner_id : Long) : MutableList<VotesReturnDto> {
+        val planners : Planners = findPlanners(planner_id)
+        val votesListReturnDto : MutableList<VotesReturnDto> = ArrayList()
+
+        for (vote in planners.votes) {
+            val returnDto = findById(vote.vote_id!!)
+            votesListReturnDto.add(returnDto)
+        }
+
+        Collections.sort(votesListReturnDto, VotesReturnDtoComparator())
+
+        return votesListReturnDto
     }
 }
