@@ -59,6 +59,27 @@ class VotesService(
         return votesRepository.save(votes).vote_id
     }
 
+    @Transactional
+    fun delete(vote_id: Long) : Long {
+        val votes = findVotes(vote_id)
+
+        votes.planners!!.votes.remove(votes)
+        votes.author!!.votes.remove(votes)
+
+        val votesContentsSet = votes.contents
+        val votesContentsIterator = votesContentsSet.iterator()
+
+        while (votesContentsIterator.hasNext()) {
+            val votesContent = votesContentsIterator.next()
+            votesContentsIterator.remove()
+            votesContentsService.delete(votesContent.votesContent_id)
+        }
+
+        votesRepository.delete(votes)
+
+        return vote_id
+    }
+
     private fun findUsers(user_id: String?): Users {
         val users = usersRepository.findById(user_id!!).orElseThrow {
             IllegalArgumentException("Error raise at usersRepository.findById$user_id")

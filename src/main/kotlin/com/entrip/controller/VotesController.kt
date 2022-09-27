@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -45,5 +46,11 @@ class VotesController(
         val votesList : MutableList<VotesReturnDto>  = votesService.findAllVotesWithPlannerID(planner_id)
 
         return sendResponseHttpByJson("Load votes with planner id : $planner_id", votesList)
+    }
+
+    @DeleteMapping("/api/v1/votes/{vote_id}")
+    fun delete(@PathVariable vote_id : Long) : ResponseEntity<RestAPIMessages> {
+        val voteId = votesService.delete(vote_id)
+        return sendResponseHttpByJson("Delete votes with id : $voteId", vote_id)
     }
 }
