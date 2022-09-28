@@ -44,7 +44,7 @@ class Users(
     var notices: MutableSet<Notices> = TreeSet(),
 
     @Column
-    @ManyToMany(mappedBy = "usersList", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "usersSet", fetch = FetchType.EAGER)
     var votesContents : MutableSet<VotesContents> = TreeSet(),
 
     @Column
