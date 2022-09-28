@@ -7,6 +7,7 @@ import com.entrip.domain.dto.Planners.PlannersSaveRequestDto
 import com.entrip.domain.dto.Planners.PlannersUpdateRequestDto
 import com.entrip.domain.dto.Plans.PlansReturnDto
 import com.entrip.domain.dto.Users.UsersReturnDto
+import com.entrip.domain.dto.Votes.VotesReturnDto
 import com.entrip.exception.NotAcceptedException
 import com.entrip.service.PlannersService
 import org.springframework.http.HttpHeaders
@@ -76,6 +77,13 @@ class PlannersController(
     fun findAllNoticesWithPlannerId(@PathVariable planner_id: Long) : ResponseEntity<RestAPIMessages> {
         val returnDtoList : MutableList<NoticesReturnDto> = plannersService.findAllNoticesWithPlannerId(planner_id)
         return sendResponseHttpByJson("Get all notices with planner id : $planner_id", returnDtoList)
+    }
+
+    @GetMapping("/api/v1/planners/{planner_id}/allVotes")
+    fun findAllVotesByPlannerId(@PathVariable planner_id :Long) : ResponseEntity<RestAPIMessages> {
+        val votesList : MutableList<VotesReturnDto>  = plannersService.findAllVotesWithPlannerID(planner_id)
+
+        return sendResponseHttpByJson("Load votes with planner id : $planner_id", votesList)
     }
 
     @GetMapping("api/v1/planners/{planner_id}/exist")
