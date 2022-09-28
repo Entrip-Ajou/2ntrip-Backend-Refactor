@@ -25,7 +25,7 @@ class VotesContents (
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "USER_ID")
-    var usersList : MutableSet<Users> ?= TreeSet(),
+    var usersSet : MutableSet<Users> ?= TreeSet(),
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "VOTE_ID")
