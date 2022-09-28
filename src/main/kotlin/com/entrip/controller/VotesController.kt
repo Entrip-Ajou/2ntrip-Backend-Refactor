@@ -36,14 +36,6 @@ class VotesController(
         return sendResponseHttpByJson("Votes is saved well", returnDto)
     }
 
-    // 투표 조회 리턴 VotesListReturnDto (전체 투표 리스트 조회)
-    @GetMapping("/api/v1/votes/{planner_id}")
-    fun findAllVotesByPlannerId(@PathVariable planner_id :Long) : ResponseEntity<RestAPIMessages> {
-        val votesList : MutableList<VotesReturnDto>  = votesService.findAllVotesWithPlannerID(planner_id)
-
-        return sendResponseHttpByJson("Load votes with planner id : $planner_id", votesList)
-    }
-
     @DeleteMapping("/api/v1/votes/{vote_id}")
     fun delete(@PathVariable vote_id : Long) : ResponseEntity<RestAPIMessages> {
         val voteId = votesService.delete(vote_id)
@@ -55,5 +47,11 @@ class VotesController(
         val voteId : Long? = votesService.update(requestDto)
         val returnDto = votesService.findById(voteId!!)
         return sendResponseHttpByJson("Votes is updated well", returnDto)
+    }
+
+    @GetMapping("/api/v1/votes/{vote_id}")
+    fun findById(@PathVariable vote_id : Long) : ResponseEntity<RestAPIMessages> {
+        val returnDto = votesService.getVotesInfoReturnDto(vote_id)
+        return sendResponseHttpByJson("Load votes with id : $vote_id", returnDto)
     }
 }

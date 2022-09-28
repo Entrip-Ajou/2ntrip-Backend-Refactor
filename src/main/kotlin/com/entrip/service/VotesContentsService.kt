@@ -1,5 +1,7 @@
 package com.entrip.service
 
+import com.entrip.domain.dto.Votes.VotingUsersReturnDto
+import com.entrip.domain.entity.Users
 import com.entrip.domain.entity.Votes
 import com.entrip.domain.entity.VotesContents
 import com.entrip.repository.VotesContentsRepository
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*
 import javax.transaction.Transactional
+import kotlin.collections.ArrayList
 
 @Service
 class VotesContentsService(
@@ -59,5 +62,16 @@ class VotesContentsService(
             IllegalArgumentException("Error raise at votesContentsRepository.findById$vote_content_id")
         }
         return votesContents
+    }
+
+    fun getVotingUsersReturnDto(content: VotesContents): VotingUsersReturnDto {
+        val contentName = content.contents
+        val users = content.usersSet
+        val usersIterator : Iterator<Users> = users!!.iterator()
+        val usersList : MutableList<Users> = ArrayList()
+        while (usersIterator.hasNext()) {
+            usersList.add(usersIterator.next())
+        }
+        return VotingUsersReturnDto(contentName, usersList)
     }
 }

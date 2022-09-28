@@ -1,9 +1,6 @@
 package com.entrip.service
 
-import com.entrip.domain.dto.Votes.VotesReturnDto
-import com.entrip.domain.dto.Votes.VotesReturnDtoComparator
-import com.entrip.domain.dto.Votes.VotesSaveRequestDto
-import com.entrip.domain.dto.Votes.VotesUpdateRequestDto
+import com.entrip.domain.dto.Votes.*
 import com.entrip.domain.dto.VotesContents.VotesContentsReturnDto
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Users
@@ -15,7 +12,6 @@ import com.entrip.repository.VotesRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.Collections
-import java.util.TreeSet
 import javax.transaction.Transactional
 
 @Service
@@ -124,17 +120,17 @@ class VotesService(
         return votes
     }
 
-    fun findAllVotesWithPlannerID(planner_id : Long) : MutableList<VotesReturnDto> {
-        val planners : Planners = findPlanners(planner_id)
-        val votesListReturnDto : MutableList<VotesReturnDto> = ArrayList()
-
-        for (vote in planners.votes) {
-            val returnDto = findById(vote.vote_id!!)
-            votesListReturnDto.add(returnDto)
+    fun getVotesInfoReturnDto(voteId: Long): VotesFullInfoReturnDto {
+        val votes = findVotes(voteId)
+        val votesContents = votes.contents
+        val votesContentsIterator : Iterator<VotesContents> = votesContents.iterator()
+        val votingUsersList : MutableList<VotingUsersReturnDto> = ArrayList()
+        while (votesContentsIterator.hasNext()) {
+            val content = votesContentsIterator.next()
+            val returnDto : VotingUsersReturnDto = votesContentsService.getVotingUsersReturnDto(content)
+            votingUsersList.add(returnDto)
         }
-
-        Collections.sort(votesListReturnDto, VotesReturnDtoComparator())
-
-        return votesListReturnDto
+        return VotesFullInfoReturnDto(votes.title, votingUsersList,
+            votes.multipleVote, votes.anonymousVote, votes.author!!.user_id!!)
     }
 }
