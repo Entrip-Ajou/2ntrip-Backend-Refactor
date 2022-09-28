@@ -3,6 +3,7 @@ package com.entrip.service
 import com.entrip.domain.dto.Votes.VotesReturnDto
 import com.entrip.domain.dto.Votes.VotesReturnDtoComparator
 import com.entrip.domain.dto.Votes.VotesSaveRequestDto
+import com.entrip.domain.dto.Votes.VotesUpdateRequestDto
 import com.entrip.domain.dto.VotesContents.VotesContentsReturnDto
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Users
@@ -57,6 +58,17 @@ class VotesService(
 
         // 투표 저장
         return votesRepository.save(votes).vote_id
+    }
+
+    @Transactional
+    fun update(requestDto: VotesUpdateRequestDto) : Long? {
+        val votes = findVotes(requestDto.vote_id)
+        votes.updateTitle(requestDto.title)
+        votes.updateAnonymousVote(requestDto.anonymousVote)
+        votes.updateMultipleVote(requestDto.multipleVote)
+        votes.updateDeadLine(requestDto.deadLine)
+
+        return votes.vote_id
     }
 
     @Transactional

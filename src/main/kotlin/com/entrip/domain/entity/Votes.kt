@@ -31,4 +31,20 @@ class Votes(
     var contents : MutableSet<VotesContents> = TreeSet()
 
 ) {
+    fun updateTitle(title: String) {
+        this.title = title
+    }
+
+    fun updateAnonymousVote(anonymousVote: Boolean) {
+        this.anonymousVote = anonymousVote
+    }
+
+    fun updateMultipleVote(multipleVote: Boolean) {
+        this.multipleVote = multipleVote
+    }
+
+    fun updateDeadLine(deadLine: Timestamp) {
+        this.deadLine = deadLine
+    }
+
 }
