@@ -5,9 +5,10 @@ class PostsReturnDto(
     val title: String,
     val content: String,
     val author: String?,
-    val likeNumber : Long,
-    val commentsNumber : Long,
-    val photoList: MutableList<String> = ArrayList<String>()
+    val likeNumber: Long,
+    val commentsNumber: Long,
+    val photoList: MutableList<String> = ArrayList<String>(),
+    val postTag: String
 ) {
 
     constructor(postsRequestDto: PostsRequestDto) : this(
@@ -17,7 +18,8 @@ class PostsReturnDto(
         author = postsRequestDto.author,
         likeNumber = postsRequestDto.likeNumber,
         commentsNumber = postsRequestDto.commentsNumber,
-        photoList = postsRequestDto.getPhotoListFromPostsRequestDto()
+        photoList = postsRequestDto.getPhotoListFromPostsRequestDto(),
+        postTag = postsRequestDto.postTag
     )
 
 }
