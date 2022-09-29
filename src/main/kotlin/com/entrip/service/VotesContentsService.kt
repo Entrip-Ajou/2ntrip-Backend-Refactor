@@ -1,9 +1,12 @@
 package com.entrip.service
 
 import com.entrip.domain.dto.Votes.VotingUsersReturnDto
+import com.entrip.domain.dto.VotesContents.VotesContentsCountRequestDto
 import com.entrip.domain.entity.Users
 import com.entrip.domain.entity.Votes
 import com.entrip.domain.entity.VotesContents
+import com.entrip.exception.NotAcceptedException
+import com.entrip.repository.UsersRepository
 import com.entrip.repository.VotesContentsRepository
 import com.entrip.repository.VotesRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,6 +21,9 @@ class VotesContentsService(
 
     @Autowired
     private val votesRepository: VotesRepository,
+
+    @Autowired
+    private val usersRepository: UsersRepository,
 ) {
 
     fun saveVotesContents(votesId : Long, contents: MutableList<String>) : MutableSet<VotesContents> {
@@ -73,5 +79,34 @@ class VotesContentsService(
             usersList.add(usersIterator.next())
         }
         return VotingUsersReturnDto(contentName, usersList)
+    }
+
+    @Transactional
+    fun vote(requestDto : VotesContentsCountRequestDto) : Int {
+        val users : Users = findUsers(requestDto.userId)
+        val votesContents : VotesContents = findVotesContents(requestDto.voteContentId)
+
+//        if (!votes.voting) {
+//            throw NotAcceptedException("this vote is closed")
+//        }
+//
+//        if(users.votesContents.contains(votesContents) && votesContents.usersSet!!.contains(users)) {
+//            throw NotAcceptedException("multiple-choice is not allowed")
+//        }
+
+        users.votesContents.add(votesContents)
+        votesContents.usersSet!!.add(users)
+
+        votesContents.vote()
+
+        return votesContents.selectedCount
+
+    }
+
+    private fun findUsers(user_id: String?): Users {
+        val users = usersRepository.findById(user_id!!).orElseThrow {
+            IllegalArgumentException("Error raise at usersRepository.findById$user_id")
+        }
+        return users
     }
 }

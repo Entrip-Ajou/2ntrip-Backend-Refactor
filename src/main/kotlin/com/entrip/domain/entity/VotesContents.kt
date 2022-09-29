@@ -40,4 +40,8 @@ class VotesContents (
         if (this.votesContent_id!! > other.votesContent_id!!) return 1
         return -1
     }
+
+    fun vote() {
+        selectedCount++
+    }
 }

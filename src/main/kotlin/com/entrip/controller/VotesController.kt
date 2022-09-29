@@ -1,11 +1,9 @@
 package com.entrip.controller
 
 import com.entrip.domain.RestAPIMessages
-import com.entrip.domain.dto.Votes.VotesReturnDto
+import com.entrip.domain.dto.VotesContents.VotesContentsCountRequestDto
 import com.entrip.domain.dto.Votes.VotesSaveRequestDto
 import com.entrip.domain.dto.Votes.VotesUpdateRequestDto
-import com.entrip.domain.entity.Planners
-import com.entrip.domain.entity.Votes
 import com.entrip.service.VotesContentsService
 import com.entrip.service.VotesService
 import org.springframework.beans.factory.annotation.Autowired
@@ -65,5 +63,11 @@ class VotesController(
     fun terminateVote(@PathVariable vote_id: Long) : ResponseEntity<RestAPIMessages> {
         votesService.terminateVote(vote_id)
         return sendResponseHttpByJson("Terminate vote with id : $vote_id", vote_id)
+    }
+
+    @PostMapping("/api/v1/votes/doVote")
+    fun vote(@RequestBody requestDto: VotesContentsCountRequestDto) : ResponseEntity<RestAPIMessages> {
+        val count : Int = votesContentsService.vote(requestDto)
+        return sendResponseHttpByJson("vote at id : ${requestDto.voteContentId}", "count : $count")
     }
 }
