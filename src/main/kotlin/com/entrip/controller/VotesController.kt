@@ -5,7 +5,10 @@ import com.entrip.domain.dto.Votes.VotesReturnDto
 import com.entrip.domain.dto.Votes.VotesSaveRequestDto
 import com.entrip.domain.dto.Votes.VotesUpdateRequestDto
 import com.entrip.domain.entity.Planners
+import com.entrip.domain.entity.Votes
+import com.entrip.service.VotesContentsService
 import com.entrip.service.VotesService
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -15,7 +18,10 @@ import java.nio.charset.Charset
 
 @RestController
 class VotesController(
-    val votesService : VotesService
+    val votesService : VotesService,
+
+    @Autowired
+    val votesContentsService: VotesContentsService
 ) {
     private fun sendResponseHttpByJson(message: String, data: Any) : ResponseEntity<RestAPIMessages> {
         val restAPIMessages = RestAPIMessages(
@@ -53,5 +59,11 @@ class VotesController(
     fun findById(@PathVariable vote_id : Long) : ResponseEntity<RestAPIMessages> {
         val returnDto = votesService.getVotesInfoReturnDto(vote_id)
         return sendResponseHttpByJson("Load votes with id : $vote_id", returnDto)
+    }
+
+    @PostMapping("/api/v1/votes/{vote_id}")
+    fun terminateVote(@PathVariable vote_id: Long) : ResponseEntity<RestAPIMessages> {
+        votesService.terminateVote(vote_id)
+        return sendResponseHttpByJson("Terminate vote with id : $vote_id", vote_id)
     }
 }

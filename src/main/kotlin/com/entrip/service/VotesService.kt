@@ -131,6 +131,12 @@ class VotesService(
             votingUsersList.add(returnDto)
         }
         return VotesFullInfoReturnDto(votes.title, votingUsersList,
-            votes.multipleVote, votes.anonymousVote, votes.author!!.user_id!!)
+            votes.multipleVote, votes.anonymousVote, votes.author!!.user_id!!, votes.voting)
+    }
+
+    @Transactional
+    fun terminateVote(voteId: Long) {
+        val votes : Votes = findVotes(voteId)
+        votes.terminate()
     }
 }

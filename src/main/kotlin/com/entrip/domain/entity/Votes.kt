@@ -47,4 +47,8 @@ class Votes(
         this.deadLine = deadLine
     }
 
+    fun terminate() {
+        this.voting = false
+    }
+
 }
