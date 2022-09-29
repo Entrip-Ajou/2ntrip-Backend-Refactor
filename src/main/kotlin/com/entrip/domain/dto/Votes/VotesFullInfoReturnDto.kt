@@ -5,6 +5,7 @@ class VotesFullInfoReturnDto(
     val contentsAndUsers : MutableList<VotingUsersReturnDto>,
     val multipleVotes: Boolean,
     val anonymousVote: Boolean,
-    val host_id : String
+    val host_id : String,
+    val voting : Boolean
 ) {
 }
