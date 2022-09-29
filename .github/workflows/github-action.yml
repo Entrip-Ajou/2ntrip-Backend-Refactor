@@ -14,8 +14,6 @@ name: Spring Boot & Gradle CI/CD
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 # 환경 변수 설정
 env:
