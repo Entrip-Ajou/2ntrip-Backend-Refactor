@@ -35,12 +35,29 @@ jobs:
         with:
           java-version: 1.8
 
+      - name: make properties files
+        run: |
+          cd ./src/main/resources
+          touch ./application.properties
+          echo "${{ secrets.PROPERTIES_APP }}" > ./application.properties
+          touch ./application-aws-s3.properties
+          echo "${{ secrets.PROPERTIES_AWS_S3 }}" > ./application-aws-s3.properties
+          touch ./application-redis.properties
+          echo "${{ secrets.PROPERTIES_REDIS }}" > ./application-redis.properties
+          touch ./application-security.properties
+          echo "${{ secrets.PROPERTIES_SECURITY }}" > ./application-security.properties
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
       # Build
       - name: Build with Gradle
         run: ./gradlew clean build
+
+      # Docker build & push to DockerHub
+      - name: Docker push
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       # 전송할 파일을 담을 디렉토리 생성
       - name: Make Directory for deliver
