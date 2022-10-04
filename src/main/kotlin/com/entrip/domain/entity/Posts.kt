@@ -16,6 +16,7 @@ class Posts(
     var content: String = "",
     var likeNumber: Long = 0L,
     var commentsNumber: Long = 0L,
+    var postTag: String = "",
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "USER_ID")

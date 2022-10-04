@@ -10,9 +10,10 @@ class PostsRequestDto(
     val title: String,
     val content: String,
     val author: String?,
-    val likeNumber : Long,
-    val commentsNumber : Long,
-    var photoList: MutableList<Photos>? = ArrayList<Photos>()
+    val likeNumber: Long,
+    val commentsNumber: Long,
+    var photoList: MutableList<Photos>? = ArrayList<Photos>(),
+    val postTag: String
 ) {
     constructor(entity: Posts) : this(
         post_id = entity.post_id,
@@ -21,7 +22,8 @@ class PostsRequestDto(
         author = entity.author!!.user_id,
         likeNumber = entity.likeNumber,
         commentsNumber = entity.commentsNumber,
-        photoList = entity.getPhotoListFromEntity(entity.photoSet)
+        photoList = entity.getPhotoListFromEntity(entity.photoSet),
+        postTag = entity.postTag
     )
 
     public fun sortPhotoListWithPriority() = Collections.sort(photoList, PhotosComparator())
