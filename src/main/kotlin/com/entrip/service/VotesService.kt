@@ -2,6 +2,7 @@ package com.entrip.service
 
 import com.entrip.domain.dto.Votes.*
 import com.entrip.domain.dto.VotesContents.VotesContentsReturnDto
+import com.entrip.domain.dto.VotesContents.VotesContentsReturnDtoComparator
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Users
 import com.entrip.domain.entity.Votes
@@ -109,6 +110,8 @@ class VotesService(
         for (content in votesContents) {
             votesContentsList.add(VotesContentsReturnDto(content))
         }
+
+        Collections.sort(votesContentsList, VotesContentsReturnDtoComparator())
 
         return VotesReturnDto(votes, votesContentsList)
     }
