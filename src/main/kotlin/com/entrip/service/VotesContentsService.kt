@@ -51,6 +51,12 @@ class VotesContentsService(
     @Transactional
     fun delete(vote_content_id : Long?) : Long {
         val votesContents = findVotesContents(vote_content_id!!)
+
+        val usersSet : MutableSet<Users> = votesContents.usersSet
+        for (user in usersSet) {
+            user.votesContents.remove(votesContents)
+        }
+
         votesContents.votes!!.contents.remove(votesContents)
         votesContentsRepository.delete(votesContents)
         return vote_content_id
@@ -87,6 +93,7 @@ class VotesContentsService(
         val votesContents : VotesContents = findVotesContents(requestDto.voteContentId)
 
         votesContents.usersSet.add(users)
+        users.votesContents.add(votesContents)
 
         votesContents.vote()
         return votesContents.selectedCount

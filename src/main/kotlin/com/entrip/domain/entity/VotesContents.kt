@@ -24,8 +24,9 @@ class VotesContents (
     var contents : String,
     var selectedCount : Int = 0,
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "USER_ID")
+    @Column
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "VOTES_CONTENTS_USERS")
     var usersSet : MutableSet<Users> = TreeSet(),
 
     @ManyToOne(fetch = FetchType.EAGER)
