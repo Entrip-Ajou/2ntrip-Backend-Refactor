@@ -124,12 +124,16 @@ class VotesService(
         val votes = findVotes(voteId)
         val votesContents = votes.contents
         val votesContentsIterator : Iterator<VotesContents> = votesContents.iterator()
-        val votingUsersList : MutableList<VotingUsersReturnDto> = ArrayList()
+        val votingUsersList : MutableList<UsersAndContentsReturnDto> = ArrayList()
+
         while (votesContentsIterator.hasNext()) {
             val content = votesContentsIterator.next()
-            val returnDto : VotingUsersReturnDto = votesContentsService.getVotingUsersReturnDto(content)
+            val returnDto : UsersAndContentsReturnDto = votesContentsService.getVotingUsersReturnDto(content)
             votingUsersList.add(returnDto)
         }
+
+        Collections.sort(votingUsersList, VotingUsersReturnDtoComparator())
+
         return VotesFullInfoReturnDto(votes.title, votingUsersList,
             votes.multipleVote, votes.anonymousVote, votes.author!!.user_id!!, votes.voting)
     }

@@ -1,11 +1,11 @@
 package com.entrip.service
 
-import com.entrip.domain.dto.Votes.VotingUsersReturnDto
+import com.entrip.domain.dto.Votes.VotesUserReturnDto
+import com.entrip.domain.dto.Votes.UsersAndContentsReturnDto
 import com.entrip.domain.dto.VotesContents.VotesContentsCountRequestDto
 import com.entrip.domain.entity.Users
 import com.entrip.domain.entity.Votes
 import com.entrip.domain.entity.VotesContents
-import com.entrip.exception.NotAcceptedException
 import com.entrip.repository.UsersRepository
 import com.entrip.repository.VotesContentsRepository
 import com.entrip.repository.VotesRepository
@@ -76,27 +76,25 @@ class VotesContentsService(
         return votesContents
     }
 
-    fun getVotingUsersReturnDto(content: VotesContents): VotingUsersReturnDto {
-        val contentName = content.contents
-        val users = content.usersSet
-        val usersIterator : Iterator<Users> = users!!.iterator()
-        val usersList : MutableList<Users> = ArrayList()
+    fun getVotingUsersReturnDto(content: VotesContents): UsersAndContentsReturnDto {
+        val usersIterator = content.usersSet.iterator()
+        val usersList : MutableList<VotesUserReturnDto> = ArrayList()
         while (usersIterator.hasNext()) {
-            usersList.add(usersIterator.next())
+            val usersReturnDto = VotesUserReturnDto(usersIterator.next())
+            usersList.add(usersReturnDto)
         }
-        return VotingUsersReturnDto(contentName, usersList)
+        return UsersAndContentsReturnDto(content.votesContent_id!!, content.contents, usersList)
     }
 
     @Transactional
-    fun vote(requestDto : VotesContentsCountRequestDto) : Int {
+    fun vote(requestDto : VotesContentsCountRequestDto) {
         val users : Users = findUsers(requestDto.userId)
-        val votesContents : VotesContents = findVotesContents(requestDto.voteContentId)
-
-        votesContents.usersSet.add(users)
-        users.votesContents.add(votesContents)
-
-        votesContents.vote()
-        return votesContents.selectedCount
+        for (votesContentsId in requestDto.voteContentIds) {
+            val votesContents : VotesContents = findVotesContents(votesContentsId)
+            votesContents.usersSet.add(users)
+            users.votesContents.add(votesContents)
+            votesContents.vote()
+        }
     }
 
     private fun findUsers(user_id: String?): Users {

@@ -1,7 +1,7 @@
 package com.entrip.domain.dto.VotesContents
 
 class VotesContentsCountRequestDto(
-    val voteContentId : Long,
+    val voteContentIds : MutableList<Long>,
     val userId : String
 ) {
 }
