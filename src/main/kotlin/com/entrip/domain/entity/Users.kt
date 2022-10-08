@@ -43,9 +43,6 @@ class Users(
     @OneToMany(mappedBy = "author", fetch = FetchType.EAGER, orphanRemoval = true)
     var notices: MutableSet<Notices> = TreeSet(),
 
-    @Column
-    @ManyToMany(mappedBy = "usersSet", fetch = FetchType.EAGER)
-    var votesContents : MutableSet<VotesContents> = TreeSet(),
 
     @Column
     @OneToMany(mappedBy = "author", fetch = FetchType.EAGER)

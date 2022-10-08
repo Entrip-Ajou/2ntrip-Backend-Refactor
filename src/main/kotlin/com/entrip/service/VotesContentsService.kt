@@ -86,21 +86,10 @@ class VotesContentsService(
         val users : Users = findUsers(requestDto.userId)
         val votesContents : VotesContents = findVotesContents(requestDto.voteContentId)
 
-//        if (!votes.voting) {
-//            throw NotAcceptedException("this vote is closed")
-//        }
-//
-//        if(users.votesContents.contains(votesContents) && votesContents.usersSet!!.contains(users)) {
-//            throw NotAcceptedException("multiple-choice is not allowed")
-//        }
-
-        users.votesContents.add(votesContents)
-        votesContents.usersSet!!.add(users)
+        votesContents.usersSet.add(users)
 
         votesContents.vote()
-
         return votesContents.selectedCount
-
     }
 
     private fun findUsers(user_id: String?): Users {

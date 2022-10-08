@@ -11,6 +11,7 @@ import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToMany
 import javax.persistence.ManyToOne
+import javax.persistence.OneToMany
 
 @Entity
 class VotesContents (
@@ -23,9 +24,9 @@ class VotesContents (
     var contents : String,
     var selectedCount : Int = 0,
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "USER_ID")
-    var usersSet : MutableSet<Users> ?= TreeSet(),
+    var usersSet : MutableSet<Users> = TreeSet(),
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "VOTE_ID")
