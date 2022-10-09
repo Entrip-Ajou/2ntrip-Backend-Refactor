@@ -6,6 +6,7 @@ import com.entrip.domain.dto.VotesContents.VotesContentsCountRequestDto
 import com.entrip.domain.entity.Users
 import com.entrip.domain.entity.Votes
 import com.entrip.domain.entity.VotesContents
+import com.entrip.exception.NotAcceptedException
 import com.entrip.repository.UsersRepository
 import com.entrip.repository.VotesContentsRepository
 import com.entrip.repository.VotesRepository
@@ -87,14 +88,27 @@ class VotesContentsService(
     }
 
     @Transactional
-    fun vote(requestDto : VotesContentsCountRequestDto) {
+    fun vote(requestDto : VotesContentsCountRequestDto) : Long? {
         val users : Users = findUsers(requestDto.userId)
+        val votes = checkValidVotes(requestDto.votesId)
         for (votesContentsId in requestDto.voteContentIds) {
             val votesContents : VotesContents = findVotesContents(votesContentsId)
             votesContents.usersSet.add(users)
             users.votesContents.add(votesContents)
             votesContents.vote()
         }
+        return votes.vote_id
+    }
+
+    private fun checkValidVotes(votesId: Long) : Votes {
+        val votes : Votes = votesRepository.findById(votesId).orElseThrow {
+            NotAcceptedException("votes is not exist")
+        }
+        if (!votes.voting) {
+            throw NotAcceptedException("votes is terminated")
+        }
+
+        return votes
     }
 
     private fun findUsers(user_id: String?): Users {

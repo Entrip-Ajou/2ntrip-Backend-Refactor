@@ -67,7 +67,7 @@ class VotesController(
 
     @PostMapping("/api/v1/votes/doVote")
     fun vote(@RequestBody requestDto: VotesContentsCountRequestDto) : ResponseEntity<RestAPIMessages> {
-        votesContentsService.vote(requestDto)
-        return sendResponseHttpByJson("successfully voted", "")
+        val voteId = votesContentsService.vote(requestDto)
+        return sendResponseHttpByJson("successfully voted at $voteId", "")
     }
 }
