@@ -46,7 +46,7 @@ class VotesController(
         return sendResponseHttpByJson("Delete votes with id : $voteId", vote_id)
     }
 
-    @PutMapping("/api/v1/votes/{vote_id}")
+    @PutMapping("/api/v1/votes")
     fun update(@RequestBody requestDto: VotesUpdateRequestDto) : ResponseEntity<RestAPIMessages> {
         val voteId : Long? = votesService.update(requestDto)
         val returnDto = votesService.findById(voteId!!)
