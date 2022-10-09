@@ -11,7 +11,9 @@ import com.entrip.repository.PlannersRepository
 import com.entrip.repository.UsersRepository
 import com.entrip.repository.VotesRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 import java.util.Collections
 import javax.transaction.Transactional
 
@@ -145,5 +147,20 @@ class VotesService(
     fun terminateVote(voteId: Long) {
         val votes : Votes = findVotes(voteId)
         votes.terminate()
+    }
+
+    @Scheduled(cron = "* 0/10 * * * *")
+    @Transactional
+    fun terminateOverDueVotes() {
+        val votesList = votesRepository.findAll()
+
+        for (vote in votesList) {
+            val deadLine = vote.deadLine.toLocalDateTime()
+            val currentDate = LocalDateTime.now()
+
+            if (deadLine.plusMinutes(5).isAfter(currentDate)) {
+                vote.terminate()
+            }
+        }
     }
 }
