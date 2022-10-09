@@ -1,6 +1,6 @@
 package com.entrip.domain.entity
 
-import java.sql.Timestamp
+import java.time.LocalDateTime
 import java.util.TreeSet
 import javax.persistence.*
 
@@ -16,7 +16,7 @@ class Votes(
     var multipleVote : Boolean,
     var anonymousVote : Boolean,
     var voting : Boolean,
-    var deadLine : Timestamp,
+    var deadLine : LocalDateTime,
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "USER_ID")
@@ -43,7 +43,7 @@ class Votes(
         this.multipleVote = multipleVote
     }
 
-    fun updateDeadLine(deadLine: Timestamp) {
+    fun updateDeadLine(deadLine: LocalDateTime) {
         this.deadLine = deadLine
     }
 

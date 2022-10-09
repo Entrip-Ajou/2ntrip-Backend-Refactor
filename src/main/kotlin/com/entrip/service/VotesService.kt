@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Collections
 import javax.transaction.Transactional
 
@@ -65,7 +66,10 @@ class VotesService(
         votes.updateTitle(requestDto.title)
         votes.updateAnonymousVote(requestDto.anonymousVote)
         votes.updateMultipleVote(requestDto.multipleVote)
-        votes.updateDeadLine(requestDto.deadLine)
+
+        val formatter : DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        val deadLineToDateTime : LocalDateTime = LocalDateTime.parse(requestDto.deadLine, formatter)
+        votes.updateDeadLine(deadLineToDateTime)
 
         return votes.vote_id
     }
@@ -149,16 +153,16 @@ class VotesService(
         votes.terminate()
     }
 
-    @Scheduled(cron = "* 0/10 * * * *")
+    @Scheduled(cron = "0 0/10 * * * *")
     @Transactional
     fun terminateOverDueVotes() {
         val votesList = votesRepository.findAll()
 
         for (vote in votesList) {
-            val deadLine = vote.deadLine.toLocalDateTime()
+            val deadLine = vote.deadLine
             val currentDate = LocalDateTime.now()
 
-            if (deadLine.plusMinutes(5).isAfter(currentDate)) {
+            if (deadLine.isBefore(currentDate)) {
                 vote.terminate()
             }
         }
