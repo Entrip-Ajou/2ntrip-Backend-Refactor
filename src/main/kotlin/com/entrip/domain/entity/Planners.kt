@@ -29,7 +29,11 @@ class Planners(
 
     @Column
     @OneToMany(mappedBy = "planners", fetch = FetchType.EAGER)
-    var notices: MutableSet<Notices> = TreeSet()
+    var notices: MutableSet<Notices> = TreeSet(),
+
+    @Column
+    @OneToMany(mappedBy = "planners", fetch = FetchType.EAGER)
+    var votes: MutableSet<Votes> = TreeSet(),
 
 ) : BaseTimeEntity() {
 

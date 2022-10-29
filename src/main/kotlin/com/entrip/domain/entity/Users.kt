@@ -44,6 +44,15 @@ class Users(
     var notices: MutableSet<Notices> = TreeSet(),
 
     @Column
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "VOTES_CONTENTS_USERS")
+    var votesContents : MutableSet<VotesContents> = TreeSet(),
+
+    @Column
+    @OneToMany(mappedBy = "author", fetch = FetchType.EAGER)
+    var votes : MutableSet<Votes> = TreeSet(),
+
+    @Column
     val nickname: String,
     var gender: Int? = null,
     var photoUrl: String? = null,

@@ -9,6 +9,8 @@ import com.entrip.domain.dto.Plans.PlansResponseDto
 import com.entrip.domain.dto.Plans.PlansReturnDto
 import com.entrip.domain.dto.Users.UsersResponseDto
 import com.entrip.domain.dto.Users.UsersReturnDto
+import com.entrip.domain.dto.Votes.VotesReturnDto
+import com.entrip.domain.dto.Votes.VotesReturnDtoComparator
 import com.entrip.domain.entity.Notices
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Plans
@@ -42,6 +44,9 @@ class PlannersService(
 
     @Autowired
     private val noticesService: NoticesService,
+
+    @Autowired
+    private val votesService: VotesService,
 
     @Autowired
     private val eventPublisher: ApplicationEventPublisher
@@ -159,6 +164,20 @@ class PlannersService(
         }
         Collections.sort(noticesList, NoticesReturnDtoComparator())
         return noticesList
+    }
+
+    fun findAllVotesWithPlannerID(planner_id : Long) : MutableList<VotesReturnDto> {
+        val planners : Planners = findPlanners(planner_id)
+        val votesListReturnDto : MutableList<VotesReturnDto> = ArrayList()
+
+        for (vote in planners.votes) {
+            val returnDto = votesService.findById(vote.vote_id!!)
+            votesListReturnDto.add(returnDto)
+        }
+
+        Collections.sort(votesListReturnDto, VotesReturnDtoComparator())
+
+        return votesListReturnDto
     }
 
     public fun plannerIsExistWithId(planner_id: Long): Boolean {
