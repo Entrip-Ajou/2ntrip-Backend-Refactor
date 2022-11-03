@@ -76,8 +76,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           aws deploy create-deployment \
-          --application-name 2ntrip-api-build \
-          --deployment-group-name 2ntrip-api-build-deploy-group \
+          --application-name $CODEDEPLOY_APPLICATION_NAME \
+          --deployment-group-name $DEPLOYMENT_GROUP_NAME \
           --file-exists-behavior OVERWRITE \
-          --s3-location bucket=2ntrip-api-build,bundleType=zip,key=2ntrip-api-build.zip \
+          --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip \
           --region ap-northeast-2
