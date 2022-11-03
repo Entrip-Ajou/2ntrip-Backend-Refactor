@@ -56,7 +56,7 @@ jobs:
 
       # 압축파일 형태로 전달
       - name: Make zip file
-        run: zip -r -qq -j ./springboot-intro-build.zip ./deploy/
+        run: zip -r -qq -j ./2ntrip-api-build.zip ./deploy/
 
       # S3 Bucket으로 copy
       - name: Deliver to AWS S3
@@ -67,7 +67,7 @@ jobs:
           aws s3 cp \
           --region ap-northeast-2 \
           --acl private \
-          ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip
+          ./2ntrip-api-build.zip s3://2ntrip-api-build/$GITHUB_SHA.zip
 
       # Deploy
       - name: Deploy
