@@ -82,7 +82,8 @@ class VotesController(
 
     @GetMapping("api/v1/votes/getPreviousVotes")
     fun getPreviousVotes(@RequestBody requestDto: PreviousVotesContentsRequestDto) : ResponseEntity<RestAPIMessages> {
+        val user_id = requestDto.user_id
         val returnDto = votesContentsService.getPreviousVoteContents(requestDto)
-        return sendResponseHttpByJson("Load votesContents", returnDto)
+        return sendResponseHttpByJson("Load previous votesContents with $user_id", returnDto)
     }
 }
