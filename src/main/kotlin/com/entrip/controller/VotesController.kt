@@ -71,4 +71,11 @@ class VotesController(
         val returnDto = votesService.getVotesInfoReturnDto(voteId!!)
         return sendResponseHttpByJson("successfully voted at $voteId", returnDto)
     }
+
+    @PostMapping("/api/v1/votes/undoVote")
+    fun undoVote(@RequestBody requestDto: VotesContentsCountRequestDto) : ResponseEntity<RestAPIMessages> {
+        val voteId = votesContentsService.undoVote(requestDto)
+        val returnDto = votesService.getVotesInfoReturnDto(voteId!!)
+        return sendResponseHttpByJson("successfully undoVoted at $voteId", returnDto)
+    }
 }

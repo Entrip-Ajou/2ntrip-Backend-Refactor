@@ -100,6 +100,21 @@ class VotesContentsService(
         return votes.vote_id
     }
 
+    @Transactional
+    fun undoVote(requestDto : VotesContentsCountRequestDto) : Long? {
+        val users : Users = findUsers(requestDto.userId)
+        val votes = checkValidVotes(requestDto.votesId)
+        val votesContents : MutableSet<VotesContents> = votes.contents
+        for (votesContent in votesContents) {
+            if (votesContent.usersSet.contains(users)) {
+                votesContent.usersSet.remove(users)
+                users.votesContents.remove(votesContent)
+                votesContent.undoVote()
+            }
+        }
+        return votes.vote_id
+    }
+
     private fun checkValidVotes(votesId: Long) : Votes {
         val votes : Votes = votesRepository.findById(votesId).orElseThrow {
             NotAcceptedException("votes is not exist")
