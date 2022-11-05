@@ -90,9 +90,9 @@ class VotesContentsService(
 
     @Transactional
     fun vote(requestDto : VotesContentsCountRequestDto) : Long? {
-        val users : Users = findUsers(requestDto.userId)
-        val votes = checkValidVotes(requestDto.votesId)
-        for (votesContentsId in requestDto.voteContentIds) {
+        val users : Users = findUsers(requestDto.user_id)
+        val votes = checkValidVotes(requestDto.vote_id)
+        for (votesContentsId in requestDto.voteContents_id) {
             val votesContents : VotesContents = findVotesContents(votesContentsId)
             votesContents.usersSet.add(users)
             users.votesContents.add(votesContents)
@@ -103,8 +103,8 @@ class VotesContentsService(
 
     @Transactional
     fun undoVote(requestDto : VotesContentsCountRequestDto) : Long? {
-        val users : Users = findUsers(requestDto.userId)
-        val votes = checkValidVotes(requestDto.votesId)
+        val users : Users = findUsers(requestDto.user_id)
+        val votes = checkValidVotes(requestDto.vote_id)
         val votesContents : MutableSet<VotesContents> = votes.contents
         for (votesContent in votesContents) {
             if (votesContent.usersSet.contains(users)) {
