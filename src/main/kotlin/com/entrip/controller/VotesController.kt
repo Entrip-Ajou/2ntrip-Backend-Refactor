@@ -4,6 +4,7 @@ import com.entrip.domain.RestAPIMessages
 import com.entrip.domain.dto.VotesContents.VotesContentsCountRequestDto
 import com.entrip.domain.dto.Votes.VotesSaveRequestDto
 import com.entrip.domain.dto.Votes.VotesUpdateRequestDto
+import com.entrip.domain.dto.VotesContents.PreviousVotesContentsRequestDto
 import com.entrip.service.VotesContentsService
 import com.entrip.service.VotesService
 import org.springframework.beans.factory.annotation.Autowired
@@ -77,5 +78,11 @@ class VotesController(
         val voteId = votesContentsService.undoVote(requestDto)
         val returnDto = votesService.getVotesInfoReturnDto(voteId!!)
         return sendResponseHttpByJson("successfully undoVoted at $voteId", returnDto)
+    }
+
+    @GetMapping("api/v1/votes/getPreviousVotes")
+    fun getPreviousVotes(@RequestBody requestDto: PreviousVotesContentsRequestDto) : ResponseEntity<RestAPIMessages> {
+        val returnDto = votesContentsService.getPreviousVoteContents(requestDto)
+        return sendResponseHttpByJson("Load votesContents", returnDto)
     }
 }

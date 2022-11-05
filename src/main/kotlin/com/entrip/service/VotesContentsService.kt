@@ -2,6 +2,7 @@ package com.entrip.service
 
 import com.entrip.domain.dto.Votes.VotesUserReturnDto
 import com.entrip.domain.dto.Votes.UsersAndContentsReturnDto
+import com.entrip.domain.dto.VotesContents.PreviousVotesContentsRequestDto
 import com.entrip.domain.dto.VotesContents.VotesContentsCountRequestDto
 import com.entrip.domain.entity.Users
 import com.entrip.domain.entity.Votes
@@ -113,6 +114,22 @@ class VotesContentsService(
             }
         }
         return votes.vote_id
+    }
+
+    fun getPreviousVoteContents(requestDto: PreviousVotesContentsRequestDto): MutableList<Long> {
+        val previousVotesContents : MutableList<Long> = ArrayList()
+        val votes : Votes = findVotes(requestDto.vote_id)
+        val user : Users = findUsers(requestDto.user_id)
+        val votesContents : MutableSet<VotesContents> = votes.contents
+
+        for (voteContent in votesContents) {
+            if (voteContent.usersSet.contains(user)) {
+                val contentId = voteContent.votesContent_id
+                previousVotesContents.add(contentId!!)
+            }
+        }
+
+        return previousVotesContents
     }
 
     private fun checkValidVotes(votesId: Long) : Votes {
