@@ -16,7 +16,7 @@ class Votes(
     var multipleVote : Boolean,
     var anonymousVote : Boolean,
     var voting : Boolean,
-    var deadLine : LocalDateTime,
+    var deadLine : LocalDateTime?,
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "USER_ID")
