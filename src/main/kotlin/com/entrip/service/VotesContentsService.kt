@@ -2,6 +2,7 @@ package com.entrip.service
 
 import com.entrip.domain.dto.Votes.VotesUserReturnDto
 import com.entrip.domain.dto.Votes.UsersAndContentsReturnDto
+import com.entrip.domain.dto.VotesContents.PreviousVotesContentsRequestDto
 import com.entrip.domain.dto.VotesContents.VotesContentsCountRequestDto
 import com.entrip.domain.entity.Users
 import com.entrip.domain.entity.Votes
@@ -89,15 +90,46 @@ class VotesContentsService(
 
     @Transactional
     fun vote(requestDto : VotesContentsCountRequestDto) : Long? {
-        val users : Users = findUsers(requestDto.userId)
-        val votes = checkValidVotes(requestDto.votesId)
-        for (votesContentsId in requestDto.voteContentIds) {
+        val users : Users = findUsers(requestDto.user_id)
+        val votes = checkValidVotes(requestDto.vote_id)
+        for (votesContentsId in requestDto.voteContents_id) {
             val votesContents : VotesContents = findVotesContents(votesContentsId)
             votesContents.usersSet.add(users)
             users.votesContents.add(votesContents)
             votesContents.vote()
         }
         return votes.vote_id
+    }
+
+    @Transactional
+    fun undoVote(requestDto : VotesContentsCountRequestDto) : Long? {
+        val users : Users = findUsers(requestDto.user_id)
+        val votes = checkValidVotes(requestDto.vote_id)
+        val votesContents : MutableSet<VotesContents> = votes.contents
+        for (votesContent in votesContents) {
+            if (votesContent.usersSet.contains(users)) {
+                votesContent.usersSet.remove(users)
+                users.votesContents.remove(votesContent)
+                votesContent.undoVote()
+            }
+        }
+        return votes.vote_id
+    }
+
+    fun getPreviousVoteContents(requestDto: PreviousVotesContentsRequestDto): MutableList<Long> {
+        val previousVotesContents : MutableList<Long> = ArrayList()
+        val votes : Votes = findVotes(requestDto.vote_id)
+        val user : Users = findUsers(requestDto.user_id)
+        val votesContents : MutableSet<VotesContents> = votes.contents
+
+        for (voteContent in votesContents) {
+            if (voteContent.usersSet.contains(user)) {
+                val contentId = voteContent.votesContent_id
+                previousVotesContents.add(contentId!!)
+            }
+        }
+
+        return previousVotesContents
     }
 
     private fun checkValidVotes(votesId: Long) : Votes {

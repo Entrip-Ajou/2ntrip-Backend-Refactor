@@ -45,4 +45,8 @@ class VotesContents (
     fun vote() {
         selectedCount++
     }
+
+    fun undoVote() {
+        selectedCount--
+    }
 }

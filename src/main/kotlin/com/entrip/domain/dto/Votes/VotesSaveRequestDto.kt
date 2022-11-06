@@ -10,13 +10,18 @@ class VotesSaveRequestDto(
     val contents : MutableList<String>,
     val multipleVotes : Boolean,
     val anonymousVotes : Boolean,
-    val deadLine : String,
+    val deadLine : String?,
     val planner_id : Long,
     val author : String,
 ) {
     fun toEntity() : Votes {
-        val formatter : DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-        val deadLineToDateTime : LocalDateTime = LocalDateTime.parse(deadLine, formatter)
+        val deadLineToDateTime : LocalDateTime? = if (deadLine != null) {
+            val formatter : DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+            LocalDateTime.parse(deadLine, formatter)
+        } else {
+            null
+        }
+
         return Votes(
             title = title,
             multipleVote = multipleVotes,

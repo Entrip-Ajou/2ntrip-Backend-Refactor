@@ -162,8 +162,10 @@ class VotesService(
             val deadLine = vote.deadLine
             val currentDate = LocalDateTime.now()
 
-            if (deadLine.isBefore(currentDate)) {
-                vote.terminate()
+            if (deadLine != null) {
+                if (deadLine.isBefore(currentDate)) {
+                    vote.terminate()
+                }
             }
         }
     }
