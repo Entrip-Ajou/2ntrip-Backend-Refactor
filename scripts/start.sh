@@ -9,8 +9,8 @@ ABSPATH=$(readlink -f $0)
 ABSDIR=$(dirname $ABSPATH)
 source ${ABSDIR}/profile.sh
 
-REPOSITORY=/home/ec2-user/app
-PROJECT_NAME=springboot-intro
+REPOSITORY=/home/ec2-user/app/step1
+PROJECT_NAME=entrip-api-kotlin
 
 echo "> Build 파일 복사"
 echo "> cp $REPOSITORY/deploy/*.jar $REPOSITORY/"
