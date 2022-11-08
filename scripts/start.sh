@@ -6,11 +6,11 @@ ABSPATH=$(readlink -f $0)
 ABSDIR=$(dirname $ABSPATH)
 source ${ABSDIR}/profile.sh
 
-REPOSITORY=/home/ec2-user/app
-PROJECT_NAME=entrip-api-kotlin
+REPOSITORY=/home/ec2-user/app/step3
+PROJECT_NAME=entrip-api-kotlind
 
 echo "> Build 파일 복사"
-echo "> cp $REPOSITORY/deploy/*.jar $REPOSITORY/"
+echo "> cp $REPOSITORY/zip/*.jar $REPOSITORY/"
 
 cp $REPOSITORY/deploy/*.jar $REPOSITORY/
 
@@ -29,10 +29,6 @@ IDLE_PROFILE=$(find_idle_profile)
 
 echo "> $JAR_NAME 를 profile=$IDLE_PROFILE 로 실행합니다."
 nohup java -jar \
-    -Dspring.config.location=classpath:/application.properties,
-    classpath:/application-$IDLE_PROFILE.properties,
-    classpath:/application-aws-s3.properties,
-    classpath:/application-redis.properties,
-    classpath:/application-security.properties \
+    -Dspring.config.location=classpath:/application.properties,classpath:/application-$IDLE_PROFILE.properties,classpath:/application-aws-s3.properties,classpath:/application-redis.properties,classpath:/application-security.properties \
     -Dspring.profiles.active=$IDLE_PROFILE \
-    $REPOSITORY/$JAR_NAME 2>&1 &
+    $JAR_NAME > $REPOSITORY/nohup.out 2>&1 &
