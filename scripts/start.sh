@@ -12,7 +12,7 @@ PROJECT_NAME=entrip-api-kotlind
 echo "> Build 파일 복사"
 echo "> cp $REPOSITORY/zip/*.jar $REPOSITORY/"
 
-cp $REPOSITORY/deploy/*.jar $REPOSITORY/
+cp $REPOSITORY/zip/*.jar $REPOSITORY/
 
 echo "> 새 어플리케이션 배포"
 JAR_NAME=$(ls -tr $REPOSITORY/*.jar | tail -n 1)
