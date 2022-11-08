@@ -8,13 +8,13 @@ function find_idle_profile()
     # curl 결과로 현재 동작중인 profile를 CURRENT_PROFILE에 저장
     # curl 명령어를 통해서, 해당 url (8080포트 : real1)의 Http Status Code를 받아옴.
     # real1 server port : 8080, real2 server port : 8081
-    RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://2ntrip.com:8080/api/v2/profile)
+    RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" localhost/api/v2/profile)
 
-    if [ ${RESPONSE_CODE} == 200 ] # 200과 같은 경우 : 정상 작동하는 경우
+    if [ ${RESPONSE_CODE} -ge 400 ]
     then
-        CURRENT_PROFILE=real1
+        CURRENT_PROFILE=real2
     else
-        CURRENT_PROFILE=$(curl -s https://2ntrip.com:8081/api/v2/profile)
+        CURRENT_PROFILE=$(curl -s localhost/api/v2/profile)
     fi
 
     # IDLE_PROFILE : nginx와 연결되지 않은 profile
@@ -37,8 +37,8 @@ function find_idle_port()
 
     if [ ${IDLE_PROFILE} == real1 ]
     then
-      echo "8080"
-    else
       echo "8081"
+    else
+      echo "8082"
     fi
 }
