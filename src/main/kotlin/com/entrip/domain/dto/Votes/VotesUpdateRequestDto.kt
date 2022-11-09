@@ -5,6 +5,6 @@ class VotesUpdateRequestDto(
     val title : String,
     val multipleVote : Boolean,
     val anonymousVote : Boolean,
-    val deadLine : String
+    val deadLine : String?
 ) {
 }

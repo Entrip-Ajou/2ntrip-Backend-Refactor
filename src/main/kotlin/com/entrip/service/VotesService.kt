@@ -68,7 +68,12 @@ class VotesService(
         votes.updateMultipleVote(requestDto.multipleVote)
 
         val formatter : DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-        val deadLineToDateTime : LocalDateTime = LocalDateTime.parse(requestDto.deadLine, formatter)
+        val deadLineToDateTime : LocalDateTime? = if (requestDto.deadLine != null) {
+            LocalDateTime.parse(requestDto.deadLine, formatter)
+        } else {
+            null
+        }
+
         votes.updateDeadLine(deadLineToDateTime)
 
         return votes.vote_id

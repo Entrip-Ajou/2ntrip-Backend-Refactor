@@ -43,7 +43,7 @@ class Votes(
         this.multipleVote = multipleVote
     }
 
-    fun updateDeadLine(deadLine: LocalDateTime) {
+    fun updateDeadLine(deadLine: LocalDateTime?) {
         this.deadLine = deadLine
     }
 
