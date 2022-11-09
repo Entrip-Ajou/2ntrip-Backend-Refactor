@@ -80,7 +80,7 @@ class VotesController(
         return sendResponseHttpByJson("successfully undoVoted at $voteId", returnDto)
     }
 
-    @GetMapping("api/v1/votes/getPreviousVotes")
+    @PostMapping("api/v1/votes/getPreviousVotes")
     fun getPreviousVotes(@RequestBody requestDto: PreviousVotesContentsRequestDto) : ResponseEntity<RestAPIMessages> {
         val user_id = requestDto.user_id
         val returnDto = votesContentsService.getPreviousVoteContents(requestDto)
