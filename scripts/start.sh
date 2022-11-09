@@ -30,6 +30,6 @@ IDLE_PROFILE=$(find_idle_profile)
 
 echo "> $JAR_NAME 를 profile=$IDLE_PROFILE 로 실행합니다."
 nohup java -jar \
-    -Dspring.config.location=$PROPERTIES_DIR/*.properties\
+    -Dspring.config.location=$PROPERTIES_DIR/application.properties,application-aws-s3.properties,application-real1.properties,application-real2.properties,application-redis.properties,application-security.properties\
     -Dspring.profiles.active=$IDLE_PROFILE \
     $JAR_NAME > $REPOSITORY/nohup.out 2>&1 &
