@@ -8,6 +8,7 @@ source ${ABSDIR}/profile.sh
 
 REPOSITORY=/home/ec2-user/app/step3
 PROJECT_NAME=entrip-api-kotlind
+PROPERTIES_DIR=/home/ec2-user/app/step3/properties
 
 echo "> Build 파일 복사"
 echo "> cp $REPOSITORY/zip/*.jar $REPOSITORY/"
@@ -29,6 +30,6 @@ IDLE_PROFILE=$(find_idle_profile)
 
 echo "> $JAR_NAME 를 profile=$IDLE_PROFILE 로 실행합니다."
 nohup java -jar \
-    -Dspring.config.location=classpath:/application.properties,classpath:/application-$IDLE_PROFILE.properties,classpath:/application-aws-s3.properties,classpath:/application-redis.properties,classpath:/application-security.properties\
+    -Dspring.config.location=$PROPERTIES_DIR/*.properties,$PROPERTIES_DIR/keystore.p12\
     -Dspring.profiles.active=$IDLE_PROFILE \
     $JAR_NAME > $REPOSITORY/nohup.out 2>&1 &
