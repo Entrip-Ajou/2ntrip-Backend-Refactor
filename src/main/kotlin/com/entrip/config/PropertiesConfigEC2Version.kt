@@ -4,12 +4,11 @@ import org.springframework.beans.factory.config.PropertiesFactoryBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
-import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.PathResource
 
 @Primary
 @Configuration
-class TempPropertiesConfig {
+class PropertiesConfigEC2Version {
 
     private val defaultEC2Path: String = "/home/ec2-user/app/step3/properties/"
 
