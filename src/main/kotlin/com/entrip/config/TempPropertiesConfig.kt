@@ -11,6 +11,8 @@ import org.springframework.core.io.PathResource
 @Configuration
 class TempPropertiesConfig {
 
+    private val defaultEC2Path: String = "/home/ec2-user/app/step3/properties/"
+
     private fun propertiesFactoryBean(path: String): PropertiesFactoryBean {
         val propertiesFactoryBean: PropertiesFactoryBean = PropertiesFactoryBean()
         val pathResource: PathResource = PathResource(path)
@@ -21,13 +23,13 @@ class TempPropertiesConfig {
 
     @Bean(name = arrayOf("awsS3"))
     public fun propertiesFactoryBeanForS3(): PropertiesFactoryBean =
-        propertiesFactoryBean("file:./application-aws-s3.properties")
+        propertiesFactoryBean("${defaultEC2Path}application-aws-s3.properties")
 
     @Bean(name = arrayOf("redis"))
     public fun propertiesFactoryBeanForRedis(): PropertiesFactoryBean =
-        propertiesFactoryBean("file:./application-redis.properties")
+        propertiesFactoryBean("${defaultEC2Path}application-redis.properties")
 
     @Bean(name = arrayOf("security"))
     public fun propertiesFactoryBeanForSecurity(): PropertiesFactoryBean =
-        propertiesFactoryBean("file:./application-security.properties")
+        propertiesFactoryBean("${defaultEC2Path}application-security.properties")
 }
