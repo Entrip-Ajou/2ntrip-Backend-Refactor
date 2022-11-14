@@ -32,3 +32,4 @@ class PropertiesConfigEC2Version {
     public fun propertiesFactoryBeanForSecurity(): PropertiesFactoryBean =
         propertiesFactoryBean("${defaultEC2Path}application-security.properties")
 }
+//
