@@ -50,5 +50,4 @@
 //        propertiesFactoryBean.setLocation(classPathResource)
 //        return propertiesFactoryBean
 //    }
-//
 //}
