@@ -26,7 +26,7 @@ class S3Uploader(
 
     private fun convert(file: MultipartFile): Optional<File> {
         val convertFile: File = File(System.getProperty("user.dir") + "/" + file.originalFilename)
-        Runtime.getRuntime().exec("chmod 777 " + System.getProperty("user.dir") + "/" + file.originalFilename)
+        Runtime.getRuntime().exec("chmod 777 " + System.getProperty("user.dir") + "/" + convertFile.name)
         logger.info(convertFile.absolutePath)
         if (convertFile.createNewFile()) {
             try {
