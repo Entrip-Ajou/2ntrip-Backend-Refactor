@@ -137,16 +137,19 @@ class UsersService(
         usersRepository.existsById(email)
 
     public fun login(usersLoginRequestDto: UsersLoginRequestDto): UsersLoginResReturnDto {
-        if (!isExistsUser(usersLoginRequestDto.user_id)) throw NotAcceptedException("Email is not valid.")
+        if (!isExistsUser(usersLoginRequestDto.user_id)) throw NotAcceptedException(DummyUsersLoginResReturnDto("Email is not valid"))
         val users = findUsers(usersLoginRequestDto.user_id)
         if (!passwordEncoder.matches(
                 usersLoginRequestDto.password,
                 users.password
             )
-        ) throw NotAcceptedException("Password is not valid.")
+        ) throw NotAcceptedException(DummyUsersLoginResReturnDto("Password is not valid"))
         val accessToken: String = jwtTokenProvider.createAccessToken(usersLoginRequestDto.user_id)
         val refreshToken: String = jwtTokenProvider.createRefreshToken(usersLoginRequestDto.user_id)
         return UsersLoginResReturnDto(users.user_id!!, accessToken, users.nickname, refreshToken)
+    }
+
+    private class DummyUsersLoginResReturnDto(val detailedMessage: String) : UsersLoginResReturnDto("", "", "", "") {
     }
 
     public fun reIssue(refreshToken: String): String {
