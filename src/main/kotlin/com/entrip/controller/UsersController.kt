@@ -64,14 +64,14 @@ class UsersController(
         return sendResponseHttpByJson("Load all planners with user, id : $user_id", plannersList)
     }
 
-    @GetMapping("api/v1/users/{nickname}/nickname/exist")
+    @GetMapping("api/v2/users/{nickname}/nickname/exist")
     public fun isExistNickname(@PathVariable nickname: String): ResponseEntity<RestAPIMessages> {
         val isExist: Boolean = usersService.isExistNickname(nickname)
         if (!isExist) throw NotAcceptedException(false)
         return sendResponseHttpByJson("Check if nickname $nickname is Exist", isExist)
     }
 
-    @GetMapping("api/v1/users/{user_id}/user_id/exist")
+    @GetMapping("api/v2/users/{user_id}/user_id/exist")
     public fun isExistUserId(@PathVariable user_id: String): ResponseEntity<RestAPIMessages> {
         val isExist: Boolean = usersService.isExistUserId(user_id)
         if (!isExist) throw NotAcceptedException(false)
