@@ -3,10 +3,7 @@ package com.entrip.service
 import com.entrip.auth.jwt.JwtTokenProvider
 import com.entrip.domain.dto.Planners.PlannersResponseDto
 import com.entrip.domain.dto.Planners.PlannersReturnDto
-import com.entrip.domain.dto.Users.UsersLoginRequestDto
-import com.entrip.domain.dto.Users.UsersLoginResReturnDto
-import com.entrip.domain.dto.Users.UsersResponseDto
-import com.entrip.domain.dto.Users.UsersSaveRequestDto
+import com.entrip.domain.dto.Users.*
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Users
 import com.entrip.exception.FailToFindNicknameOrIdException
@@ -53,6 +50,7 @@ class UsersService(
             nickname = requestDto.nickname,
             m_password = requestDto.password
         )
+        if (isExistUserId(users.user_id!!)) throw NotAcceptedException(UsersReturnDto("", "", -1, "", ""))
         val user_id: String? = usersRepository.save(users).user_id
         return user_id
     }
