@@ -3,10 +3,7 @@ package com.entrip.service
 import com.entrip.auth.jwt.JwtTokenProvider
 import com.entrip.domain.dto.Planners.PlannersResponseDto
 import com.entrip.domain.dto.Planners.PlannersReturnDto
-import com.entrip.domain.dto.Users.UsersLoginRequestDto
-import com.entrip.domain.dto.Users.UsersLoginResReturnDto
-import com.entrip.domain.dto.Users.UsersResponseDto
-import com.entrip.domain.dto.Users.UsersSaveRequestDto
+import com.entrip.domain.dto.Users.*
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Users
 import com.entrip.exception.FailToFindNicknameOrIdException
@@ -53,6 +50,7 @@ class UsersService(
             nickname = requestDto.nickname,
             m_password = requestDto.password
         )
+        if (isExistUserId(users.user_id!!)) throw NotAcceptedException(UsersReturnDto("", "", -1, "", ""))
         val user_id: String? = usersRepository.save(users).user_id
         return user_id
     }
@@ -137,16 +135,19 @@ class UsersService(
         usersRepository.existsById(email)
 
     public fun login(usersLoginRequestDto: UsersLoginRequestDto): UsersLoginResReturnDto {
-        if (!isExistsUser(usersLoginRequestDto.user_id)) throw NotAcceptedException("Email is not valid.")
+        if (!isExistsUser(usersLoginRequestDto.user_id)) throw NotAcceptedException(DummyUsersLoginResReturnDto("Email is not valid"))
         val users = findUsers(usersLoginRequestDto.user_id)
         if (!passwordEncoder.matches(
                 usersLoginRequestDto.password,
                 users.password
             )
-        ) throw NotAcceptedException("Password is not valid.")
+        ) throw NotAcceptedException(DummyUsersLoginResReturnDto("Password is not valid"))
         val accessToken: String = jwtTokenProvider.createAccessToken(usersLoginRequestDto.user_id)
         val refreshToken: String = jwtTokenProvider.createRefreshToken(usersLoginRequestDto.user_id)
         return UsersLoginResReturnDto(users.user_id!!, accessToken, users.nickname, refreshToken)
+    }
+
+    private class DummyUsersLoginResReturnDto(val detailedMessage: String) : UsersLoginResReturnDto("", "", "", "") {
     }
 
     public fun reIssue(refreshToken: String): String {

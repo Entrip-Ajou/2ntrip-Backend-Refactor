@@ -1,6 +1,6 @@
 package com.entrip.domain.dto.Users
 
-class UsersLoginResReturnDto (
+open class UsersLoginResReturnDto(
     val user_id: String,
     val accessToken: String,
     val nickname: String,
