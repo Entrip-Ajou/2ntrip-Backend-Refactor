@@ -51,7 +51,7 @@ class JwtTokenProvider(
 
     fun createAccessToken(userPk: String): String {
         //token Valid Time : 1 min
-        val tokenValidTime = 1 * 60 * 1000L
+        val tokenValidTime = 1 * 15 * 1000L
         val accessToken = createToken(userPk, tokenValidTime)
         redisService.setValues(userPk + "A", accessToken, Duration.ofMillis(tokenValidTime))
         return accessToken
