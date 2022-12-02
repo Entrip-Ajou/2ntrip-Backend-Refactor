@@ -163,6 +163,7 @@ class JwtTokenProvider(
             expireAccessTokenManually(accessToken)
             expireRefreshTokenManually(refreshToken)
         }
+        logger.warn("*************************************************")
         return userPk
     }
 }
