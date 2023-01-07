@@ -10,6 +10,7 @@ import com.entrip.exception.FailToFindNicknameOrIdException
 import com.entrip.exception.NotAcceptedException
 import com.entrip.repository.PlannersRepository
 import com.entrip.repository.UsersRepository
+import com.entrip.repository.UsersTravelFavoriteRepository
 import io.jsonwebtoken.SignatureException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
