@@ -59,7 +59,7 @@ class JwtTokenProvider(
 
     fun createRefreshToken(userPk: String): String {
         //token Valid Time : 1 day
-        val tokenValidTime = 3600 * 60 * 1000L
+        val tokenValidTime = 5 * 60 * 1000L
         val refreshToken = createToken(userPk, tokenValidTime)
         redisService.setValues(userPk + "R", refreshToken, Duration.ofMillis(tokenValidTime))
         return refreshToken
