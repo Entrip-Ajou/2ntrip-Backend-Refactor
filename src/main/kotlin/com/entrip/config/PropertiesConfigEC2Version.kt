@@ -31,4 +31,8 @@ class PropertiesConfigEC2Version {
     @Bean(name = arrayOf("security"))
     public fun propertiesFactoryBeanForSecurity(): PropertiesFactoryBean =
         propertiesFactoryBean("${defaultEC2Path}application-security.properties")
+
+    @Bean(name = arrayOf("mongodb"))
+    public fun propertiesFactoryBeanForMongodb(): PropertiesFactoryBean =
+        propertiesFactoryBean("${defaultEC2Path}application-mongodb.properties")
 }

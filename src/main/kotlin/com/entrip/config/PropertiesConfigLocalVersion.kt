@@ -50,4 +50,13 @@
 //        propertiesFactoryBean.setLocation(classPathResource)
 //        return propertiesFactoryBean
 //    }
+//
+//    @Bean(name = arrayOf("mongodb"))
+//    public fun propertiesFactoryBeanForMongoDB(): PropertiesFactoryBean {
+//        val propertiesFactoryBean: PropertiesFactoryBean = PropertiesFactoryBean()
+//        val classPathResource: ClassPathResource = ClassPathResource("application-mongodb.properties")
+//
+//        propertiesFactoryBean.setLocation(classPathResource)
+//        return propertiesFactoryBean
+//    }
 //}

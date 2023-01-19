@@ -13,7 +13,6 @@ import com.entrip.repository.UsersRepository
 import io.jsonwebtoken.SignatureException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import java.security.Signature
 import javax.transaction.Transactional
 
 @Service
