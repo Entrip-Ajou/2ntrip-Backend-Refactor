@@ -60,7 +60,6 @@ class UsersTravelFavoritesController(
         val bytes =
             Files.readAllBytes(Paths.get("/home/ec2-user/app/step1/entrip-api-kotlin/src/main/resources/data.txt"))
         return ResponseEntity<Any>(String(bytes), headers, HttpStatus.OK)
-
     }
 
 
