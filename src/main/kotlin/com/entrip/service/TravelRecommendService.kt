@@ -14,7 +14,7 @@ class TravelRecommendService {
     private var logger: Logger = LoggerFactory.getLogger(TravelRecommendService::class.java)
 
     //private val localPath : String = "~~"
-    private val EC2Path: String = "/home/ec2-user/app/step1/entrip-api-kotlin/resources/CollaborativeFiltering"
+    private val EC2Path: String = "/home/ec2-user/app/step1/entrip-api-kotlin/src/main/resources/CollaborativeFiltering"
     private val localPath: String = "/Users/donghwan/Downloads/CollaborativeFiltering"
 
     fun callPython(users_id: String, region: String, recommendType: Int): String {
