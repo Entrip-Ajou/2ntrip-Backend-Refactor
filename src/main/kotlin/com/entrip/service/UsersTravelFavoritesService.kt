@@ -23,4 +23,8 @@ class UsersTravelFavoritesService(
         val usersTravelFavorites = UsersTravelFavorites(user_id)
         usersTravelFavoritesRepository.save(usersTravelFavorites)
     }
+
+    fun getAllUsersTravelFavorite(): MutableList<UsersTravelFavorites> {
+        return usersTravelFavoritesRepository.findAll()
+    }
 }
