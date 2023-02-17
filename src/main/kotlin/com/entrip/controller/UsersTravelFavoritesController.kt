@@ -1,26 +1,18 @@
 package com.entrip.controller
 
 import com.entrip.domain.RestAPIMessages
-import com.entrip.domain.entity.TravelFavorite
+import com.entrip.domain.dto.UsersTravelFavoriteRequestDto.UsersTravelFavoriteSaveRequestDto
 import com.entrip.domain.entity.UsersTravelFavorites
-import com.entrip.repository.UsersTravelFavoritesRepository
 import com.entrip.service.UsersTravelFavoritesService
 import com.fasterxml.jackson.databind.ObjectMapper
-import jdk.nashorn.internal.objects.NativeDebug.getClass
-import org.springframework.core.io.ClassPathResource
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.io.InputStream
 import java.nio.charset.Charset
 import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.Paths
-import javax.xml.ws.Response
-import kotlin.io.path.Path
 
 @RestController
 class UsersTravelFavoritesController(
@@ -41,14 +33,11 @@ class UsersTravelFavoritesController(
     }
 
     @PostMapping("/api/v2/usersTravelFavorite/{user_id}")
-    fun addUsersTravelFavorite(
-        @PathVariable user_id: String,
-        @RequestBody travelFavorite: TravelFavorite
-    ): ResponseEntity<RestAPIMessages> =
-        sendResponseHttpByJson(
-            "add $user_id 's travel favorite",
-            usersTravelFavoritesService.addUsersTravelFavorite(user_id, travelFavorite)
-        )
+    fun addUsersTravelFavorite(@PathVariable user_id: String, @RequestBody requestDto: UsersTravelFavoriteSaveRequestDto): ResponseEntity<RestAPIMessages> {
+        val usersTravelFavorite : UsersTravelFavorites = usersTravelFavoritesService.addUsersTravelFavorite(user_id, requestDto)
+
+        return sendResponseHttpByJson("add $user_id 's travel favorite", usersTravelFavorite)
+    }
 
     @GetMapping("/api/v2/usersTravelFavorite/all")
     fun getAllUsersTravelFavorite(): ResponseEntity<Any> {
