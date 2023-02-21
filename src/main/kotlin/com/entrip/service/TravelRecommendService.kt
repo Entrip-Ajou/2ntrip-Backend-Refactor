@@ -61,7 +61,7 @@ class TravelRecommendService {
         //var result: Int = executor.execute(commandLine)
         //logger.info("result : $result")
         val result: String = outputStream.toString()
-        //logger.info("output : $result")
+        logger.info("output : $result")
         return result
     }
 }
