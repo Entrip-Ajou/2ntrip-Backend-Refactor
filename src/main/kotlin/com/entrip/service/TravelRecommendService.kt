@@ -20,13 +20,14 @@ class TravelRecommendService {
     private val localPath: String = "/Users/donghwan/Downloads/CollaborativeFiltering"
 
     fun callPython(requestDto : TravelRecommendRequestDto): TravelRecommendResponseDto {
-        logger.info("in callPython \n")
+//        logger.info("in callPython \n")
         val recommendRegions : MutableList<String> = ArrayList()
-
-        recommendRegions.add(getModelResult(requestDto, 1))
-        recommendRegions.add(getModelResult(requestDto, 2))
-        recommendRegions.add(getModelResult(requestDto, 3))
-
+//
+//        recommendRegions.add(getModelResult(requestDto, 1))
+//        recommendRegions.add(getModelResult(requestDto, 2))
+//        recommendRegions.add(getModelResult(requestDto, 3))
+//
+        recommendRegions.add("hi")
         logger.info("in callPython method : $recommendRegions")
 
         return TravelRecommendResponseDto(requestDto.user_id, recommendRegions)
