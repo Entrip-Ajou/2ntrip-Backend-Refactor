@@ -1,7 +1,7 @@
 package com.entrip.controller
 
 import com.entrip.domain.RestAPIMessages
-import com.entrip.domain.dto.UsersTravelFavoriteRequestDto.UsersTravelFavoriteSaveRequestDto
+import com.entrip.domain.dto.UsersTravelFavorite.UsersTravelFavoriteSaveRequestDto
 import com.entrip.domain.entity.UsersTravelFavorites
 import com.entrip.service.UsersTravelFavoritesService
 import com.fasterxml.jackson.databind.ObjectMapper
