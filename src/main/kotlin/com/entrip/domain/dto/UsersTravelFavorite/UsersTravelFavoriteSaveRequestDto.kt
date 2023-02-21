@@ -1,4 +1,4 @@
-package com.entrip.domain.dto.UsersTravelFavoriteRequestDto
+package com.entrip.domain.dto.UsersTravelFavorite
 
 class UsersTravelFavoriteSaveRequestDto(
     val regions : MutableList<String>,

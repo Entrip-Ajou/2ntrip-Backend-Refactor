@@ -1,7 +1,7 @@
 package com.entrip.service
 
-import com.entrip.domain.dto.UsersTravelFavoriteRequestDto.EachTravelFavoriteSaveRequestDto
-import com.entrip.domain.dto.UsersTravelFavoriteRequestDto.UsersTravelFavoriteSaveRequestDto
+import com.entrip.domain.dto.UsersTravelFavorite.EachTravelFavoriteSaveRequestDto
+import com.entrip.domain.dto.UsersTravelFavorite.UsersTravelFavoriteSaveRequestDto
 import com.entrip.domain.entity.UsersTravelFavorites
 import com.entrip.repository.UsersTravelFavoritesRepository
 import com.fasterxml.jackson.databind.ObjectMapper

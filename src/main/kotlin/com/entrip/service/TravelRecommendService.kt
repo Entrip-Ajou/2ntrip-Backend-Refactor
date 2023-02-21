@@ -1,5 +1,7 @@
 package com.entrip.service
 
+import com.entrip.domain.dto.TravelRecommend.TravelRecommendRequestDto
+import com.entrip.domain.dto.TravelRecommend.TravelRecommendResponseDto
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.exec.DefaultExecutor
 import org.apache.commons.exec.PumpStreamHandler
@@ -17,9 +19,19 @@ class TravelRecommendService {
     private val EC2Path: String = "/home/ec2-user/app/step1/entrip-api-kotlin/src/main/resources/CollaborativeFiltering"
     private val localPath: String = "/Users/donghwan/Downloads/CollaborativeFiltering"
 
-    fun callPython(users_id: String, region: String, recommendType: Int): String {
+    fun callPython(requestDto : TravelRecommendRequestDto): TravelRecommendResponseDto {
+        var recommendRegions : MutableList<String> = ArrayList()
+
+        recommendRegions.add(getModelResult(requestDto, 1))
+        recommendRegions.add(getModelResult(requestDto, 2))
+        recommendRegions.add(getModelResult(requestDto, 3))
+
+        return TravelRecommendResponseDto(requestDto.user_id, recommendRegions)
+    }
+
+    fun getModelResult(requestDto: TravelRecommendRequestDto, recommendType : Int) : String {
         val command: Array<String> =
-            arrayOf("$EC2Path/venv/bin/python", "$EC2Path/main.py", users_id, region, recommendType.toString())
+            arrayOf("$EC2Path/venv/bin/python", "$EC2Path/main.py", requestDto.user_id, requestDto.region, recommendType.toString())
         var result: String = ""
         try {
             result = execPython(command)
