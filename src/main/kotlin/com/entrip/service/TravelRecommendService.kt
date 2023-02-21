@@ -21,16 +21,13 @@ class TravelRecommendService {
 
     fun callPython(requestDto : TravelRecommendRequestDto): TravelRecommendResponseDto {
         val recommendRegions : MutableList<String> = ArrayList()
-//
-//        recommendRegions.add(getModelResult(requestDto, 1))
-//        recommendRegions.add(getModelResult(requestDto, 2))
-//        recommendRegions.add(getModelResult(requestDto, 3))
-//
-        recommendRegions.add("hi")
-        recommendRegions.add("bye")
 
-        logger.info("in callPython method : $recommendRegions")
+        recommendRegions.add(getModelResult(requestDto, 1))
+        recommendRegions.add(getModelResult(requestDto, 2))
+        recommendRegions.add(getModelResult(requestDto, 3))
+
         logger.info("user_id is ${requestDto.user_id}")
+        logger.info("in callPython method : $recommendRegions")
 
         return TravelRecommendResponseDto(user_id = requestDto.user_id, recommendRegions = recommendRegions)
     }
