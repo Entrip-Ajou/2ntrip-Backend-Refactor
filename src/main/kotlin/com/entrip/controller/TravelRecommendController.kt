@@ -2,6 +2,7 @@ package com.entrip.controller
 
 import com.entrip.domain.RestAPIMessages
 import com.entrip.domain.dto.TravelRecommend.TravelRecommendRequestDto
+import com.entrip.domain.dto.TravelRecommend.TravelRecommendResponseDto
 import com.entrip.service.TravelRecommendService
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -30,8 +31,8 @@ class TravelRecommendController(
 
     @GetMapping("/api/v2/travelRecommend")
     fun execPython(@RequestBody requestDto: TravelRecommendRequestDto): ResponseEntity<RestAPIMessages> {
-        return sendResponseHttpByJson(
-            "TravelRecommend!", travelRecommendService.callPython(requestDto)
-        )
+        val responseDto : TravelRecommendResponseDto = travelRecommendService.callPython(requestDto)
+
+        return sendResponseHttpByJson("TravelRecommend!", responseDto)
     }
 }
