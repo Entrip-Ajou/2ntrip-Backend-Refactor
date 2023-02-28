@@ -34,7 +34,7 @@ class TravelRecommendService {
 
     fun getModelResult(requestDto: TravelRecommendRequestDto, recommendType : Int) : String {
         val command: Array<String> =
-            arrayOf("$EC2Path/venv/bin/python", "$EC2Path/main.py", requestDto.user_id, requestDto.region, recommendType.toString())
+            arrayOf("python3", "$EC2Path/main.py", requestDto.user_id, requestDto.region, recommendType.toString())
         var result: String = ""
         try {
             result = execPython(command)
