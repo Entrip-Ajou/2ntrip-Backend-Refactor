@@ -28,6 +28,8 @@ class TravelRecommendService(
         val region : String = getHighScoreRegion(user_id)
         val recommendRegions : MutableList<String> = ArrayList()
 
+        logger.info("High Score Resion is $region")
+
         recommendRegions.add(getModelResult(user_id, region, 1))
         recommendRegions.add(getModelResult(user_id, region, 2))
         recommendRegions.add(getModelResult(user_id, region, 3))
