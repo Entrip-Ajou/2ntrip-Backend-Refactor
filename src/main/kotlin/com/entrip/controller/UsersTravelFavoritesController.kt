@@ -1,6 +1,7 @@
 package com.entrip.controller
 
 import com.entrip.domain.RestAPIMessages
+import com.entrip.domain.dto.TravelRecommend.TravelRecommendResponseDto
 import com.entrip.domain.dto.UsersTravelFavorite.UsersTravelFavoriteSaveRequestDto
 import com.entrip.domain.entity.UsersTravelFavorites
 import com.entrip.service.UsersTravelFavoritesService
@@ -34,9 +35,9 @@ class UsersTravelFavoritesController(
 
     @PostMapping("/api/v2/usersTravelFavorite/{user_id}")
     fun addUsersTravelFavorite(@PathVariable user_id: String, @RequestBody requestDto: UsersTravelFavoriteSaveRequestDto): ResponseEntity<RestAPIMessages> {
-        val usersTravelFavorite : UsersTravelFavorites = usersTravelFavoritesService.addUsersTravelFavorite(user_id, requestDto)
+        val travelRecommendResponseDto : TravelRecommendResponseDto = usersTravelFavoritesService.getRecommedRegions(user_id, requestDto)
 
-        return sendResponseHttpByJson("add $user_id 's travel favorite", usersTravelFavorite)
+        return sendResponseHttpByJson("Travel Recommend!", travelRecommendResponseDto)
     }
 
     @GetMapping("/api/v2/usersTravelFavorite/all")

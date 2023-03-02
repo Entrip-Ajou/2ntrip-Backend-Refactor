@@ -1,5 +1,6 @@
 package com.entrip.service
 
+import com.entrip.domain.dto.TravelRecommend.TravelRecommendResponseDto
 import com.entrip.domain.dto.UsersTravelFavorite.EachTravelFavoriteSaveRequestDto
 import com.entrip.domain.dto.UsersTravelFavorite.UsersTravelFavoriteSaveRequestDto
 import com.entrip.domain.entity.UsersTravelFavorites
@@ -10,8 +11,15 @@ import org.springframework.stereotype.Service
 @Service
 class UsersTravelFavoritesService(
     private final val usersTravelFavoritesRepository: UsersTravelFavoritesRepository,
+    private final val travelRecommendService: TravelRecommendService,
     private val objectMapper: ObjectMapper
 ) {
+    fun getRecommedRegions(user_id: String, requestDto: UsersTravelFavoriteSaveRequestDto): TravelRecommendResponseDto {
+        addUsersTravelFavorite(user_id, requestDto)
+
+        return travelRecommendService.callPython(user_id)
+    }
+
     fun addUsersTravelFavorite(user_id: String, requestDto: UsersTravelFavoriteSaveRequestDto): UsersTravelFavorites {
         // 유저가 추천받기 위한 usersTravelFavorite 엔티티를 가지고 않을 경우 새로 하나 만든다.
         if (!usersTravelFavoritesRepository.existsById(user_id)) {
