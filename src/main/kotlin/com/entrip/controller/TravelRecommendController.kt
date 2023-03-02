@@ -31,7 +31,7 @@ class TravelRecommendController(
 
     @GetMapping("/api/v2/travelRecommend")
     fun execPython(@RequestBody requestDto: TravelRecommendRequestDto): ResponseEntity<RestAPIMessages> {
-        val responseDto : TravelRecommendResponseDto = travelRecommendService.callPython(requestDto)
+        val responseDto : TravelRecommendResponseDto = travelRecommendService.callPython(requestDto.user_id)
 
         return sendResponseHttpByJson("TravelRecommend!", responseDto)
     }
