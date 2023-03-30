@@ -12,7 +12,7 @@
 
 ## Credits and References
 이동환 (Github ID : hwanld), 이진희 (Github ID : Egenieee) <br>
-Jira : https://refactor2ntrip.atlassian.net/jira/software/projects/REF/boards/2
-Confluence : https://refactor2ntrip.atlassian.net/wiki/spaces/REF/overview
+Jira : https://refactor2ntrip.atlassian.net/jira/software/projects/REF/boards/2 <br>
+Confluence : https://refactor2ntrip.atlassian.net/wiki/spaces/REF/overview <br>
 
 
