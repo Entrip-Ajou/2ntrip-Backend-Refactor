@@ -1,1 +1,1 @@
-rootProject.name = "entrip-api-kotlin"
+rootProject.name = "2ntrip-Backend-Refactor"
