@@ -10,7 +10,7 @@ import org.springframework.core.io.PathResource
 @Configuration
 class PropertiesConfigEC2Version {
 
-    private val defaultEC2Path: String = "/home/ec2-user/app/step3/properties/"
+    private val defaultEC2Path: String = "/home/ec2-user/properties/"
 
     private fun propertiesFactoryBean(path: String): PropertiesFactoryBean {
         val propertiesFactoryBean: PropertiesFactoryBean = PropertiesFactoryBean()
