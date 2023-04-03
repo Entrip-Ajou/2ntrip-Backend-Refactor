@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	id("org.springframework.boot") version "2.7.1"
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
+	id("org.asciidoctor.jvm.convert") version "3.3.2"
 	kotlin("jvm") version "1.6.21"
 	kotlin("plugin.spring") version "1.6.21"
 	kotlin("plugin.jpa") version "1.6.21"
@@ -50,6 +51,10 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.apache.commons:commons-exec:1.3")
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+
+	// Spring REST Docs dependency
+	testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc:2.0.6.RELEASE")
+	testImplementation("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.6.RELEASE")
 }
 
 
@@ -63,3 +68,28 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
+// For Spring REST Docs Task
+tasks {
+	val snippetsDir by extra { file("build/generated-snippets") }
+
+	test {
+		outputs.dir(snippetsDir)
+	}
+
+	asciidoctor {
+		inputs.dir(snippetsDir)
+		dependsOn(test)
+		doLast {
+			copy {
+				from("build/docs/asciidoc")
+				into("src/main/resources/static/docs")
+			}
+		}
+	}
+
+	build {
+		dependsOn(asciidoctor)
+	}
+}
+
