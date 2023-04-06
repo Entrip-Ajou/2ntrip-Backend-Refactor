@@ -56,6 +56,9 @@ dependencies {
 	testImplementation("io.kotest:kotest-assertions-core:4.4.3")
 	implementation("io.kotest:kotest-extensions-spring:4.4.3")
 
+	testImplementation("io.mockk:mockk:1.12.0")
+	testImplementation("com.ninja-squad:springmockk:3.0.0")
+
 	// Spring REST Docs dependency
 	testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc:2.0.6.RELEASE")
 	testImplementation("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.6.RELEASE")
