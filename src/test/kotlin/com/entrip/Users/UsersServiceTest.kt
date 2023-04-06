@@ -12,9 +12,6 @@ import com.entrip.repository.UsersRepository
 import com.entrip.service.UsersService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.extensions.spring.SpringExtension
-import io.kotest.matchers.collections.shouldContain
-import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.every
@@ -24,8 +21,6 @@ import java.security.SignatureException
 import java.util.*
 
 class UsersServiceTest : BehaviorSpec() {
-
-    override fun extensions() = listOf(SpringExtension)
 
     val jwtTokenProvider = mockk<JwtTokenProvider>()
     val passwordEncoder = mockk<PasswordEncoder>()
