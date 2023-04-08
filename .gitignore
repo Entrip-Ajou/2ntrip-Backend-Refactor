@@ -29,6 +29,7 @@ application-aws-s3.properties
 application-redis.properties
 application-security.properties
 application-mongodb.properties
+application-test.properties
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
