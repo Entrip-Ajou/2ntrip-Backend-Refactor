@@ -248,7 +248,7 @@ class UsersIntegrationTest() : BehaviorSpec() {
                         .andExpect(content().json(objectMapper.writeValueAsString(expectedErrorResponse)))
                         .andDo(
                             MockMvcRestDocumentation.document(
-                                "Users_isExistNickname_failCase",
+                                "Users_isExistUserId_failCase",
                                 Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
                                 Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
                                 pathParameters(
