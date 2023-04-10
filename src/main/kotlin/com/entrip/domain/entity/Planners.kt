@@ -2,7 +2,7 @@ package com.entrip.domain.entity
 
 import com.entrip.domain.BaseTimeEntity
 import java.time.LocalDateTime
-import java.util.TreeSet
+import java.util.*
 import javax.persistence.*
 
 @Entity
@@ -35,7 +35,7 @@ class Planners(
     @OneToMany(mappedBy = "planners", fetch = FetchType.EAGER)
     var votes: MutableSet<Votes> = TreeSet(),
 
-) : BaseTimeEntity() {
+    ) : BaseTimeEntity(), Comparable<Planners> {
 
     fun update(title: String, start_date: String, end_date: String): Unit {
         this.title = title
@@ -51,5 +51,9 @@ class Planners(
     fun setComment_timeStamp(): Unit {
         this.comment_timeStamp = LocalDateTime.now()
         return Unit
+    }
+
+    override fun compareTo(other: Planners): Int {
+        return 1
     }
 }
