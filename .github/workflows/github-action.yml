@@ -81,5 +81,5 @@ jobs:
           --application-name $CODEDEPLOY_APPLICATION_NAME \
           --deployment-group-name $DEPLOYMENT_GROUP_NAME \
           --file-exists-behavior OVERWRITE \
-          --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip \
+          --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=2ntrip-api-refactor-deploy.zip \
           --region ap-northeast-2
