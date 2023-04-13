@@ -56,6 +56,9 @@ jobs:
       - name: Copy shell
         run: cp ./scripts/* ./deploy/
 
+      - name: Grant execute permission for scripts
+        run: chmod +x ./scripts/*
+
       # 압축파일 형태로 전달
       - name: Make zip file
         run: zip -r -qq -j ./2ntrip-api-refactor-deploy.zip ./deploy/
