@@ -12,7 +12,7 @@ IDLE_PORT=$(find_idle_port)
 
 echo "> Health Check Start!"
 echo "> IDLE_PORT: $IDLE_PORT"
-echo "> curl -s https://2ntrip.com:$IDLE_PORT/api/v2/profile "
+echo "> curl -s https://2ntrip.link:$IDLE_PORT/api/v2/profile "
 sleep 10
 
 for RETRY_COUNT in {1..10}
