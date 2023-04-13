@@ -13,9 +13,9 @@ on:
 
 # 환경 변수 설정
 env:
-  S3_BUCKET_NAME: 2ntrip-api-build
-  CODEDEPLOY_APPLICATION_NAME: 2ntrip-CodeDeploy
-  DEPLOYMENT_GROUP_NAME: 2ntrip-api-kotlin
+  S3_BUCKET_NAME: 2ntrip-api-refactor-deploy
+  CODEDEPLOY_APPLICATION_NAME: 2ntrip-backend-refactor
+  DEPLOYMENT_GROUP_NAME: 2ntrip-backend-refactor
 
 jobs:
   build:
