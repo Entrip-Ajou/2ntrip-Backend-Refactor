@@ -6,7 +6,7 @@ ABSPATH=$(readlink -f $0)
 ABSDIR=$(dirname $ABSPATH)
 source ${ABSDIR}/profile.sh
 
-REPOSITORY=/home/ec2-user
+REPOSITORY=/home/ec2-user/deploy
 PROJECT_NAME=2ntrip-Backend-Refactor
 PROPERTIES_DIR=/home/ec2-user/properties
 
