@@ -68,6 +68,9 @@ jobs:
           --region ap-northeast-2 \
           --acl private \
           ./2ntrip-api-build.zip s3://2ntrip-api-build/$GITHUB_SHA.zip
+          
+          echo secrets.AWS_ACCESS_KEY_ID
+          echo secrets.AWS_SECRET_ACCESS_KEY
 
       # Deploy
       - name: Deploy
