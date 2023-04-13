@@ -1,13 +1,13 @@
 #!/bin/bash
 
-REPOSITORY=/home/ec2-user/app/step1
-PROJECT_NAME=entrip-api-kotlin
+REPOSITORY=/home/ec2-user
+PROJECT_NAME=2ntrip-Backend-Refactor
 
 cd $REPOSITORY/$PROJECT_NAME/
 
 echo "> Git Pull"
 
-git pull origin master
+git pull origin main
 
 echo "> 프로젝트 Build 시작"
 
@@ -45,5 +45,3 @@ nohup java -jar \
        -Dspring.config.location=classpath:/application.properties\
        -Dspring.profiles.active=real \
        $REPOSITORY/$JAR_NAME 2>&1 &
-
-
