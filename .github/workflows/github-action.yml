@@ -69,7 +69,7 @@ jobs:
           aws s3 cp \
           --region ap-northeast-2 \
           --acl private \
-          ./2ntrip-api-refactor-deploy.zip s3://2ntrip-api-refactor-deploy/$GITHUB_SHA.zip
+          ./2ntrip-api-refactor-deploy.zip s3://2ntrip-backend-refactor-deploy/
 
       # Deploy
       - name: Deploy
