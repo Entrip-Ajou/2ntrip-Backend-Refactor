@@ -6,9 +6,9 @@ ABSPATH=$(readlink -f $0)
 ABSDIR=$(dirname $ABSPATH)
 source ${ABSDIR}/profile.sh
 
-REPOSITORY=/home/ec2-user/app/step3
-PROJECT_NAME=entrip-api-kotlin
-PROPERTIES_DIR=/home/ec2-user/app/step3/properties
+REPOSITORY=/home/ec2-user
+PROJECT_NAME=2ntrip-Backend-Refactor
+PROPERTIES_DIR=/home/ec2-user/properties
 
 echo "> Build 파일 복사"
 echo "> cp $REPOSITORY/zip/*.jar $REPOSITORY/"

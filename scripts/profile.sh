@@ -14,7 +14,7 @@ function find_idle_profile()
     then
         CURRENT_PROFILE=none
     else
-        CURRENT_PROFILE=$(curl -s https://2ntrip.com/api/v2/profile)
+        CURRENT_PROFILE=$(curl -s https://2ntrip.link/api/v2/profile)
     fi
 
     # IDLE_PROFILE : nginx와 연결되지 않은 profile

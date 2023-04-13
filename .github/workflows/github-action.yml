@@ -13,9 +13,9 @@ on:
 
 # 환경 변수 설정
 env:
-  S3_BUCKET_NAME: 2ntrip-api-build
-  CODEDEPLOY_APPLICATION_NAME: 2ntrip-CodeDeploy
-  DEPLOYMENT_GROUP_NAME: 2ntrip-api-kotlin
+  S3_BUCKET_NAME: 2ntrip-backend-refactor-deploy
+  CODEDEPLOY_APPLICATION_NAME: 2ntrip-backend-refactor
+  DEPLOYMENT_GROUP_NAME: 2ntrip-backend-refactor
 
 jobs:
   build:
@@ -77,7 +77,7 @@ jobs:
         run: |
           aws deploy create-deployment \
           --application-name $CODEDEPLOY_APPLICATION_NAME \
-          --deployment-group-name $DEPLOYMENT_GROUP_NAME \
-          --file-exists-behavior OVERWRITE \
-          --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip \
-          --region ap-northeast-2
+          —deployment-group-name $DEPLOYMENT_GROUP_NAME \
+          —file-exists-behavior OVERWRITE \
+          —s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip \
+          —region ap-northeast-2
