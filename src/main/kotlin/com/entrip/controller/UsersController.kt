@@ -8,31 +8,15 @@ import com.entrip.domain.dto.Users.UsersReturnDto
 import com.entrip.domain.dto.Users.UsersSaveRequestDto
 import com.entrip.exception.NotAcceptedException
 import com.entrip.service.UsersService
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
-import java.nio.charset.Charset
-import kotlin.system.exitProcess
 
 @RestController
 class UsersController(
     private final val usersService: UsersService,
     private val passwordEncoder: PasswordEncoder
-) {
-    private fun sendResponseHttpByJson(message: String, data: Any): ResponseEntity<RestAPIMessages> {
-        val restAPIMessages: RestAPIMessages = RestAPIMessages(
-            httpStatus = 200,
-            message = message,
-            data = data
-        )
-        val headers: HttpHeaders = HttpHeaders()
-        headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
-        return ResponseEntity<RestAPIMessages>(restAPIMessages, headers, HttpStatus.OK)
-    }
-
+) : BaseController() {
     @PostMapping("/api/v2/users")
     public fun save(@RequestBody requestDto: UsersSaveRequestDto): ResponseEntity<RestAPIMessages> {
         requestDto.password = passwordEncoder.encode(requestDto.password)
