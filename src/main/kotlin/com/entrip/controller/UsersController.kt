@@ -37,8 +37,8 @@ class UsersController(
     @GetMapping("/api/v1/users/{user_id}")
     public fun findById(@PathVariable user_id: String): ResponseEntity<RestAPIMessages> {
         val responseDto: UsersResponseDto = usersService.findByUserId(user_id)
-        val returndto: UsersReturnDto = UsersReturnDto(responseDto)
-        return sendResponseHttpByJson("Load user with id : $user_id", returndto)
+        val returnDto: UsersReturnDto = UsersReturnDto(responseDto)
+        return sendResponseHttpByJson("Load user with id : $user_id", returnDto)
     }
 
     @GetMapping("api/v1/users/{user_id}/all")
