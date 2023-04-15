@@ -12,7 +12,6 @@ import com.entrip.service.*
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.extensions.spring.SpringExtension
-import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -108,7 +107,7 @@ class PlannersServiceTest : BehaviorSpec() {
                 val savedPlannersId = plannersService.save(plannersSaveRequestDto)
 
                 then("저장된 planners의 id가 반환된다") {
-                    savedPlannersId!! shouldBeGreaterThan 0L
+                    savedPlannersId!! shouldBe 1L
                 }
             }
         }
@@ -182,7 +181,8 @@ class PlannersServiceTest : BehaviorSpec() {
             noticesService.noticesRepository.save(notices)
             votesService.votesRepository.save(votes)
 
-            planners.users.add(users)
+//            planners.users.add(users)
+//            users.planners.add(planners)
             planners.plans?.add(plans)
             planners.notices.add(notices)
             planners.votes.add(votes)
@@ -269,10 +269,10 @@ class PlannersServiceTest : BehaviorSpec() {
             }
 
             `when`("유효하지 않은 planner_id를 주고 plannerIsExistWithId를 호출하면") {
-                val isExist = plannersService.plannerIsExistWithId(validPlannerId)
+                val isExist = plannersService.plannerIsExistWithId(invalidPlannerId)
 
                 then("false가 반환된다") {
-                    isExist shouldBe true
+                    isExist shouldBe false
                 }
             }
 
@@ -283,7 +283,7 @@ class PlannersServiceTest : BehaviorSpec() {
 //                    isExist shouldBe true
 //                }
 //            }
-
+//
 //            `when`("유효하지 않은 user_id를 주고 userIsExistInPlannerWithUserId를 호출하면") {
 //                val isExist = plannersService.userIsExistInPlannerWithUserId(validPlannerId, invalidUserId)
 //
@@ -301,7 +301,7 @@ class PlannersServiceTest : BehaviorSpec() {
 //            }
 
             `when`("유효하지 않은 nickname를 주고 userIsExistInPlannerWithUserNickname를 호출하면") {
-                then("IllegalArgumentException이 throw된") {
+                then("IllegalArgumentException이 throw된다") {
                     shouldThrow<IllegalArgumentException> {
                         plannersService.userIsExistInPlannerWithNickname(
                             validPlannerId,

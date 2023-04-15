@@ -5,7 +5,6 @@ import com.entrip.repository.PlannersRepository
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
@@ -75,10 +74,7 @@ class PlannersRepositoryTest : BehaviorSpec() {
                 val savedPlanners = plannersRepository.findAll()[0]
 
                 then("Planners가 삭제된다") {
-                    savedPlanners.planner_id shouldNotBe plannersOne.planner_id
-                    savedPlanners.title shouldNotBe plannersOne.title
-                    savedPlanners.start_date shouldNotBe plannersOne.start_date
-                    savedPlanners.end_date shouldNotBe plannersOne.end_date
+                    plannersRepository.findAll().size shouldBe 1
 
                     savedPlanners.planner_id shouldBe plannersTwo.planner_id
                     savedPlanners.title shouldBe plannersTwo.title
