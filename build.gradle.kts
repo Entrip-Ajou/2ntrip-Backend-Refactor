@@ -1,5 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val snippetsDir by extra { file("build/generated-snippets") }
+val asciidoctorExt: Configuration by configurations.creating
+
 plugins {
 	id("org.springframework.boot") version "2.7.1"
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
@@ -55,6 +58,16 @@ dependencies {
 	// Spring REST Docs dependency
 	testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc:2.0.6.RELEASE")
 	testImplementation("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.6.RELEASE")
+	asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
+
+	// Test Dependencies for Kotlin
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("io.mockk:mockk:1.12.0")
+	testImplementation("com.ninja-squad:springmockk:3.0.0")
+	testImplementation("io.kotest:kotest-runner-junit5:4.4.3")
+	testImplementation("io.kotest:kotest-assertions-core:4.4.3")
+	implementation("io.kotest:kotest-extensions-spring:4.4.3")
+
 }
 
 
@@ -69,9 +82,8 @@ tasks.withType<Test> {
 	useJUnitPlatform()
 }
 
-// For Spring REST Docs Task
+
 tasks {
-	val snippetsDir by extra { file("build/generated-snippets") }
 
 	test {
 		outputs.dir(snippetsDir)
@@ -79,6 +91,7 @@ tasks {
 
 	asciidoctor {
 		inputs.dir(snippetsDir)
+		configurations(asciidoctorExt.name)
 		dependsOn(test)
 		doLast {
 			copy {
@@ -92,4 +105,3 @@ tasks {
 		dependsOn(asciidoctor)
 	}
 }
-

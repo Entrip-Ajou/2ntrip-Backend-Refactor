@@ -42,6 +42,7 @@ class UsersService(
 
     @Transactional
     public fun save(requestDto: UsersSaveRequestDto): String? {
+        requestDto.password = passwordEncoder.encode(requestDto.password)
         val users: Users = Users(
             user_id = requestDto.user_id,
             photoUrl = requestDto.photoUrl,

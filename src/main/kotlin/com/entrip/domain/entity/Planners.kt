@@ -35,7 +35,7 @@ class Planners(
     @OneToMany(mappedBy = "planners", fetch = FetchType.EAGER)
     var votes: MutableSet<Votes> = TreeSet(),
 
-) : BaseTimeEntity() {
+) : BaseTimeEntity(), Comparable<Planners> {
 
     fun update(title: String, start_date: String, end_date: String): Unit {
         this.title = title
@@ -51,5 +51,10 @@ class Planners(
     fun setComment_timeStamp(): Unit {
         this.comment_timeStamp = LocalDateTime.now()
         return Unit
+    }
+
+    override fun compareTo(other: Planners): Int {
+        if (this.planner_id!! >= other.planner_id!!) return 1;
+        return -1;
     }
 }
