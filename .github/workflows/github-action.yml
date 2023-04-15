@@ -42,6 +42,9 @@ jobs:
       - name: MongoDB in GitHub Actions
         uses: supercharge/mongodb-github-action@1.9.0
 
+      - name: Start MySQL
+        uses: samin/mysql-action@v1.3
+
       - name: Create Properties Files
         run: touch ./src/main/resources/application.properties ; touch ./src/main/resources/application-aws-s3.properties ; touch ./src/main/resources/application-mongodb.properties ; touch ./src/main/resources/application-redis.properties ; touch ./src/main/resources/application-security.properties ; touch ./src/test/resources/application-test.properties
 
