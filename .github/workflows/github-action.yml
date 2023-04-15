@@ -43,7 +43,7 @@ jobs:
         uses: supercharge/mongodb-github-action@1.9.0
 
       - name: Create Properties Files
-        run: cd /home/ec2-user/properties ; touch application.properties ; touch application-aws-s3.properties ; touch application-mongodb.properties ; touch application-redis.properties
+        run: mkdir /home/ec2-user/properties ; cd /home/ec2-user/properties ; touch application.properties ; touch application-aws-s3.properties ; touch application-mongodb.properties ; touch application-redis.properties
 
       - name: Load Application Properties
         run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > /home/ec2-user/properties/application.properties
