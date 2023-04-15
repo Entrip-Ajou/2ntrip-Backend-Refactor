@@ -4,6 +4,7 @@ import org.springframework.beans.factory.config.PropertiesFactoryBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
+import org.springframework.core.io.PathResource
 
 @Primary
 @Configuration
@@ -13,7 +14,7 @@ class PropertiesConfigEC2Version {
 
     private fun propertiesFactoryBean(path: String): PropertiesFactoryBean {
         val propertiesFactoryBean: PropertiesFactoryBean = PropertiesFactoryBean()
-        val pathResource: PathR   esource = PathResource(path)
+        val pathResource: PathResource = PathResource(path)
 
         propertiesFactoryBean.setLocation(pathResource)
         return propertiesFactoryBean
