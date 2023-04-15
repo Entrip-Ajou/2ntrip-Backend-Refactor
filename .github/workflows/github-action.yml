@@ -42,6 +42,21 @@ jobs:
       - name: MongoDB in GitHub Actions
         uses: supercharge/mongodb-github-action@1.9.0
 
+      - name: Load Application Properties
+        run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > /home/ec2-user/properties/application.properties
+
+      - name: Load Application AWS S3 Properties
+        run: echo "${{ secrets.APPLICATION_AWS_S3_PROPERTIES }}" > /home/ec2-user/properties/application-aws-s3.properties
+
+      - name: Load Application MongoDB Properties
+        run: echo "${{ secrets.APPLICATION_MONGO_PROPERTIES }}" > /home/ec2-user/properties/application-mongodb.properties
+
+      - name: Load Application Redis Properties
+        run: echo "${{ secrets.APPLICATION_REDIS_PROPERTIES }}" > /home/ec2-user/properties/application-redis.properties
+
+      - name: Load Application Security Properties
+        run: echo "${{ secrets.APPLICATION_SECURITY_PROPERTIES }}" > /home/ec2-user/properties/application-security.properties
+
       # Build
       - name: Build with Gradle
         run: ./gradlew clean build
