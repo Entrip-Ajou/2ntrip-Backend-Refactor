@@ -12,13 +12,14 @@ IDLE_PORT=$(find_idle_port)
 
 echo "> Health Check Start!"
 echo "> IDLE_PORT: $IDLE_PORT"
-echo "> curl -s https://2ntrip.link:$IDLE_PORT/api/v2/profile "
+echo "> curl -s https://2ntrip.link/api/v2/profile "
+
 sleep 10
 
 for RETRY_COUNT in {1..10}
 do
 
-  RESPONSE=$(curl -s https://2ntrip.link:${IDLE_PORT}/api/v2/profile)
+  RESPONSE=$(curl -s https://2ntrip.link/api/v2/profile)
   UP_COUNT=$(echo ${RESPONSE} | grep 'real' | wc -l)
 
   if [ ${UP_COUNT} -ge 1 ]
@@ -40,4 +41,5 @@ do
 
   echo "> Health check 연결 실패. 재시도..."
   sleep 10
+  
 done

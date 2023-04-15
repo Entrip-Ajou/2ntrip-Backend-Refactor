@@ -5,8 +5,10 @@
 name: Spring Boot & Gradle CI/CD
 
 # Event Trigger
-# master branch에 pusht가 발생할 경우 동작
+# master branch에 push가 발생할 경우 동작
 # branch 단위 외에도, tag나 cron 식 등을 사용할 수 있음
+# Testing 0413
+
 on:
   push:
     branches: [ main ]
@@ -54,9 +56,12 @@ jobs:
       - name: Copy shell
         run: cp ./scripts/* ./deploy/
 
+      - name: Grant execute permission for scripts
+        run: chmod +x ./scripts/*
+
       # 압축파일 형태로 전달
       - name: Make zip file
-        run: zip -r -qq -j ./2ntrip-api-build.zip ./deploy/
+        run: zip -r -qq -j ./2ntrip-api-refactor-deploy.zip ./deploy/
 
       # S3 Bucket으로 copy
       - name: Deliver to AWS S3
@@ -67,10 +72,7 @@ jobs:
           aws s3 cp \
           --region ap-northeast-2 \
           --acl private \
-          ./2ntrip-api-build.zip s3://2ntrip-api-build/$GITHUB_SHA.zip
-          
-          echo secrets.AWS_ACCESS_KEY_ID
-          echo secrets.AWS_SECRET_ACCESS_KEY
+          ./2ntrip-api-refactor-deploy.zip s3://2ntrip-backend-refactor-deploy/
 
       # Deploy
       - name: Deploy
@@ -80,7 +82,7 @@ jobs:
         run: |
           aws deploy create-deployment \
           --application-name $CODEDEPLOY_APPLICATION_NAME \
-          —deployment-group-name $DEPLOYMENT_GROUP_NAME \
-          —file-exists-behavior OVERWRITE \
-          —s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip \
-          —region ap-northeast-2
+          --deployment-group-name $DEPLOYMENT_GROUP_NAME \
+          --file-exists-behavior OVERWRITE \
+          --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=2ntrip-api-refactor-deploy.zip \
+          --region ap-northeast-2
