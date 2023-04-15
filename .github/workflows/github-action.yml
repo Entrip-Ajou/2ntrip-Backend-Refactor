@@ -45,9 +45,6 @@ jobs:
       - name: Start MySQL
         uses: samin/mysql-action@v1.3
 
-      - name: Liquibase Init Start H2 Action
-        uses: liquibase-github-actions/init-start-h2@v4.21.1
-
       - name: Create Properties Files
         run: touch ./src/main/resources/application.properties ; touch ./src/main/resources/application-aws-s3.properties ; touch ./src/main/resources/application-mongodb.properties ; touch ./src/main/resources/application-redis.properties ; touch ./src/main/resources/application-security.properties ; touch ./src/test/resources/application-test.properties
 
