@@ -19,7 +19,6 @@ class UsersController(
 ) : BaseController() {
     @PostMapping("/api/v2/users")
     public fun save(@RequestBody requestDto: UsersSaveRequestDto): ResponseEntity<RestAPIMessages> {
-        requestDto.password = passwordEncoder.encode(requestDto.password)
         val user_id: String? = usersService.save(requestDto)
         val responseDto: UsersResponseDto = usersService.findByUserId(user_id)
         val returnDto: UsersReturnDto = UsersReturnDto(responseDto = responseDto)

@@ -49,6 +49,7 @@ class UsersServiceTest : BehaviorSpec() {
 
             every { usersRepository.findAll() } returns emptyList()
             every { usersRepository.save(any()) } returns users
+            every { passwordEncoder.encode(any()) } returns "testPassword"
 
             `when`("save하면") {
                 val result = usersService.save(usersSaveRequestDto)
