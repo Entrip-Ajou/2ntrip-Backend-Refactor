@@ -1,7 +1,6 @@
 package com.entrip.controller
 
 import com.entrip.domain.RestAPIMessages
-import com.entrip.domain.dto.Planners.PlannersReturnDto
 import com.entrip.domain.dto.Users.UsersLoginRequestDto
 import com.entrip.domain.dto.Users.UsersResponseDto
 import com.entrip.domain.dto.Users.UsersReturnDto
@@ -35,17 +34,17 @@ class UsersController(
     }
 
     @GetMapping("/api/v1/users/{user_id}")
-    public fun findById(@PathVariable user_id: String): ResponseEntity<RestAPIMessages> {
-        val responseDto: UsersResponseDto = usersService.findByUserId(user_id)
-        val returnDto: UsersReturnDto = UsersReturnDto(responseDto)
-        return sendResponseHttpByJson("Load user with id : $user_id", returnDto)
-    }
+    public fun findById(@PathVariable user_id: String): ResponseEntity<RestAPIMessages> =
+        sendResponseHttpByJson("Load user with id : $user_id", UsersReturnDto(usersService.findByUserId(user_id)))
+
 
     @GetMapping("api/v1/users/{user_id}/all")
-    public fun findAllPlannersWithUsersId(@PathVariable user_id: String): ResponseEntity<RestAPIMessages> {
-        val plannersList: List<PlannersReturnDto> = usersService.findAllPlannersWithUserId(user_id)
-        return sendResponseHttpByJson("Load all planners with user, id : $user_id", plannersList)
-    }
+    public fun findAllPlannersWithUsersId(@PathVariable user_id: String): ResponseEntity<RestAPIMessages> =
+        sendResponseHttpByJson(
+            "Load all planners with user, id : $user_id",
+            usersService.findAllPlannersWithUserId(user_id)
+        )
+
 
     @GetMapping("api/v2/users/{nickname}/nickname/exist")
     public fun isExistNickname(@PathVariable nickname: String): ResponseEntity<RestAPIMessages> {
@@ -62,10 +61,9 @@ class UsersController(
     }
 
     @DeleteMapping("/api/v1/users/{user_id}")
-    public fun delete(@PathVariable user_id: String): ResponseEntity<RestAPIMessages> {
-        val deletedUserId: String? = usersService.delete(user_id)
-        return sendResponseHttpByJson("Delete user with id : $user_id", deletedUserId!!)
-    }
+    public fun delete(@PathVariable user_id: String): ResponseEntity<RestAPIMessages> =
+        sendResponseHttpByJson("Delete user with id : $user_id", usersService.delete(user_id)!!)
+
 
     @PutMapping("api/v1/users/token/{user_id}/{token}")
     public fun addToken(@PathVariable user_id: String, @PathVariable token: String): ResponseEntity<RestAPIMessages> {
@@ -84,18 +82,12 @@ class UsersController(
     }
 
     @PostMapping("api/v2/users/login")
-    public fun login(@RequestBody requestDto: UsersLoginRequestDto): ResponseEntity<RestAPIMessages> {
-        val usersLoginResReturnDto = usersService.login(requestDto)
-        return sendResponseHttpByJson("Success to Login!", usersLoginResReturnDto)
-    }
+    public fun login(@RequestBody requestDto: UsersLoginRequestDto): ResponseEntity<RestAPIMessages> =
+        sendResponseHttpByJson("Success to Login!", usersService.login(requestDto))
 
     @GetMapping("api/v2/users/reIssue/{refreshToken}")
-    public fun reIssue(
-        @PathVariable refreshToken: String
-    ): ResponseEntity<RestAPIMessages> {
-        val newAccessToken: String = usersService.reIssue(refreshToken)
-        return sendResponseHttpByJson("Change Access Token", newAccessToken)
-    }
+    public fun reIssue(@PathVariable refreshToken: String): ResponseEntity<RestAPIMessages> =
+        sendResponseHttpByJson("Change Access Token", usersService.reIssue(refreshToken))
 
     @DeleteMapping("api/v1/users/{user_id}/logout")
     fun logout(@PathVariable user_id: String): ResponseEntity<RestAPIMessages> =
