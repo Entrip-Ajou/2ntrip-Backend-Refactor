@@ -81,7 +81,7 @@ class UsersControllerTest() : BehaviorSpec() {
             )
 
             every { usersService.save(any()) } returns validUserId
-            every { usersService.findByUserId(validUserId) } returns usersResponseDto
+            every { usersService.findByUserIdAndReturnResponseDto(validUserId) } returns usersResponseDto
 
             `when`("/api/v2/users POST 요청 보내면") {
                 then("HttpStatus.OK, UsersReturnDto가 REST로 응답") {

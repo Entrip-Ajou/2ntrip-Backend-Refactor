@@ -88,8 +88,8 @@ class UsersServiceTest : BehaviorSpec() {
             every { jwtTokenProvider.expireAllTokensWithUserPk(any()) } returns validUserId
 
 
-            `when`("findByUserId($validUserId)를 호출하면") {
-                val result = usersService.findByUserId(validUserId)
+            `when`("findByUserIdAndReturnResponseDto($validUserId)를 호출하면") {
+                val result = usersService.findByUserIdAndReturnResponseDto(validUserId)
                 then("save된 usersResponseDto가 리턴된다") {
                     result.user_id shouldBe validUserId
                     result.gender shouldBe 1

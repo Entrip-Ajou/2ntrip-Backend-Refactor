@@ -17,62 +17,50 @@ import javax.transaction.Transactional
 
 @Service
 class UsersService(
-    private final val usersRepository: UsersRepository,
+    private val usersRepository: UsersRepository,
 
     private val plannersRepository: PlannersRepository,
     private val jwtTokenProvider: JwtTokenProvider,
     private val passwordEncoder: PasswordEncoder
 ) {
 
-    private fun findUsers(user_id: String?): Users {
-        val users = usersRepository.findById(user_id!!).orElseThrow {
+    private fun findUsers(user_id: String?): Users =
+        usersRepository.findById(user_id!!).orElseThrow {
             IllegalArgumentException("Error raise at UsersRepository.findById$user_id")
         }
-        return users
-    }
 
-    private fun findPlanners(planner_id: Long?): Planners {
-        val planners: Planners = plannersRepository.findById(planner_id!!).orElseThrow {
+    private fun findPlanners(planner_id: Long?): Planners =
+        plannersRepository.findById(planner_id!!).orElseThrow {
             IllegalArgumentException("Error raise at PlannersRepository.findById$planner_id")
         }
-        return planners
-    }
-
 
     @Transactional
-    public fun save(requestDto: UsersSaveRequestDto): String? {
-        requestDto.password = passwordEncoder.encode(requestDto.password)
-        val users: Users = Users(
-            user_id = requestDto.user_id,
-            photoUrl = requestDto.photoUrl,
-            gender = requestDto.gender,
-            nickname = requestDto.nickname,
-            m_password = requestDto.password
-        )
-        if (isExistUserId(users.user_id!!)) throw NotAcceptedException(UsersReturnDto("", "", -1, "", ""))
+    fun save(requestDto: UsersSaveRequestDto): String? {
+        if (isExistUserId(requestDto.user_id))
+            throw NotAcceptedException(UsersReturnDto("", "", -1, "", ""))
+        val users = requestDto.toEntity()
+        // Encode Password before saving user
+        users.m_password = passwordEncoder.encode(requestDto.password)
         return usersRepository.save(users).user_id
     }
 
-    public fun findByUserId(user_id: String?): UsersResponseDto {
-        val entity: Users = findUsers(user_id)
-        return UsersResponseDto(entity)
-    }
-
+    fun findByUserIdAndReturnResponseDto(user_id: String?): UsersResponseDto =
+        UsersResponseDto(findUsers(user_id))
 
     @Transactional
-    public fun delete(user_id: String): String? {
+    fun delete(user_id: String): String? {
         val users = findUsers(user_id)
         val plannersIterator = users.planners.iterator()
         while (plannersIterator.hasNext()) {
             val planners = plannersIterator.next()
-            planners.users?.remove(users)
+            planners.users.remove(users)
         }
         usersRepository.delete(users)
         return user_id
     }
 
     @Transactional
-    public fun addPlanners(planner_id: Long, user_id: String): Long? {
+    fun addPlanners(planner_id: Long, user_id: String): Long? {
         val planners: Planners = findPlanners(planner_id)
         val users: Users = findUsers(user_id)
         users.addPlanners(planners)
@@ -81,34 +69,34 @@ class UsersService(
     }
 
     @Transactional
-    public fun findAllPlannersWithUserId(user_id: String): MutableList<PlannersReturnDto> {
+    fun findAllPlannersWithUserId(user_id: String): MutableList<PlannersReturnDto> {
         val users: Users = findUsers(user_id)
         val plannersSet: MutableSet<Planners> = users.planners
         val plannersIterator = plannersSet.iterator()
-        val plannersList: MutableList<PlannersReturnDto> = ArrayList<PlannersReturnDto>()
+        val plannersList: MutableList<PlannersReturnDto> = ArrayList()
         while (plannersIterator.hasNext()) {
             val planners = plannersIterator.next()
-            val plannersResponseDto: PlannersResponseDto = PlannersResponseDto(planners)
-            val plannersReturnDto: PlannersReturnDto = PlannersReturnDto(plannersResponseDto)
+            val plannersResponseDto = PlannersResponseDto(planners)
+            val plannersReturnDto = PlannersReturnDto(plannersResponseDto)
             plannersList.add(plannersReturnDto)
         }
         return plannersList
     }
 
-    public fun isExistNickname(nickname: String) : Boolean =
+    fun isExistNickname(nickname: String) : Boolean =
         usersRepository.existsByNickname(nickname)
 
-    public fun isExistUserId(user_id: String): Boolean =
+    fun isExistUserId(user_id: String): Boolean =
         usersRepository.existsByUser_id(user_id)
 
     @Transactional
-    public fun updateToken(user_id: String, token: String): String {
-        val users: Users = findUsers(user_id)
+    fun updateToken(user_id: String, token: String): String {
+        val users = findUsers(user_id)
         users.updateToken(token)
         return user_id
     }
 
-    public fun findUserWithNicknameOrUserId(nicknameOrUserId: String): String? {
+    fun findUserWithNicknameOrUserId(nicknameOrUserId: String): String? {
         val usersList: List<Users> = usersRepository.findAll()
         for (users: Users in usersList) {
             if (users.user_id == nicknameOrUserId || users.nickname == nicknameOrUserId)
@@ -117,8 +105,7 @@ class UsersService(
         throw FailToFindNicknameOrIdException("Fail To Find Nickname Or Id matched Users!")
     }
 
-
-    public fun login(usersLoginRequestDto: UsersLoginRequestDto): UsersLoginResReturnDto {
+    fun login(usersLoginRequestDto: UsersLoginRequestDto): UsersLoginResReturnDto {
         if (!isExistUserId(usersLoginRequestDto.user_id)) throw NotAcceptedException(DummyUsersLoginResReturnDto("Email is not valid"))
         val users = findUsers(usersLoginRequestDto.user_id)
         if (!passwordEncoder.matches(
@@ -131,10 +118,9 @@ class UsersService(
         return UsersLoginResReturnDto(users.user_id!!, accessToken, users.nickname, refreshToken)
     }
 
-    private class DummyUsersLoginResReturnDto(val detailedMessage: String) : UsersLoginResReturnDto("", "", "", "") {
-    }
+    private class DummyUsersLoginResReturnDto(val detailedMessage: String) : UsersLoginResReturnDto("", "", "", "")
 
-    public fun reIssue(refreshToken: String): String {
+    fun reIssue(refreshToken: String): String {
         try {
             jwtTokenProvider.getUserPk(refreshToken)
         } catch (e: SignatureException) {
@@ -143,7 +129,7 @@ class UsersService(
         return jwtTokenProvider.reIssue(refreshToken)
     }
 
-    public fun logout(user_id: String): String =
+    fun logout(user_id: String): String =
         jwtTokenProvider.expireAllTokensWithUserPk(user_id)
 }
 
