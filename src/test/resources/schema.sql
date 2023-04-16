@@ -1,3 +1,21 @@
+drop table if exists comments CASCADE;
+drop table if exists notices CASCADE;
+drop table if exists photos CASCADE;
+drop table if exists planners CASCADE;
+drop table if exists planners_users CASCADE;
+drop table if exists plans CASCADE;
+drop table if exists posts CASCADE;
+drop table if exists posts_like_users CASCADE;
+drop table if exists posts_comments CASCADE;
+drop table if exists posts_nested_comments CASCADE;
+drop table if exists users CASCADE;
+drop table if exists users_like_posts CASCADE;
+drop table if exists users_planners CASCADE;
+drop table if exists users_votes_contents CASCADE;
+drop table if exists votes CASCADE;
+drop table if exists votes_contents CASCADE;
+drop table if exists votes_contents_users_set CASCADE;
+drop sequence if exists hibernate_sequence;
 create sequence hibernate_sequence start with 1 increment by 1;
 create table comments
 (
