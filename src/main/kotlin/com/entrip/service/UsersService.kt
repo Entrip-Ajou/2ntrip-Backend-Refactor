@@ -11,6 +11,8 @@ import com.entrip.exception.NotAcceptedException
 import com.entrip.repository.PlannersRepository
 import com.entrip.repository.UsersRepository
 import io.jsonwebtoken.SignatureException
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
@@ -23,6 +25,8 @@ class UsersService(
     private val jwtTokenProvider: JwtTokenProvider,
     private val passwordEncoder: PasswordEncoder
 ) {
+
+    val logger: Logger = LoggerFactory.getLogger(UsersService::class.java)
 
     private fun findUsers(user_id: String?): Users =
         usersRepository.findById(user_id!!).orElseThrow {
@@ -41,7 +45,9 @@ class UsersService(
         val users = requestDto.toEntity()
         // Encode Password before saving user
         users.m_password = passwordEncoder.encode(requestDto.password)
-        return usersRepository.save(users).user_id
+        usersRepository.save(users)
+        logger.info("User is saved in Database with userid : '{}'", users.user_id)
+        return users.user_id
     }
 
     fun findByUserIdAndReturnResponseDto(user_id: String?): UsersResponseDto =
@@ -56,6 +62,7 @@ class UsersService(
             planners.users.remove(users)
         }
         usersRepository.delete(users)
+        logger.info("User is deleted from Database with userid : '{}'", user_id)
         return user_id
     }
 
@@ -65,6 +72,7 @@ class UsersService(
         val users: Users = findUsers(user_id)
         users.addPlanners(planners)
         planners.addUsers(users)
+        logger.info("Planner with planner_id : '{}' is added with User with user_id : '{}'", planner_id, user_id)
         return planners.planner_id
     }
 
@@ -93,6 +101,7 @@ class UsersService(
     fun updateToken(user_id: String, token: String): String {
         val users = findUsers(user_id)
         users.updateToken(token)
+        logger.info("Update users' token with user_id : '{}' with token : '{}'", user_id, token)
         return user_id
     }
 
@@ -102,19 +111,30 @@ class UsersService(
             if (users.user_id == nicknameOrUserId || users.nickname == nicknameOrUserId)
                 return users.user_id
         }
+        logger.warn("Fail to find User with Nickname or UserId value : '{}'", nicknameOrUserId)
         throw FailToFindNicknameOrIdException("Fail To Find Nickname Or Id matched Users!")
     }
 
     fun login(usersLoginRequestDto: UsersLoginRequestDto): UsersLoginResReturnDto {
-        if (!isExistUserId(usersLoginRequestDto.user_id)) throw NotAcceptedException(DummyUsersLoginResReturnDto("Email is not valid"))
+        // Match email first. If failed, throw NotAcceptedException
+        if (!isExistUserId(usersLoginRequestDto.user_id)) {
+            logger.warn("Fail to Login because email is not valid with email value : '{}'", usersLoginRequestDto.user_id)
+            throw NotAcceptedException(DummyUsersLoginResReturnDto("Email is not valid"))
+        }
         val users = findUsers(usersLoginRequestDto.user_id)
+        // Match password second with passwordEncoder. If failed, throw NotAcceptedException
         if (!passwordEncoder.matches(
                 usersLoginRequestDto.password,
                 users.password
             )
-        ) throw NotAcceptedException(DummyUsersLoginResReturnDto("Password is not valid"))
+        ) {
+            logger.warn("Fail to Login because password is not valid")
+            throw NotAcceptedException(DummyUsersLoginResReturnDto("Password is not valid"))
+        }
+        // Create accessToken and refreshToken via jwtTokenProvider
         val accessToken: String = jwtTokenProvider.createAccessToken(usersLoginRequestDto.user_id)
         val refreshToken: String = jwtTokenProvider.createRefreshToken(usersLoginRequestDto.user_id)
+        logger.info("Success to Login. Return UsersLoginResReturnDto with accessToken and refreshToken")
         return UsersLoginResReturnDto(users.user_id!!, accessToken, users.nickname, refreshToken)
     }
 
@@ -124,13 +144,20 @@ class UsersService(
         try {
             jwtTokenProvider.getUserPk(refreshToken)
         } catch (e: SignatureException) {
-            throw SignatureException("Refresh token Signature is not valid.")
+            logger.error("Fail to reIssue because jwtToken signature is not valid")
+            throw SignatureException("Refresh token Signature is not valid")
         }
-        return jwtTokenProvider.reIssue(refreshToken)
+        val reIssuedRefreshToken = jwtTokenProvider.reIssue(refreshToken)
+        logger.info("ReIssue refresh Token")
+        return reIssuedRefreshToken
     }
 
-    fun logout(user_id: String): String =
-        jwtTokenProvider.expireAllTokensWithUserPk(user_id)
+    fun logout(user_id: String): String {
+        // Logout through expire all token made with user_id
+        val result = jwtTokenProvider.expireAllTokensWithUserPk(user_id)
+        logger.info("Logout with user_id value : '{}'", result)
+        return result
+    }
 }
 
 
