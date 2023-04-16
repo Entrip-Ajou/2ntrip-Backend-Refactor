@@ -39,7 +39,6 @@ class UsersService(
     }
 
 
-
     @Transactional
     public fun save(requestDto: UsersSaveRequestDto): String? {
         requestDto.password = passwordEncoder.encode(requestDto.password)
@@ -51,8 +50,7 @@ class UsersService(
             m_password = requestDto.password
         )
         if (isExistUserId(users.user_id!!)) throw NotAcceptedException(UsersReturnDto("", "", -1, "", ""))
-        val user_id: String? = usersRepository.save(users).user_id
-        return user_id
+        return usersRepository.save(users).user_id
     }
 
     public fun findByUserId(user_id: String?): UsersResponseDto {
