@@ -97,23 +97,11 @@ class UsersService(
         return plannersList
     }
 
-    public fun isExistNickname(nickname: String): Boolean {
-        val usersList: List<Users> = usersRepository.findAll()
-        for (users: Users in usersList) {
-            val temp: String = users.nickname
-            if (temp == nickname) return true
-        }
-        return false
-    }
+    public fun isExistNickname(nickname: String) : Boolean =
+        usersRepository.existsByNickname(nickname)
 
-    public fun isExistUserId(user_id: String): Boolean {
-        val usersList: List<Users> = usersRepository.findAll()
-        for (users: Users in usersList) {
-            val temp: String? = users.user_id
-            if (temp == user_id) return true
-        }
-        return false
-    }
+    public fun isExistUserId(user_id: String): Boolean =
+        usersRepository.existsByUser_id(user_id)
 
     @Transactional
     public fun updateToken(user_id: String, token: String): String {
@@ -131,11 +119,9 @@ class UsersService(
         throw FailToFindNicknameOrIdException("Fail To Find Nickname Or Id matched Users!")
     }
 
-    public fun isExistsUser(email: String): Boolean =
-        usersRepository.existsById(email)
 
     public fun login(usersLoginRequestDto: UsersLoginRequestDto): UsersLoginResReturnDto {
-        if (!isExistsUser(usersLoginRequestDto.user_id)) throw NotAcceptedException(DummyUsersLoginResReturnDto("Email is not valid"))
+        if (!isExistUserId(usersLoginRequestDto.user_id)) throw NotAcceptedException(DummyUsersLoginResReturnDto("Email is not valid"))
         val users = findUsers(usersLoginRequestDto.user_id)
         if (!passwordEncoder.matches(
                 usersLoginRequestDto.password,

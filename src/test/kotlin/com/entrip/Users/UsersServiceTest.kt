@@ -50,6 +50,7 @@ class UsersServiceTest : BehaviorSpec() {
             every { usersRepository.findAll() } returns emptyList()
             every { usersRepository.save(any()) } returns users
             every { passwordEncoder.encode(any()) } returns "testPassword"
+            every { usersRepository.existsByUser_id(any()) } returns false
 
             `when`("save하면") {
                 val result = usersService.save(usersSaveRequestDto)
@@ -73,8 +74,10 @@ class UsersServiceTest : BehaviorSpec() {
             every { usersRepository.findById(validUserId) } returns Optional.of(users)
             every { usersRepository.findById(invalidUserId) } returns Optional.empty()
             every { usersRepository.findAll() } returns listOf(users)
-            every { usersRepository.existsById(validUserId) } returns true
-            every { usersRepository.existsById(invalidUserId) } returns false
+            every { usersRepository.existsByUser_id(validUserId) } returns true
+            every { usersRepository.existsByUser_id(invalidUserId) } returns false
+            every { usersRepository.existsByNickname(validNickname) } returns true
+            every { usersRepository.existsByNickname(invalidNickname) } returns false
             every { jwtTokenProvider.createAccessToken(any()) } returns "accessToken"
             every { jwtTokenProvider.createRefreshToken(any()) } returns "refreshToken"
             every { passwordEncoder.matches(validPassword, any()) } returns true
@@ -105,20 +108,6 @@ class UsersServiceTest : BehaviorSpec() {
 
             `when`("isExistUserId(invalidUserId)을 호출하면") {
                 val result = usersService.isExistUserId(invalidUserId)
-                then("false가 리턴된다") {
-                    result shouldBe false
-                }
-            }
-
-            `when`("isExistsUser(validUserId)를 호출하면") {
-                val result = usersService.isExistsUser(validUserId)
-                then("true가 리턴된다") {
-                    result shouldBe true
-                }
-            }
-
-            `when`("isExistsUser(invalidUserId)를 호출하면") {
-                val result = usersService.isExistsUser(invalidUserId)
                 then("false가 리턴된다") {
                     result shouldBe false
                 }
