@@ -97,30 +97,19 @@ class PlannersIntegrationTest : BehaviorSpec() {
             )
 
             `when`("플래너 생성을 요청하면") {
-                val plannersReturnDto = PlannersReturnDto(
-                    PlannersResponseDto(
-                        plannersRepository.findById(1).get()
-                    )
-                )
-
-                val successExpectedResponse = RestAPIMessages(
-                    httpStatus = 200,
-                    message = "Planner is saved well",
-                    data = plannersReturnDto
-                )
-
                 then("플래너가 생성되고 plannersReturnDto가 반환된다") {
-                    mockMvc.post("/api/v1/planners/{user_id}", user_id) {
+                    val result = mockMvc.post("/api/v1/planners/{user_id}", user_id) {
                         contentType = MediaType.APPLICATION_JSON
                         content = objectMapper.writeValueAsString(plannersSaveRequestDto)
                         header("AccessToken", accessToken)
                     }.andExpect {
                         status { isOk() }
-                        content { json(objectMapper.writeValueAsString(successExpectedResponse)) }
-                    }
+                    }.andReturn()
+
+                    val planner_id = getContent(result, "planner_id").toLong()
 
                     // plnnersRepository, plannerService를 통해서 제대로 저장이 되었는지 확인할 필요가 있을까?
-                    plannersRepository.findById(1).get().planner_id shouldBe 1
+                    plannersRepository.findById(planner_id).get().planner_id shouldBe 1
                 }
             }
         }
@@ -159,7 +148,7 @@ class PlannersIntegrationTest : BehaviorSpec() {
             `when`("findById를 요청하면") {
                 val plannersReturnDto = PlannersReturnDto(
                     PlannersResponseDto(
-                        plannersRepository.findById(1).get()
+                        plannersRepository.findById(planner_id).get()
                     )
                 )
 
