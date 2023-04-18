@@ -19,7 +19,7 @@ class Users(
     var planners: MutableSet<Planners> = TreeSet(),
 
     @Column
-    @OneToMany(mappedBy = "users", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY, orphanRemoval = true)
     //Check "orphanRemoval = true" is possible
     var comments: MutableSet<Comments> = TreeSet(),
 
