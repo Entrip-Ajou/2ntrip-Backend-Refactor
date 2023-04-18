@@ -14,7 +14,7 @@ class Users(
     val user_id: String? = null,
 
     @Column
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "PLANNERS_USERS")
     var planners: MutableSet<Planners> = TreeSet(),
 
