@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.extensions.spring.SpringExtension
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -426,7 +427,7 @@ class UsersIntegrationTest() : BehaviorSpec() {
             val expectedResponse = RestAPIMessages(
                 httpStatus = 200, message = "Update user $user_id's token : $tokenValue", data = usersReturnDto
             )
-            `when`("addToken을 실행하면") {
+            `when`("updateToken 실행하면") {
                 then("token이 더해진 UsersReturnDto가 리턴된다") {
                     mockMvc.perform(
                         RestDocumentationRequestBuilders.put(
@@ -701,6 +702,10 @@ class UsersIntegrationTest() : BehaviorSpec() {
                 httpStatus = 200, message = "Load all planners with user, id : $user_id", data = expectedList
             )
 
+//            val users = usersRepository.findById(user_id).get()
+//            users.planners.add(planners1)
+//            planners1.users.add(users)
+
             `when`("addPlanner로 플래너 1번을 등록하면") {
                 then("플래너가 사용자에게 등록되고 planner_id=1가 리턴된다") {
                     mockMvc.perform(
@@ -829,6 +834,46 @@ class UsersIntegrationTest() : BehaviorSpec() {
                     }.andExpect {
                         status { isBadRequest() }
                     }
+                }
+            }
+        }
+
+        given("재로그인 후 올바른 accessToken을 Http Header에 실어서 (4)")
+        {
+            val usersLoginRequestDto = UsersLoginRequestDto(
+                user_id = user_id, password = password
+            )
+
+            val expectedResponse = RestAPIMessages (
+                httpStatus = 200, message = "Delete user with id : $user_id", data = user_id
+            )
+
+            `when`("회원 탈퇴를 요청하면") {
+                then("회원 탈퇴가 정상적으로 이루어진다") {
+                    val result = mockMvc.post("/api/v2/users/login") {
+                        contentType = MediaType.APPLICATION_JSON
+                        content = objectMapper.writeValueAsString(usersLoginRequestDto)
+                    }.andReturn()
+
+                    val content = result.response.contentAsString
+                    val restAPIMessages = objectMapper.readValue<RestAPIMessages>(content, RestAPIMessages::class.java)
+                    val str = restAPIMessages.data.toString()
+                    val pairs = str.substring(1, str.length - 1).split(", ")
+                    for (pair in pairs) {
+                        val keyValue = pair.split("=")
+                        if (keyValue[0] == "accessToken") accessToken = keyValue[1]
+                        if (keyValue[0] == "refreshToken") refreshToken = keyValue[1]
+                    }
+
+                    mockMvc.perform(
+                        RestDocumentationRequestBuilders.delete("/api/v1/users/{user_id}", user_id)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("AccessToken", accessToken)
+                    )
+                        .andExpect(status().isOk)
+                        .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)))
+
+                    usersRepository.findAll().size shouldBe 0
                 }
             }
         }

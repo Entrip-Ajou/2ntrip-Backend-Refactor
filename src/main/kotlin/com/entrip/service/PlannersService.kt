@@ -15,16 +15,16 @@ import com.entrip.domain.entity.Notices
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Plans
 import com.entrip.domain.entity.Users
-import com.entrip.events.CrudEvent
 import com.entrip.repository.PlannersRepository
 import com.entrip.repository.PlansRepository
 import com.entrip.repository.UsersRepository
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import java.util.*
 import javax.transaction.Transactional
-import kotlin.collections.ArrayList
 
 @Service
 class PlannersService(
@@ -52,6 +52,9 @@ class PlannersService(
     private val eventPublisher: ApplicationEventPublisher
 
 ) {
+
+    val logger: Logger = LoggerFactory.getLogger(PlannersService::class.java)
+
     private fun findPlanners(planner_id: Long): Planners {
         val planners: Planners = plannersRepository.findById(planner_id!!).orElseThrow {
             IllegalArgumentException("Error raise at PlannersRepository.findById$planner_id")
@@ -60,8 +63,8 @@ class PlannersService(
     }
 
     private fun findUsers(user_id: String?): Users {
-        val users: Users = usersRepository.findById(user_id!!).orElseThrow {
-            IllegalArgumentException("Error raise at usersRepository.findById$user_id")
+        val users: Users = usersRepository.findUsersByUser_idFetchPlanners(user_id!!).orElseThrow {
+            IllegalArgumentException("Error raise at UsersRepository.findById$user_id")
         }
         return users
     }
@@ -83,6 +86,7 @@ class PlannersService(
     public fun save(requestDto: PlannersSaveRequestDto): Long? {
         val users = findUsers(requestDto.user_id)
         val planners = requestDto.toEntity()
+        logger.info("**********************************")
         planners.setComment_timeStamp()
         users.addPlanners(planners)
         planners.addUsers(users)

@@ -11,7 +11,7 @@ import javax.persistence.*
 @EnableJpaAuditing
 class Users(
     @Id @Column(name = "USER_ID")
-    val user_id: String? = null,
+    val user_id: String,
 
     @Column
     @ManyToMany(fetch = FetchType.LAZY)

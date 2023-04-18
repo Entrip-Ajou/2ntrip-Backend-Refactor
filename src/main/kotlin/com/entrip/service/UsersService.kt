@@ -33,6 +33,18 @@ class UsersService(
             IllegalArgumentException("Error raise at UsersRepository.findById$user_id")
         }
 
+    // Select Users with join Fetch Users.Planners
+    private fun findUsersWithFetchPlanner (user_id : String) : Users =
+        usersRepository.findUsersByUser_idFetchPlanners(user_id).orElseThrow {
+            IllegalArgumentException("Error raise at UsersRepository.findById$user_id")
+        }
+
+    // Select Users with Lazy strategy
+    private fun findUsersWithLazy (user_id : String) : Users =
+        usersRepository.findUsersByUser_idWithLazy(user_id).orElseThrow {
+            IllegalArgumentException("Error raise at UsersRepository.findById$user_id")
+        }
+
     private fun findPlanners(planner_id: Long?): Planners =
         plannersRepository.findById(planner_id!!).orElseThrow {
             IllegalArgumentException("Error raise at PlannersRepository.findById$planner_id")
@@ -47,15 +59,15 @@ class UsersService(
         users.m_password = passwordEncoder.encode(requestDto.password)
         usersRepository.save(users)
         logger.info("User is saved in Database with userid : '{}'", users.user_id)
-        return users.user_id
+        return users.user_id!!
     }
 
     fun findByUserIdAndReturnResponseDto(user_id: String?): UsersResponseDto =
-        UsersResponseDto(findUsers(user_id))
+        UsersResponseDto(findUsersWithLazy(user_id!!))
 
     @Transactional
     fun delete(user_id: String): String? {
-        val users = findUsers(user_id)
+        val users = findUsersWithFetchPlanner(user_id)
         val plannersIterator = users.planners.iterator()
         while (plannersIterator.hasNext()) {
             val planners = plannersIterator.next()
@@ -69,7 +81,7 @@ class UsersService(
     @Transactional
     fun addPlanners(planner_id: Long, user_id: String): Long? {
         val planners: Planners = findPlanners(planner_id)
-        val users: Users = findUsers(user_id)
+        val users: Users = findUsersWithFetchPlanner(user_id)
         users.addPlanners(planners)
         planners.addUsers(users)
         logger.info("Planner with planner_id : '{}' is added with User with user_id : '{}'", planner_id, user_id)
@@ -78,7 +90,7 @@ class UsersService(
 
     @Transactional
     fun findAllPlannersWithUserId(user_id: String): MutableList<PlannersReturnDto> {
-        val users: Users = findUsers(user_id)
+        val users: Users = findUsersWithFetchPlanner(user_id)
         val plannersSet: MutableSet<Planners> = users.planners
         val plannersIterator = plannersSet.iterator()
         val plannersList: MutableList<PlannersReturnDto> = ArrayList()
@@ -99,7 +111,7 @@ class UsersService(
 
     @Transactional
     fun updateToken(user_id: String, token: String): String {
-        val users = findUsers(user_id)
+        val users = findUsersWithLazy(user_id)
         users.updateToken(token)
         logger.info("Update users' token with user_id : '{}' with token : '{}'", user_id, token)
         return user_id
@@ -121,7 +133,7 @@ class UsersService(
             logger.warn("Fail to Login because email is not valid with email value : '{}'", usersLoginRequestDto.user_id)
             throw NotAcceptedException(DummyUsersLoginResReturnDto("Email is not valid"))
         }
-        val users = findUsers(usersLoginRequestDto.user_id)
+        val users = findUsersWithLazy(usersLoginRequestDto.user_id)
         // Match password second with passwordEncoder. If failed, throw NotAcceptedException
         if (!passwordEncoder.matches(
                 usersLoginRequestDto.password,

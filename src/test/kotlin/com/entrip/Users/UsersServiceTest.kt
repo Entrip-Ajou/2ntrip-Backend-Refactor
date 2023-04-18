@@ -71,13 +71,15 @@ class UsersServiceTest : BehaviorSpec() {
             val invalidRefreshToken = "invalidRefreshToken"
             val refreshedToken = "refreshedToken"
 
-            every { usersRepository.findById(validUserId) } returns Optional.of(users)
-            every { usersRepository.findById(invalidUserId) } returns Optional.empty()
             every { usersRepository.findAll() } returns listOf(users)
             every { usersRepository.existsByUser_id(validUserId) } returns true
             every { usersRepository.existsByUser_id(invalidUserId) } returns false
             every { usersRepository.existsByNickname(validNickname) } returns true
             every { usersRepository.existsByNickname(invalidNickname) } returns false
+            every { usersRepository.findUsersByUser_idWithLazy(validUserId) } returns Optional.of(users)
+            every { usersRepository.findUsersByUser_idWithLazy(invalidUserId) } throws IllegalArgumentException()
+            every { usersRepository.findUsersByUser_idFetchPlanners(validUserId) } returns Optional.of(users)
+            every { usersRepository.findUsersByUser_idFetchPlanners(invalidUserId) } throws IllegalArgumentException()
             every { jwtTokenProvider.createAccessToken(any()) } returns "accessToken"
             every { jwtTokenProvider.createRefreshToken(any()) } returns "refreshToken"
             every { passwordEncoder.matches(validPassword, any()) } returns true
@@ -86,7 +88,6 @@ class UsersServiceTest : BehaviorSpec() {
             every { jwtTokenProvider.getUserPk(invalidRefreshToken) } throws SignatureException()
             every { jwtTokenProvider.reIssue(any()) } returns refreshedToken
             every { jwtTokenProvider.expireAllTokensWithUserPk(any()) } returns validUserId
-
 
             `when`("findByUserIdAndReturnResponseDto($validUserId)를 호출하면") {
                 val result = usersService.findByUserIdAndReturnResponseDto(validUserId)
