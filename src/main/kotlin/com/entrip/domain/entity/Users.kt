@@ -9,7 +9,7 @@ import javax.persistence.*
 
 @Entity
 @EnableJpaAuditing
-@Table(indexes = [Index(name = "idx_userId_nickname", columnList = "user_id, nickname")])
+@Table(indexes = [Index(name = "idx_nickname", columnList = "nickname")])
 class Users(
     @Id @Column(name = "USER_ID")
     val user_id: String,
