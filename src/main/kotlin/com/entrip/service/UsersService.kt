@@ -68,11 +68,8 @@ class UsersService(
     @Transactional
     fun delete(user_id: String): String? {
         val users = findUsersWithFetchPlanner(user_id)
-        val plannersIterator = users.planners.iterator()
-        while (plannersIterator.hasNext()) {
-            val planners = plannersIterator.next()
-            planners.users.remove(users)
-        }
+        for (p : Planners in users.planners)
+            p.users.remove(users)
         usersRepository.delete(users)
         logger.info("User is deleted from Database with userid : '{}'", user_id)
         return user_id
