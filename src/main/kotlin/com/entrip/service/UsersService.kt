@@ -91,15 +91,9 @@ class UsersService(
     @Transactional
     fun findAllPlannersWithUserId(user_id: String): MutableList<PlannersReturnDto> {
         val users: Users = findUsersWithFetchPlanner(user_id)
-        val plannersSet: MutableSet<Planners> = users.planners
-        val plannersIterator = plannersSet.iterator()
         val plannersList: MutableList<PlannersReturnDto> = ArrayList()
-        while (plannersIterator.hasNext()) {
-            val planners = plannersIterator.next()
-            val plannersResponseDto = PlannersResponseDto(planners)
-            val plannersReturnDto = PlannersReturnDto(plannersResponseDto)
-            plannersList.add(plannersReturnDto)
-        }
+        for (p : Planners in users.planners)
+            plannersList.add(PlannersReturnDto(PlannersResponseDto(p)))
         return plannersList
     }
 
