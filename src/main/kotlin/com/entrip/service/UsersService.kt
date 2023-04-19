@@ -52,11 +52,14 @@ class UsersService(
 
     @Transactional
     fun save(requestDto: UsersSaveRequestDto): String? {
+        // Check if User is already exist. If exists, throw NotAcceptedException
         if (isExistUserId(requestDto.user_id))
             throw NotAcceptedException(UsersReturnDto("", "", -1, "", ""))
+        // Convert saveDto to Entity
         val users = requestDto.toEntity()
         // Encode Password before saving user
         users.m_password = passwordEncoder.encode(requestDto.password)
+        // Save Users in DB
         usersRepository.save(users)
         logger.info("User is saved in Database with userid : '{}'", users.user_id)
         return users.user_id!!
@@ -144,19 +147,22 @@ class UsersService(
     private class DummyUsersLoginResReturnDto(val detailedMessage: String) : UsersLoginResReturnDto("", "", "", "")
 
     fun reIssue(refreshToken: String): String {
+        // Get userPK from token first. If failed, throw SignatureException
+        // The only reason is SignatureException because expiration doesn't matter with reIssue
         try {
             jwtTokenProvider.getUserPk(refreshToken)
         } catch (e: SignatureException) {
             logger.error("Fail to reIssue because jwtToken signature is not valid")
             throw SignatureException("Refresh token Signature is not valid")
         }
+        // ReIssue with jwtTokenProvider
         val reIssuedRefreshToken = jwtTokenProvider.reIssue(refreshToken)
         logger.info("ReIssue refresh Token")
         return reIssuedRefreshToken
     }
 
     fun logout(user_id: String): String {
-        // Logout through expire all token made with user_id
+        // Logout through expiring all token made with user_id
         val result = jwtTokenProvider.expireAllTokensWithUserPk(user_id)
         logger.info("Logout with user_id value : '{}'", result)
         return result
