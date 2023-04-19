@@ -62,7 +62,7 @@ class UsersService(
         // Save Users in DB
         usersRepository.save(users)
         logger.info("User is saved in Database with userid : '{}'", users.user_id)
-        return users.user_id!!
+        return users.user_id
     }
 
     fun findByUserIdAndReturnResponseDto(user_id: String?): UsersResponseDto =
@@ -112,10 +112,13 @@ class UsersService(
     }
 
     fun findUserWithNicknameOrUserId(nicknameOrUserId: String): String? {
-        val usersList: List<Users> = usersRepository.findAll()
-        for (users: Users in usersList) {
-            if (users.user_id == nicknameOrUserId || users.nickname == nicknameOrUserId)
-                return users.user_id
+        if (usersRepository.existsByUser_id(nicknameOrUserId)) {
+            val users = usersRepository.findUsersByUser_idWithLazy(nicknameOrUserId).get()
+            return users.user_id
+        }
+        if (usersRepository.existsByNickname(nicknameOrUserId)) {
+            val users = usersRepository.findUsersByNickname(nicknameOrUserId).get()
+            return users.user_id
         }
         logger.warn("Fail to find User with Nickname or UserId value : '{}'", nicknameOrUserId)
         throw FailToFindNicknameOrIdException("Fail To Find Nickname Or Id matched Users!")
@@ -141,7 +144,7 @@ class UsersService(
         val accessToken: String = jwtTokenProvider.createAccessToken(usersLoginRequestDto.user_id)
         val refreshToken: String = jwtTokenProvider.createRefreshToken(usersLoginRequestDto.user_id)
         logger.info("Success to Login. Return UsersLoginResReturnDto with accessToken and refreshToken")
-        return UsersLoginResReturnDto(users.user_id!!, accessToken, users.nickname, refreshToken)
+        return UsersLoginResReturnDto(users.user_id, accessToken, users.nickname, refreshToken)
     }
 
     private class DummyUsersLoginResReturnDto(val detailedMessage: String) : UsersLoginResReturnDto("", "", "", "")

@@ -17,4 +17,6 @@ interface UsersRepository : JpaRepository<Users, String> {
     @Query("select u from Users u where u.user_id = ?1")
     fun findUsersByUser_idWithLazy (user_id : String) : Optional<Users>
 
+    fun findUsersByNickname (nickname : String) : Optional<Users>
+
 }

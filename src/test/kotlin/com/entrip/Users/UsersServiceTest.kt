@@ -72,21 +72,37 @@ class UsersServiceTest : BehaviorSpec() {
             val refreshedToken = "refreshedToken"
 
             every { usersRepository.findAll() } returns listOf(users)
+
             every { usersRepository.existsByUser_id(validUserId) } returns true
             every { usersRepository.existsByUser_id(invalidUserId) } returns false
+            every { usersRepository.existsByUser_id(validNickname) } returns false
+            every { usersRepository.existsByUser_id(invalidNickname) } returns false
+
             every { usersRepository.existsByNickname(validNickname) } returns true
             every { usersRepository.existsByNickname(invalidNickname) } returns false
+            every { usersRepository.existsByNickname(validUserId) } returns false
+            every { usersRepository.existsByNickname(invalidUserId) } returns false
+
             every { usersRepository.findUsersByUser_idWithLazy(validUserId) } returns Optional.of(users)
             every { usersRepository.findUsersByUser_idWithLazy(invalidUserId) } throws IllegalArgumentException()
+
             every { usersRepository.findUsersByUser_idFetchPlanners(validUserId) } returns Optional.of(users)
             every { usersRepository.findUsersByUser_idFetchPlanners(invalidUserId) } throws IllegalArgumentException()
+
+            every { usersRepository.findUsersByNickname(validNickname) } returns Optional.of(users)
+            every { usersRepository.findUsersByNickname(invalidNickname) } throws IllegalArgumentException()
+
             every { jwtTokenProvider.createAccessToken(any()) } returns "accessToken"
             every { jwtTokenProvider.createRefreshToken(any()) } returns "refreshToken"
+
             every { passwordEncoder.matches(validPassword, any()) } returns true
             every { passwordEncoder.matches(invalidPassword, any()) } returns false
+
             every { jwtTokenProvider.getUserPk(validRefreshToken) } returns validUserId
             every { jwtTokenProvider.getUserPk(invalidRefreshToken) } throws SignatureException()
+
             every { jwtTokenProvider.reIssue(any()) } returns refreshedToken
+
             every { jwtTokenProvider.expireAllTokensWithUserPk(any()) } returns validUserId
 
             `when`("findByUserIdAndReturnResponseDto($validUserId)를 호출하면") {
