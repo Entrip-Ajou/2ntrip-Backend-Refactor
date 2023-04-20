@@ -19,7 +19,7 @@ class UsersController(
     @PostMapping("/api/v2/users")
     public fun save(@RequestBody requestDto: UsersSaveRequestDto): ResponseEntity<RestAPIMessages> {
         val user_id: String? = usersService.save(requestDto)
-        val responseDto: UsersResponseDto = usersService.findByUserId(user_id)
+        val responseDto: UsersResponseDto = usersService.findByUserIdAndReturnResponseDto(user_id)
         val returnDto: UsersReturnDto = UsersReturnDto(responseDto = responseDto)
         return sendResponseHttpByJson("User is saved well", returnDto)
     }
@@ -35,7 +35,7 @@ class UsersController(
 
     @GetMapping("/api/v1/users/{user_id}")
     public fun findById(@PathVariable user_id: String): ResponseEntity<RestAPIMessages> =
-        sendResponseHttpByJson("Load user with id : $user_id", UsersReturnDto(usersService.findByUserId(user_id)))
+        sendResponseHttpByJson("Load user with id : $user_id", UsersReturnDto(usersService.findByUserIdAndReturnResponseDto(user_id)))
 
 
     @GetMapping("api/v1/users/{user_id}/all")
@@ -68,7 +68,7 @@ class UsersController(
     @PutMapping("api/v1/users/token/{user_id}/{token}")
     public fun addToken(@PathVariable user_id: String, @PathVariable token: String): ResponseEntity<RestAPIMessages> {
         val updatedUserId: String = usersService.updateToken(user_id, token)
-        val responseDto: UsersResponseDto = usersService.findByUserId(user_id)
+        val responseDto: UsersResponseDto = usersService.findByUserIdAndReturnResponseDto(user_id)
         val returnDto: UsersReturnDto = UsersReturnDto(responseDto)
         return sendResponseHttpByJson("Update user $user_id's token : $token", returnDto)
     }
@@ -76,7 +76,7 @@ class UsersController(
     @GetMapping("api/v1/users/findUserWithNicknameOrUserId/{nicknameOrUserId}")
     public fun findUserWithNicknameOrUserId(@PathVariable nicknameOrUserId: String): ResponseEntity<RestAPIMessages> {
         val targetUserId = usersService.findUserWithNicknameOrUserId(nicknameOrUserId)
-        val responseDto: UsersResponseDto = usersService.findByUserId(targetUserId)
+        val responseDto: UsersResponseDto = usersService.findByUserIdAndReturnResponseDto(targetUserId)
         val returnDto: UsersReturnDto = UsersReturnDto(responseDto)
         return sendResponseHttpByJson("Get user with nicknameOrUserId : $nicknameOrUserId", returnDto)
     }
