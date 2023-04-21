@@ -6,7 +6,7 @@ import com.entrip.domain.dto.Planners.PlannersReturnDto
 import com.entrip.domain.dto.Planners.PlannersSaveRequestDto
 import com.entrip.domain.dto.Planners.PlannersUpdateRequestDto
 import com.entrip.domain.dto.Plans.PlansReturnDto
-import com.entrip.domain.dto.Users.UsersReturnDto
+import com.entrip.domain.dto.Users.UsersResponseDto
 import com.entrip.domain.dto.Votes.VotesReturnDto
 import com.entrip.exception.NotAcceptedException
 import com.entrip.service.PlannersService
@@ -109,7 +109,7 @@ class PlannersController(
 
     @GetMapping("api/v1/planners/{planner_id}/getAllUser")
     public fun findAllUsersWithPlannerId(@PathVariable planner_id: Long): ResponseEntity<RestAPIMessages> {
-        val usersList: MutableList<UsersReturnDto> = plannersService.findAllUsersWithPlannerId(planner_id)
+        val usersList: MutableList<UsersResponseDto> = plannersService.findAllUsersWithPlannerId(planner_id)
         return sendResponseHttpByJson("Load all users with planner id : $planner_id", usersList)
     }
 

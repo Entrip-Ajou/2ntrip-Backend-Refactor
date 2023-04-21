@@ -5,7 +5,7 @@ import com.entrip.domain.dto.Planners.PlannersResponseDto
 import com.entrip.domain.dto.Planners.PlannersReturnDto
 import com.entrip.domain.dto.Users.UsersLoginRequestDto
 import com.entrip.domain.dto.Users.UsersLoginResReturnDto
-import com.entrip.domain.dto.Users.UsersReturnDto
+import com.entrip.domain.dto.Users.UsersResponseDto
 import com.entrip.domain.dto.Users.UsersSaveRequestDto
 import com.entrip.domain.entity.Planners
 import com.entrip.repository.PlannersRepository
@@ -82,16 +82,16 @@ class UsersIntegrationTest() : BehaviorSpec() {
             val usersSaveRequestDto = UsersSaveRequestDto(
                 user_id = user_id, nickname = nickname, gender = gender, password = password, photoUrl = photoUrl
             )
-            val usersReturnDto = UsersReturnDto(
+            val usersResponseDto = UsersResponseDto(
                 user_id = user_id, nickname = nickname, gender = gender, photoUrl = photoUrl, token = null
             )
 
             val successExpectedResponse = RestAPIMessages(
-                httpStatus = 200, message = "User is saved well", data = usersReturnDto
+                httpStatus = 200, message = "User is saved well", data = usersResponseDto
             )
 
             val failExpectedResponse = RestAPIMessages(
-                httpStatus = 202, message = "NotAcceptedException\n", data = UsersReturnDto("", "", -1, "", "")
+                httpStatus = 202, message = "NotAcceptedException\n", data = UsersResponseDto("", "", -1, "", "")
             )
             `when`("회원 가입을 요청하면") {
                 then("회원 가입이 완료되고 usersReturnDto가 리턴된다") {
@@ -421,11 +421,11 @@ class UsersIntegrationTest() : BehaviorSpec() {
         given("올바른 accessToken을 Http Header에 실어서 (1)")
         {
 
-            val usersReturnDto = UsersReturnDto(
+            val usersResponseDto = UsersResponseDto(
                 user_id = user_id, nickname = nickname, gender = gender, photoUrl = photoUrl, token = tokenValue
             )
             val expectedResponse = RestAPIMessages(
-                httpStatus = 200, message = "Update user $user_id's token : $tokenValue", data = usersReturnDto
+                httpStatus = 200, message = "Update user $user_id's token : $tokenValue", data = usersResponseDto
             )
             `when`("updateToken 실행하면") {
                 then("token이 더해진 UsersReturnDto가 리턴된다") {
@@ -473,11 +473,11 @@ class UsersIntegrationTest() : BehaviorSpec() {
 
         given("올바른 accessToken을 Http Header에 실어서 (2)")
         {
-            val usersReturnDto = UsersReturnDto(
+            val usersResponseDto = UsersResponseDto(
                 user_id = user_id, nickname = nickname, gender = gender, photoUrl = photoUrl, token = tokenValue
             )
             val successExpectedResponse = RestAPIMessages(
-                httpStatus = 200, message = "Load user with id : $user_id", data = usersReturnDto
+                httpStatus = 200, message = "Load user with id : $user_id", data = usersResponseDto
             )
             val failExpectedResponse = RestAPIMessages(
                 httpStatus = 500,
@@ -551,17 +551,17 @@ class UsersIntegrationTest() : BehaviorSpec() {
 
         given("올바른 accessToken을 Http Header에 실어서 (3)")
         {
-            val usersReturnDto = UsersReturnDto(
+            val usersResponseDto = UsersResponseDto(
                 user_id = user_id, nickname = nickname, gender = gender, photoUrl = photoUrl, token = tokenValue
             )
 
             class dummy(val e: String) {}
 
             val successExpectedResponseWithUserId = RestAPIMessages(
-                httpStatus = 200, message = "Get user with nicknameOrUserId : $user_id", data = usersReturnDto
+                httpStatus = 200, message = "Get user with nicknameOrUserId : $user_id", data = usersResponseDto
             )
             val successExpectedResponseWithNickname = RestAPIMessages(
-                httpStatus = 200, message = "Get user with nicknameOrUserId : $nickname", data = usersReturnDto
+                httpStatus = 200, message = "Get user with nicknameOrUserId : $nickname", data = usersResponseDto
             )
             val failExpectedResponse = RestAPIMessages(
                 httpStatus = 202,

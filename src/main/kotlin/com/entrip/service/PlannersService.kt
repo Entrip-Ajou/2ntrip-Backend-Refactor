@@ -8,7 +8,6 @@ import com.entrip.domain.dto.Planners.PlannersUpdateRequestDto
 import com.entrip.domain.dto.Plans.PlansResponseDto
 import com.entrip.domain.dto.Plans.PlansReturnDto
 import com.entrip.domain.dto.Users.UsersResponseDto
-import com.entrip.domain.dto.Users.UsersReturnDto
 import com.entrip.domain.dto.Votes.VotesReturnDto
 import com.entrip.domain.dto.Votes.VotesReturnDtoComparator
 import com.entrip.domain.entity.Notices
@@ -127,16 +126,15 @@ class PlannersService(
         return plansList
     }
 
-    public fun findAllUsersWithPlannerId(planner_id: Long): MutableList<UsersReturnDto> {
+    public fun findAllUsersWithPlannerId(planner_id: Long): MutableList<UsersResponseDto> {
         val planners = findPlanners(planner_id)
         val usersSet: MutableSet<Users>? = planners.users
-        val usersList: MutableList<UsersReturnDto> = ArrayList<UsersReturnDto>()
+        val usersList: MutableList<UsersResponseDto> = ArrayList<UsersResponseDto>()
         val iterator = usersSet!!.iterator()
         while (iterator.hasNext()) {
             val users = iterator.next()
             val responseDto = UsersResponseDto(users)
-            val returnDto = UsersReturnDto(responseDto)
-            usersList.add(returnDto)
+            usersList.add(responseDto)
         }
         return usersList
     }

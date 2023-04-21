@@ -3,7 +3,10 @@ package com.entrip.service
 import com.entrip.auth.jwt.JwtTokenProvider
 import com.entrip.domain.dto.Planners.PlannersResponseDto
 import com.entrip.domain.dto.Planners.PlannersReturnDto
-import com.entrip.domain.dto.Users.*
+import com.entrip.domain.dto.Users.UsersLoginRequestDto
+import com.entrip.domain.dto.Users.UsersLoginResReturnDto
+import com.entrip.domain.dto.Users.UsersResponseDto
+import com.entrip.domain.dto.Users.UsersSaveRequestDto
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Users
 import com.entrip.exception.FailToFindNicknameOrIdException
@@ -54,7 +57,7 @@ class UsersService(
     fun save(requestDto: UsersSaveRequestDto): String? {
         // Check if User is already exist. If exists, throw NotAcceptedException
         if (isExistUserId(requestDto.user_id))
-            throw NotAcceptedException(UsersReturnDto("", "", -1, "", ""))
+            throw NotAcceptedException(UsersResponseDto("", "", -1, "", ""))
         // Convert saveDto to Entity
         val users = requestDto.toEntity()
         // Encode Password before saving user
