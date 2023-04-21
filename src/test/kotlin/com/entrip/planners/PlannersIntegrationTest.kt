@@ -153,17 +153,12 @@ class PlannersIntegrationTest : BehaviorSpec() {
         }
 
 
-        given("PlannersSaveRequestDto가 주어졌을 때") {
-            val plannersSaveRequestDto = PlannersSaveRequestDto(
-                user_id = user_id
-            )
-
+        given("user_id가 주어졌을 때") {
             `when`("플래너 생성을 요청하면") {
                 then("플래너가 생성되고 plannersReturnDto가 반환된다") {
                     val result = mockMvc.perform(
                         RestDocumentationRequestBuilders.post("/api/v1/planners/{user_id}", user_id)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(plannersSaveRequestDto))
                             .header("AccessToken", accessToken)
                     ).andExpect(status().isOk())
                         .andDo(
@@ -174,9 +169,7 @@ class PlannersIntegrationTest : BehaviorSpec() {
                                 requestHeaders(
                                     headerWithName("AccessToken").description("사용자 Access Token")
                                 ),
-                                requestFields(
-                                    fieldWithPath("user_id").description("사용자 이메일").type(JsonFieldType.STRING)
-                                ),
+                                pathParameters(parameterWithName("user_id").description("사용자 이메일")),
                                 responseFields(
                                     fieldWithPath("httpStatus").description("HTTP 상태 코드").type(JsonFieldType.NUMBER),
                                     fieldWithPath("message").description("메시지").type(JsonFieldType.STRING),
@@ -316,7 +309,7 @@ class PlannersIntegrationTest : BehaviorSpec() {
                         .andExpect(content().json(objectMapper.writeValueAsString(successExpectedResponse)))
                         .andDo(
                             MockMvcRestDocumentation.document(
-                                "Planners_isExistWithCorrectId",
+                                "Planners_isExistWithValidId",
                                 Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
                                 Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
                                 requestHeaders(
@@ -348,7 +341,7 @@ class PlannersIntegrationTest : BehaviorSpec() {
                         .andExpect(content().json(objectMapper.writeValueAsString(failExpectedResponse)))
                         .andDo(
                             MockMvcRestDocumentation.document(
-                                "Planners_isExistWithWrongId",
+                                "Planners_isExistWithInvalidId",
                                 Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
                                 Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
                                 requestHeaders(
@@ -645,7 +638,7 @@ class PlannersIntegrationTest : BehaviorSpec() {
                                 requestHeaders(
                                     headerWithName("AccessToken").description("사용자 Access Token")
                                 ),
-                                pathParameters(parameterWithName("planner_id").description("조회할 플래너 아이디")),
+                                pathParameters(parameterWithName("planner_id").description("삭제할 플래너 아이디")),
                                 responseFields(
                                     fieldWithPath("httpStatus").description("HTTP 상태 코드").type(JsonFieldType.NUMBER),
                                     fieldWithPath("message").description("메시지").type(JsonFieldType.STRING),
@@ -720,14 +713,6 @@ class PlannersIntegrationTest : BehaviorSpec() {
         given("플래너가 하나 저장되어 있고, 유저가 두 명 저장된 상태에서 (1)") {
             // New User
             val new_user_id = "test2@2ntrip.com"
-//
-//            val usersSaveRequestDto = UsersSaveRequestDto(
-//                user_id = new_user_id,
-//                nickname = "nickname2",
-//                gender = 1,
-//                password = "test",
-//                photoUrl = "2ntrip.com"
-//            )
 
             //usersService.save(usersSaveRequestDto)
             usersService.updateToken(user_id, "token")
@@ -1061,7 +1046,7 @@ class PlannersIntegrationTest : BehaviorSpec() {
                         .andExpect(content().json(objectMapper.writeValueAsString(successExpectedResponse)))
                         .andDo(
                             MockMvcRestDocumentation.document(
-                                "Planners_isExistInPlannerWithValidNickname",
+                                "Planners_isExistInPlannerWithInvalidNickname",
                                 Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
                                 Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
                                 requestHeaders(
