@@ -181,8 +181,8 @@ class PlannersServiceTest : BehaviorSpec() {
             noticesService.noticesRepository.save(notices)
             votesService.votesRepository.save(votes)
 
-//            planners.users.add(users)
-//            users.planners.add(planners)
+            planners.users.add(users)
+            users.planners.add(planners)
             planners.plans?.add(plans)
             planners.notices.add(notices)
             planners.votes.add(votes)
