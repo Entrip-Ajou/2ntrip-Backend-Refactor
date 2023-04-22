@@ -1,6 +1,5 @@
 package com.entrip.planners
 
-import com.entrip.auth.jwt.JwtTokenProvider
 import com.entrip.domain.RestAPIMessages
 import com.entrip.domain.dto.Notices.NoticesReturnDto
 import com.entrip.domain.dto.Notices.NoticesSaveRequestDto
@@ -26,7 +25,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.extension.ExtendWith
-import org.junit.platform.commons.logging.LoggerFactory
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
@@ -59,7 +58,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 class PlannersIntegrationTest : BehaviorSpec() {
 
     override fun extensions() = listOf(SpringExtension)
-    private final val logger = LoggerFactory.getLogger(PlannersIntegrationTest::class.java)
+    val logger = LoggerFactory.getLogger(PlannersIntegrationTest::class.java)
 
     @Autowired
     lateinit var mockMvc: MockMvc
@@ -89,32 +88,30 @@ class PlannersIntegrationTest : BehaviorSpec() {
     lateinit var noticesService: NoticesService
 
     @Autowired
-    lateinit var votesRepository: VotesRepository
-
-    @Autowired
     lateinit var votesService: VotesService
 
-    @Autowired
-    lateinit var votesContentsRepository: VotesContentsRepository
-
-    @Autowired
-    lateinit var jwtTokenProvider: JwtTokenProvider
-
-    final val user_id = "test@2ntrip.com"
+    private final val userOneId = "testOne@2ntrip.com"
+    private final val userTwoId = "testTwo@2ntrip.com"
+    private final val userOneNickname = "nicknameOne"
+    private final val userTwoNickname = "nicknameTwo"
 
     final val objectMapper = ObjectMapper().registerModule(KotlinModule())
 
     lateinit var accessToken: String
     lateinit var refreshToken: String
-    var planner_id: Long = 0L
+
+    var plannerOneId: Long = 0L
+    var plannerTwoId: Long = 0L
 
     init {
-        // beforeSpec으로 했더니 계속해서
-        // cannot invoke "org.springframework.restdocs.standardrestdocumentation context.getandincrement step count()" because "this.context" is null
-        // 오류가 나서 beforeEach로 변경
-
         beforeSpec {
             plannersRepository.deleteAll()
+        }
+
+        afterSpec {
+            plannersService.exitPlanner(plannerOneId, userOneId) // user가 없다면 delete
+            usersService.delete(userOneId)
+            usersService.delete(userTwoId)
         }
 
         given("Users") {
@@ -123,15 +120,15 @@ class PlannersIntegrationTest : BehaviorSpec() {
                     // planner v1 메서드를 사용하기 위해서 user를 저장한 후, accessToken을 받아온다.
 
                     val usersSaveRequestDto = UsersSaveRequestDto(
-                        user_id = user_id,
-                        nickname = "nickname",
+                        user_id = userOneId,
+                        nickname = userOneNickname,
                         gender = 0,
                         password = "password",
                         photoUrl = "2ntrip.com"
                     )
 
                     val usersLoginRequestDto = UsersLoginRequestDto(
-                        user_id = user_id,
+                        user_id = userOneId,
                         password = "password"
                     )
 
@@ -157,7 +154,7 @@ class PlannersIntegrationTest : BehaviorSpec() {
             `when`("플래너 생성을 요청하면") {
                 then("플래너가 생성되고 plannersReturnDto가 반환된다") {
                     val result = mockMvc.perform(
-                        RestDocumentationRequestBuilders.post("/api/v1/planners/{user_id}", user_id)
+                        RestDocumentationRequestBuilders.post("/api/v1/planners/{user_id}", userOneId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("AccessToken", accessToken)
                     ).andExpect(status().isOk())
@@ -187,16 +184,16 @@ class PlannersIntegrationTest : BehaviorSpec() {
                             )
                         ).andReturn()
 
-                    planner_id = getContent(result, "planner_id").toLong()
+                    plannerOneId = getContent(result, "planner_id").toLong()
 
                     // plannersRepository, plannerService를 통해서 제대로 저장이 되었는지 확인할 필요가 있을까?
-                    plannersRepository.findById(planner_id).get().planner_id shouldBe 1
+                    plannersRepository.findById(plannerOneId).get().planner_id shouldBe 1
                 }
             }
         }
 
         given("플래너가 저장된 상태에서") {
-            val wrong_planner_id = 100L
+            val wrongPlannerId = 100L
 
             `when`("PlannersUpdateRequestDto로 플래너 수정을 요청하면") {
                 val plannersUpdateRequestDto = PlannersUpdateRequestDto(
@@ -207,7 +204,7 @@ class PlannersIntegrationTest : BehaviorSpec() {
 
                 then("플래너가 수정되고 plannersReturnDto가 반환된다") {
                     mockMvc.perform(
-                        RestDocumentationRequestBuilders.put("/api/v1/planners/{planner_id}", planner_id)
+                        RestDocumentationRequestBuilders.put("/api/v1/planners/{planner_id}", plannerOneId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(plannersUpdateRequestDto))
                             .header("AccessToken", accessToken)
@@ -249,19 +246,19 @@ class PlannersIntegrationTest : BehaviorSpec() {
             `when`("findById를 요청하면") {
                 val plannersReturnDto = PlannersReturnDto(
                     PlannersResponseDto(
-                        plannersRepository.findById(planner_id).get()
+                        plannersRepository.findById(plannerOneId).get()
                     )
                 )
 
                 val successExpectedResponse = RestAPIMessages(
                     httpStatus = 200,
-                    message = "Load planner with $planner_id",
+                    message = "Load planner with $plannerOneId",
                     data = plannersReturnDto
                 )
 
                 then("plannersReturnDto가 반환된다") {
                     mockMvc.perform(
-                        RestDocumentationRequestBuilders.get("/api/v1/planners/{planner_id}", planner_id)
+                        RestDocumentationRequestBuilders.get("/api/v1/planners/{planner_id}", plannerOneId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("AccessToken", accessToken)
                     ).andExpect(status().isOk)
@@ -297,12 +294,12 @@ class PlannersIntegrationTest : BehaviorSpec() {
                 then("true가 반환된다") {
                     val successExpectedResponse = RestAPIMessages(
                         httpStatus = 200,
-                        message = "Find if planner is exist with specific planner id : $planner_id",
+                        message = "Find if planner is exist with specific planner id : $plannerOneId",
                         data = true
                     )
 
                     mockMvc.perform(
-                        RestDocumentationRequestBuilders.get("/api/v1/planners/{planner_id}/exist", planner_id)
+                        RestDocumentationRequestBuilders.get("/api/v1/planners/{planner_id}/exist", plannerOneId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("AccessToken", accessToken)
                     ).andExpect(status().isOk)
@@ -334,7 +331,7 @@ class PlannersIntegrationTest : BehaviorSpec() {
                     )
 
                     mockMvc.perform(
-                        RestDocumentationRequestBuilders.get("/api/v1/planners/{planner_id}/exist", wrong_planner_id)
+                        RestDocumentationRequestBuilders.get("/api/v1/planners/{planner_id}/exist", wrongPlannerId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("AccessToken", accessToken)
                     ).andExpect(status().isAccepted())
@@ -362,7 +359,7 @@ class PlannersIntegrationTest : BehaviorSpec() {
         given("플래너와 플랜이 저장된 상태에서") {
             // Plans -> 리포지토리 통해서 바로 저장하는게 나은가, mockMvc post로 저장하는게 나은가
             val plansSaveRequestDto = PlansSaveRequestDto(
-                planner_id = planner_id,
+                planner_id = plannerOneId,
                 date = "2023/05/05",
                 todo = "국밥 먹기",
                 time = "10:30",
@@ -371,10 +368,10 @@ class PlannersIntegrationTest : BehaviorSpec() {
             )
 
 
-            val plan_id = plansService.save(plansSaveRequestDto)
+            val planId = plansService.save(plansSaveRequestDto)
 
             val plansReturnDto = PlansReturnDto(
-                PlansResponseDto(plansRepository.findById(plan_id!!).get())
+                PlansResponseDto(plansRepository.findById(planId!!).get())
             )
 
             val plansList = mutableListOf(plansReturnDto)
@@ -382,13 +379,13 @@ class PlannersIntegrationTest : BehaviorSpec() {
             `when`("플래너에 있는 모든 플랜 조회를 요청하면") {
                 val successExpectedResponse = RestAPIMessages(
                     httpStatus = 200,
-                    message = "Load all plans with specific planner id : $planner_id",
+                    message = "Load all plans with specific planner id : $plannerOneId",
                     data = plansList
                 )
 
                 then("planList 반환된다") {
                     val result = mockMvc.perform(
-                        RestDocumentationRequestBuilders.get("/api/v1/planners/{planner_id}/all", planner_id)
+                        RestDocumentationRequestBuilders.get("/api/v1/planners/{planner_id}/all", plannerOneId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("AccessToken", accessToken)
                     ).andExpect(status().isOk)
@@ -426,7 +423,7 @@ class PlannersIntegrationTest : BehaviorSpec() {
 
                 val successExpectedResponse = RestAPIMessages(
                     httpStatus = 200,
-                    message = "Get all plans with specific date $date, planner_id $planner_id",
+                    message = "Get all plans with specific date $date, planner_id $plannerOneId",
                     data = plansList
                 )
 
@@ -434,7 +431,7 @@ class PlannersIntegrationTest : BehaviorSpec() {
                     mockMvc.perform(
                         RestDocumentationRequestBuilders.get(
                             "/api/v1/planners/{planner_id}/{date}/find",
-                            planner_id,
+                            plannerOneId,
                             date
                         )
                             .contentType(MediaType.APPLICATION_JSON)
@@ -475,19 +472,17 @@ class PlannersIntegrationTest : BehaviorSpec() {
         }
 
         given("플래너와 공지가 저장된 상태에서") {
-            // Notices
-
             val noticesSaveRequestDto = NoticesSaveRequestDto(
-                author = user_id,
+                author = userOneId,
                 title = "공지 제목",
                 content = "공지 내용",
-                planner_id = planner_id
+                planner_id = plannerOneId
             )
 
-            val notice_id = noticesService.save(noticesSaveRequestDto)
+            val noticeId = noticesService.save(noticesSaveRequestDto)
 
             val noticesReturnDto = NoticesReturnDto(
-                noticesRepository.findById(notice_id!!).get()
+                noticesRepository.findById(noticeId!!).get()
             )
 
             val noticesList = mutableListOf(noticesReturnDto)
@@ -495,13 +490,13 @@ class PlannersIntegrationTest : BehaviorSpec() {
             `when`("플래너에 있는 모든 공지 조회를 요청하면") {
                 val successExpectedResponse = RestAPIMessages(
                     httpStatus = 200,
-                    message = "Get all notices with planner id : $planner_id",
+                    message = "Get all notices with planner id : $plannerOneId",
                     data = noticesList
                 )
 
                 then("noticeList가 반환된다") {
                     mockMvc.perform(
-                        RestDocumentationRequestBuilders.get("/api/v1/planners/{planner_id}/allNotices", planner_id)
+                        RestDocumentationRequestBuilders.get("/api/v1/planners/{planner_id}/allNotices", plannerOneId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("AccessToken", accessToken)
                     ).andExpect(status().isOk)
@@ -535,25 +530,23 @@ class PlannersIntegrationTest : BehaviorSpec() {
         }
 
         given("플래너와 투표가 저장된 상태에서") {
-            // Votes
-
             val votesSaveRequestDto = VotesSaveRequestDto(
                 title = "투표 제목",
                 contents = mutableListOf("1", "2", "3"),
                 multipleVotes = true,
                 anonymousVotes = false,
                 deadLine = null,
-                planner_id = planner_id,
-                author = user_id
+                planner_id = plannerOneId,
+                author = userOneId
             )
 
-            val vote_id = votesService.save(votesSaveRequestDto)
+            val voteId = votesService.save(votesSaveRequestDto)
 
             val votesReturnDto = VotesReturnDto(
-                vote_id = vote_id,
+                vote_id = voteId,
                 title = "투표 제목",
                 voting = true,
-                host_id = user_id,
+                host_id = userOneId,
                 contents = mutableListOf(
                     VotesContentsReturnDto(votesContents_id = 1, content = "1", selectedCount = 0),
                     VotesContentsReturnDto(votesContents_id = 2, content = "2", selectedCount = 0),
@@ -566,13 +559,13 @@ class PlannersIntegrationTest : BehaviorSpec() {
             `when`("플래너에 있는 모든 투표 조회를 요청하면") {
                 val successExpectedResponse = RestAPIMessages(
                     httpStatus = 200,
-                    message = "Load votes with planner id : $planner_id",
+                    message = "Load votes with planner id : $plannerOneId",
                     data = votesList
                 )
 
                 then("voteList가 반환된다") {
                     mockMvc.perform(
-                        RestDocumentationRequestBuilders.get("/api/v1/planners/{planner_id}/allVotes", planner_id)
+                        RestDocumentationRequestBuilders.get("/api/v1/planners/{planner_id}/allVotes", plannerOneId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("AccessToken", accessToken)
                     ).andExpect(status().isOk)
@@ -608,125 +601,30 @@ class PlannersIntegrationTest : BehaviorSpec() {
             }
         }
 
-        given("플래너가 두 개 저장된 상태에서") {
-            val plannersSaveRequestDtoOne = PlannersSaveRequestDto(
-                user_id = user_id
-            )
-
-            val planner_id_to_delete = plannersService.save(plannersSaveRequestDtoOne)
-
-
-            `when`("플래너 삭제를 요청하면") {
-                val successExpectedResponse = RestAPIMessages(
-                    httpStatus = 200,
-                    message = "Delete planner with id : $planner_id_to_delete",
-                    data = planner_id_to_delete!!
-                )
-
-                then("플래너가 삭제되고, 삭제된 플래너 아이디가 반환된다") {
-                    mockMvc.perform(
-                        RestDocumentationRequestBuilders.delete("/api/v1/planners/{planner_id}", planner_id_to_delete)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header("AccessToken", accessToken)
-                    ).andExpect(status().isOk)
-                        .andExpect(content().json(objectMapper.writeValueAsString(successExpectedResponse)))
-                        .andDo(
-                            MockMvcRestDocumentation.document(
-                                "Planners_delete",
-                                Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
-                                Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
-                                requestHeaders(
-                                    headerWithName("AccessToken").description("사용자 Access Token")
-                                ),
-                                pathParameters(parameterWithName("planner_id").description("삭제할 플래너 아이디")),
-                                responseFields(
-                                    fieldWithPath("httpStatus").description("HTTP 상태 코드").type(JsonFieldType.NUMBER),
-                                    fieldWithPath("message").description("메시지").type(JsonFieldType.STRING),
-                                    fieldWithPath("data").description("삭제된 플래너 아이디").type(JsonFieldType.NUMBER)
-                                )
-                            )
-                        )
-                }
-            }
-        }
-
-        given("플래너가 두 개와 유저가 두 명 저장된 상태에서") {
-            val plannersSaveRequestDtoOne = PlannersSaveRequestDto(
-                user_id = user_id
-            )
-
-            val new_user_id = "test2@2ntrip.com"
-
+        given("플래너가 하나 저장되어 있고, 유저가 두 명 저장된 상태에서 (1)") {
+            // save new user
             val usersSaveRequestDto = UsersSaveRequestDto(
-                user_id = new_user_id,
-                nickname = "nickname2",
-                gender = 1,
-                password = "test",
+                user_id = userTwoId,
+                nickname = userTwoNickname,
+                gender = 0,
+                password = "password",
                 photoUrl = "2ntrip.com"
             )
 
-            val planner_id_to_delete = plannersService.save(plannersSaveRequestDtoOne)
             usersService.save(usersSaveRequestDto)
 
-
-            `when`("플래너 삭제 및 exit를 요청하면") {
-                val successExpectedResponse = RestAPIMessages(
-                    httpStatus = 200,
-                    message = "Delete planner $planner_id_to_delete",
-                    data = planner_id_to_delete!!
-                )
-
-                then("플래너가 삭제되고, 삭제된 플래너 아이디가 반환된다") {
-                    mockMvc.perform(
-                        RestDocumentationRequestBuilders.delete(
-                            "/api/v1/planners/{planner_id}/{user_id}/delete",
-                            planner_id_to_delete,
-                            new_user_id
-                        )
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header("AccessToken", accessToken)
-                    ).andExpect(status().isOk)
-                        .andExpect(content().json(objectMapper.writeValueAsString(successExpectedResponse)))
-                        .andDo(
-                            MockMvcRestDocumentation.document(
-                                "Planners_deleteWithExit",
-                                Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
-                                Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
-                                requestHeaders(
-                                    headerWithName("AccessToken").description("사용자 Access Token")
-                                ),
-                                pathParameters(
-                                    parameterWithName("planner_id").description("삭제할 플래너 아이디"),
-                                    parameterWithName("user_id").description("확인할 유저 이메일")
-                                ),
-                                responseFields(
-                                    fieldWithPath("httpStatus").description("HTTP 상태 코드").type(JsonFieldType.NUMBER),
-                                    fieldWithPath("message").description("메시지").type(JsonFieldType.STRING),
-                                    fieldWithPath("data").description("삭제된 플래너 아이디").type(JsonFieldType.NUMBER)
-                                )
-                            )
-                        )
-                }
-            }
-        }
-
-        given("플래너가 하나 저장되어 있고, 유저가 두 명 저장된 상태에서 (1)") {
-            // New User
-            val new_user_id = "test2@2ntrip.com"
-
-            //usersService.save(usersSaveRequestDto)
-            usersService.updateToken(user_id, "token")
-            usersService.updateToken(new_user_id, "token")
+            usersService.updateToken(userOneId, "token")
+            usersService.updateToken(userTwoId, "token")
 
             val usersReturnDtoOne = UsersReturnDto(
                 UsersResponseDto(
-                    usersRepository.findById(user_id).get()
+                    usersRepository.findById(userOneId).get()
                 )
             )
 
             val usersReturnDtoTwo = UsersReturnDto(
                 UsersResponseDto(
-                    usersRepository.findById(new_user_id).get()
+                    usersRepository.findById(userTwoId).get()
                 )
             )
 
@@ -735,15 +633,15 @@ class PlannersIntegrationTest : BehaviorSpec() {
             `when`("새로운 유저를 플래너에 추가하도록 요청하면") {
                 val successExpectedResponse = RestAPIMessages(
                     httpStatus = 200,
-                    message = "$planner_id 번 플래너에 $new_user_id 사용자 등록 완료.",
-                    data = planner_id
+                    message = "$plannerOneId 번 플래너에 $userTwoId 사용자 등록 완료.",
+                    data = plannerOneId
                 )
                 then("플래너에 유저가 등록되고, 플래너 아이디를 반환한다") {
                     mockMvc.perform(
                         RestDocumentationRequestBuilders.put(
                             "/api/v1/planners/{planner_id}/{user_id}",
-                            planner_id,
-                            new_user_id
+                            plannerOneId,
+                            userTwoId
                         )
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("AccessToken", accessToken)
@@ -774,15 +672,15 @@ class PlannersIntegrationTest : BehaviorSpec() {
                 val successExpectedResponse = RestAPIMessages(
                     httpStatus = 200,
                     message = "이미 planner에 등록되어있는 회원입니다.",
-                    data = planner_id
+                    data = plannerOneId
                 )
 
                 then("이미 추가되었다는 메시지를 반환받는다") {
                     mockMvc.perform(
                         RestDocumentationRequestBuilders.put(
                             "/api/v1/planners/{planner_id}/{user_id}",
-                            planner_id,
-                            new_user_id
+                            plannerOneId,
+                            userTwoId
                         )
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("AccessToken", accessToken)
@@ -812,13 +710,13 @@ class PlannersIntegrationTest : BehaviorSpec() {
             `when`("플래너에 있는 모든 유저 조회를 요청하면") {
                 val successExpectedResponse = RestAPIMessages(
                     httpStatus = 200,
-                    message = "Load all users with planner id : $planner_id",
+                    message = "Load all users with planner id : $plannerOneId",
                     data = usersList
                 )
 
                 then("유저 리스트를 반환받는다") {
                     mockMvc.perform(
-                        RestDocumentationRequestBuilders.get("/api/v1/planners/{planner_id}/getAllUser", planner_id)
+                        RestDocumentationRequestBuilders.get("/api/v1/planners/{planner_id}/getAllUser", plannerOneId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("AccessToken", accessToken)
                     ).andExpect(status().isOk)
@@ -850,15 +748,15 @@ class PlannersIntegrationTest : BehaviorSpec() {
             `when`("플래너에서 유저를 exit하도록 요청하면") {
                 val successExpectedResponse = RestAPIMessages(
                     httpStatus = 200,
-                    message = "User ${new_user_id} exit planner ${planner_id}",
+                    message = "User ${userTwoId} exit planner ${plannerOneId}",
                     data = true
                 )
                 then("true값을 반환받는다") {
                     mockMvc.perform(
                         RestDocumentationRequestBuilders.delete(
                             "/api/v1/planners/{planner_id}/{user_id}/exit",
-                            planner_id,
-                            new_user_id
+                            plannerOneId,
+                            userTwoId
                         )
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("AccessToken", accessToken)
@@ -888,25 +786,10 @@ class PlannersIntegrationTest : BehaviorSpec() {
         }
 
         given("플래너가 하나 저장되어 있고, 유저가 두 명 저장된 상태에서 (2)") {
-            // New User
-            val new_user_id = "test3@2ntrip.com"
-
-            val usersSaveRequestDto = UsersSaveRequestDto(
-                user_id = new_user_id,
-                nickname = "nickname3",
-                gender = 1,
-                password = "test",
-                photoUrl = "2ntrip.com"
-            )
-
-            usersService.save(usersSaveRequestDto)
-            usersService.updateToken(user_id, "token")
-            usersService.updateToken(new_user_id, "token")
-
             `when`("플래너에 있는 유저가 존재하는지 조회를 요청하면") {
                 val successExpectedResponse = RestAPIMessages(
                     httpStatus = 200,
-                    message = "Check if user : $user_id is exist at planner : $planner_id",
+                    message = "Check if user : $userOneId is exist at planner : $plannerOneId",
                     data = true
                 )
 
@@ -914,8 +797,8 @@ class PlannersIntegrationTest : BehaviorSpec() {
                     mockMvc.perform(
                         RestDocumentationRequestBuilders.get(
                             "/api/v1/planners/{planner_id}/{user_id}/exist",
-                            planner_id,
-                            user_id
+                            plannerOneId,
+                            userOneId
                         )
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("AccessToken", accessToken)
@@ -943,8 +826,6 @@ class PlannersIntegrationTest : BehaviorSpec() {
                 }
             }
             `when`("플래너에 없는 유저가 존재하는지 조회를 요청하면") {
-                val wrong_user_id = "test3@2ntrip.com"
-
                 val successExpectedResponse = RestAPIMessages(
                     httpStatus = 202,
                     message = "NotAcceptedException\n",
@@ -955,8 +836,8 @@ class PlannersIntegrationTest : BehaviorSpec() {
                     mockMvc.perform(
                         RestDocumentationRequestBuilders.get(
                             "/api/v1/planners/{planner_id}/{user_id}/exist",
-                            planner_id,
-                            wrong_user_id
+                            plannerOneId,
+                            userTwoId
                         )
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("AccessToken", accessToken)
@@ -984,11 +865,9 @@ class PlannersIntegrationTest : BehaviorSpec() {
                 }
             }
             `when`("플래너에 있는 유저의 닉네임으로 조회를 요청하면") {
-                val nickname = "nickname"
-
                 val successExpectedResponse = RestAPIMessages(
                     httpStatus = 200,
-                    message = "Check if user : $nickname is exist at planner : $planner_id",
+                    message = "Check if user : $userOneNickname is exist at planner : $plannerOneId",
                     data = true
                 )
 
@@ -996,8 +875,8 @@ class PlannersIntegrationTest : BehaviorSpec() {
                     mockMvc.perform(
                         RestDocumentationRequestBuilders.get(
                             "/api/v1/planners/{planner_id}/{nickname}/exist/nickname",
-                            planner_id,
-                            nickname
+                            plannerOneId,
+                            userOneNickname
                         )
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("AccessToken", accessToken)
@@ -1025,8 +904,6 @@ class PlannersIntegrationTest : BehaviorSpec() {
                 }
             }
             `when`("플래너에 없는 유저의 닉네임으로 조회를 요청하면") {
-                val wrong_nickname = "nickname3"
-
                 val successExpectedResponse = RestAPIMessages(
                     httpStatus = 202,
                     message = "NotAcceptedException\n",
@@ -1037,8 +914,8 @@ class PlannersIntegrationTest : BehaviorSpec() {
                     mockMvc.perform(
                         RestDocumentationRequestBuilders.get(
                             "/api/v1/planners/{planner_id}/{nickname}/exist/nickname",
-                            planner_id,
-                            wrong_nickname
+                            plannerOneId,
+                            userTwoNickname
                         )
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("AccessToken", accessToken)
@@ -1060,6 +937,95 @@ class PlannersIntegrationTest : BehaviorSpec() {
                                     fieldWithPath("httpStatus").description("HTTP 상태 코드").type(JsonFieldType.NUMBER),
                                     fieldWithPath("message").description("메시지").type(JsonFieldType.STRING),
                                     fieldWithPath("data").description("존재 유무 값").type(JsonFieldType.BOOLEAN),
+                                )
+                            )
+                        )
+                }
+            }
+        }
+
+        given("플래너가 두 개 저장된 상태에서") {
+            val plannersSaveRequestDtoOne = PlannersSaveRequestDto(
+                user_id = userOneId
+            )
+
+            val plannerIdToDelete = plannersService.save(plannersSaveRequestDtoOne)
+
+            `when`("플래너 삭제를 요청하면") {
+                val successExpectedResponse = RestAPIMessages(
+                    httpStatus = 200,
+                    message = "Delete planner with id : $plannerIdToDelete",
+                    data = plannerIdToDelete!!
+                )
+
+                then("플래너가 삭제되고, 삭제된 플래너 아이디가 반환된다") {
+                    mockMvc.perform(
+                        RestDocumentationRequestBuilders.delete("/api/v1/planners/{planner_id}", plannerIdToDelete)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("AccessToken", accessToken)
+                    ).andExpect(status().isOk)
+                        .andExpect(content().json(objectMapper.writeValueAsString(successExpectedResponse)))
+                        .andDo(
+                            MockMvcRestDocumentation.document(
+                                "Planners_delete",
+                                Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
+                                Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
+                                requestHeaders(
+                                    headerWithName("AccessToken").description("사용자 Access Token")
+                                ),
+                                pathParameters(parameterWithName("planner_id").description("삭제할 플래너 아이디")),
+                                responseFields(
+                                    fieldWithPath("httpStatus").description("HTTP 상태 코드").type(JsonFieldType.NUMBER),
+                                    fieldWithPath("message").description("메시지").type(JsonFieldType.STRING),
+                                    fieldWithPath("data").description("삭제된 플래너 아이디").type(JsonFieldType.NUMBER)
+                                )
+                            )
+                        )
+                }
+            }
+        }
+
+        given("플래너가 두 개와 유저가 두 명 저장된 상태에서") {
+            val plannersSaveRequestDtoOne = PlannersSaveRequestDto(
+                user_id = userOneId
+            )
+
+            val plannerIdToDelete = plannersService.save(plannersSaveRequestDtoOne)
+
+            `when`("플래너 삭제 및 exit를 요청하면") {
+                val successExpectedResponse = RestAPIMessages(
+                    httpStatus = 200,
+                    message = "Delete planner $plannerIdToDelete",
+                    data = plannerIdToDelete!!
+                )
+
+                then("플래너가 삭제되고, 삭제된 플래너 아이디가 반환된다") {
+                    mockMvc.perform(
+                        RestDocumentationRequestBuilders.delete(
+                            "/api/v1/planners/{planner_id}/{user_id}/delete",
+                            plannerIdToDelete,
+                            userTwoId
+                        )
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("AccessToken", accessToken)
+                    ).andExpect(status().isOk)
+                        .andExpect(content().json(objectMapper.writeValueAsString(successExpectedResponse)))
+                        .andDo(
+                            MockMvcRestDocumentation.document(
+                                "Planners_deleteWithExit",
+                                Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
+                                Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
+                                requestHeaders(
+                                    headerWithName("AccessToken").description("사용자 Access Token")
+                                ),
+                                pathParameters(
+                                    parameterWithName("planner_id").description("삭제할 플래너 아이디"),
+                                    parameterWithName("user_id").description("확인할 유저 이메일")
+                                ),
+                                responseFields(
+                                    fieldWithPath("httpStatus").description("HTTP 상태 코드").type(JsonFieldType.NUMBER),
+                                    fieldWithPath("message").description("메시지").type(JsonFieldType.STRING),
+                                    fieldWithPath("data").description("삭제된 플래너 아이디").type(JsonFieldType.NUMBER)
                                 )
                             )
                         )
