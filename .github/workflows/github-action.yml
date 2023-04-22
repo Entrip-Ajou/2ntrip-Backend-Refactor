@@ -5,17 +5,19 @@
 name: Spring Boot & Gradle CI/CD
 
 # Event Trigger
-# master branch에 pusht가 발생할 경우 동작
+# master branch에 push가 발생할 경우 동작
 # branch 단위 외에도, tag나 cron 식 등을 사용할 수 있음
+# Testing 0413
+
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 # 환경 변수 설정
 env:
-  S3_BUCKET_NAME: 2ntrip-api-build
-  CODEDEPLOY_APPLICATION_NAME: 2ntrip-CodeDeploy
-  DEPLOYMENT_GROUP_NAME: 2ntrip-api-kotlin
+  S3_BUCKET_NAME: 2ntrip-backend-refactor-deploy
+  CODEDEPLOY_APPLICATION_NAME: 2ntrip-backend-refactor
+  DEPLOYMENT_GROUP_NAME: 2ntrip-backend-refactor
 
 jobs:
   build:
@@ -34,9 +36,45 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Redis Server in GitHub Actions
+        uses: supercharge/redis-github-action@1.5.0
+
+      - name: MongoDB in GitHub Actions
+        uses: supercharge/mongodb-github-action@1.9.0
+        with:
+          mongodb-username: wkazxf
+          mongodb-password: ${{ secrets.MONGODB_PASSWORD }}
+          mongodb-db: 2ntrip
+
+      - name: Start MySQL
+        uses: samin/mysql-action@v1.3
+        with:
+          mysql database: 2ntrip
+          mysql root password: ${{ secrets.MYSQL_PASSWORD }}
+          mysql user: 'root'
+          mysql password: ${{ secrets.MYSQL_PASSWORD }}
+
+      - name: Create Properties Files
+        run: touch ./src/main/resources/application.properties ; touch ./src/main/resources/application-aws-s3.properties ; touch ./src/main/resources/application-mongodb.properties ; touch ./src/main/resources/application-redis.properties ; touch ./src/main/resources/application-security.properties ; touch ./src/test/resources/application-test.properties
+
+      - name: Load Application Properties
+        run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.properties
+
+      - name: Load Application AWS S3 Properties
+        run: echo "${{ secrets.APPLICATION_AWS_S3_PROPERTIES }}" > ./src/main/resources/application-aws-s3.properties
+
+      - name: Load Application MongoDB Properties
+        run: echo "${{ secrets.APPLICATION_MONGO_PROPERTIES }}" > ./src/main/resources/application-mongodb.properties
+
+      - name: Load Application Redis Properties
+        run: echo "${{ secrets.APPLICATION_REDIS_PROPERTIES }}" > ./src/main/resources/application-redis.properties
+
+      - name: Load Application Security Properties
+        run: echo "${{ secrets.APPLICATION_SECURITY_PROPERTIES }}" > ./src/main/resources/application-security.properties
+
       # Build
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: ./gradlew clean build -i
 
       # 전송할 파일을 담을 디렉토리 생성
       - name: Make Directory for deliver
@@ -54,9 +92,12 @@ jobs:
       - name: Copy shell
         run: cp ./scripts/* ./deploy/
 
+      - name: Grant execute permission for scripts
+        run: chmod +x ./scripts/*
+
       # 압축파일 형태로 전달
       - name: Make zip file
-        run: zip -r -qq -j ./2ntrip-api-build.zip ./deploy/
+        run: zip -r -qq -j ./2ntrip-api-refactor-deploy.zip ./deploy/
 
       # S3 Bucket으로 copy
       - name: Deliver to AWS S3
@@ -67,7 +108,7 @@ jobs:
           aws s3 cp \
           --region ap-northeast-2 \
           --acl private \
-          ./2ntrip-api-build.zip s3://2ntrip-api-build/$GITHUB_SHA.zip
+          ./2ntrip-api-refactor-deploy.zip s3://2ntrip-backend-refactor-deploy/
 
       # Deploy
       - name: Deploy
@@ -79,5 +120,5 @@ jobs:
           --application-name $CODEDEPLOY_APPLICATION_NAME \
           --deployment-group-name $DEPLOYMENT_GROUP_NAME \
           --file-exists-behavior OVERWRITE \
-          --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip \
+          --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=2ntrip-api-refactor-deploy.zip \
           --region ap-northeast-2

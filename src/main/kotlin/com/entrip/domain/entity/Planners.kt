@@ -35,7 +35,7 @@ class Planners(
     @OneToMany(mappedBy = "planners", fetch = FetchType.EAGER)
     var votes: MutableSet<Votes> = TreeSet(),
 
-    ) : BaseTimeEntity(), Comparable<Planners> {
+) : BaseTimeEntity(), Comparable<Planners> {
 
     fun update(title: String, start_date: String, end_date: String): Unit {
         this.title = title

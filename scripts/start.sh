@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # start.sh
-# 서버 구동을 위한 스크립트
+## 서버 구동을 위한 스크립트
 
 ABSPATH=$(readlink -f $0)
 ABSDIR=$(dirname $ABSPATH)
 source ${ABSDIR}/profile.sh
 
-REPOSITORY=/home/ec2-user/app/step3
-PROJECT_NAME=entrip-api-kotlin
-PROPERTIES_DIR=/home/ec2-user/app/step3/properties
+REPOSITORY=/home/ec2-user/deploy
+PROJECT_NAME=2ntrip-Backend-Refactor
+PROPERTIES_DIR=/home/ec2-user/properties
 
 echo "> Build 파일 복사"
 echo "> cp $REPOSITORY/zip/*.jar $REPOSITORY/"
@@ -29,7 +29,7 @@ echo "> $JAR_NAME 실행"
 IDLE_PROFILE=$(find_idle_profile)
 
 echo "> $JAR_NAME 를 profile=$IDLE_PROFILE 로 실행합니다."
-sudo nohup java -jar \
+nohup java -jar \
     -Dspring.config.location=$PROPERTIES_DIR/application.properties,$PROPERTIES_DIR/application-aws-s3.properties,$PROPERTIES_DIR/application-$IDLE_PROFILE.properties,$PROPERTIES_DIR/application-redis.properties,$PROPERTIES_DIR/application-security.properties \
     -Dspring.profiles.active=$IDLE_PROFILE \
     $JAR_NAME > $REPOSITORY/nohup.out 2>&1 &
