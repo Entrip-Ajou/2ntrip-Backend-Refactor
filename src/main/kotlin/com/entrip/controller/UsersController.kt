@@ -3,6 +3,7 @@ package com.entrip.controller
 import com.entrip.domain.RestAPIMessages
 import com.entrip.domain.dto.Users.UsersLoginRequestDto
 import com.entrip.domain.dto.Users.UsersSaveRequestDto
+import com.entrip.exception.NotAcceptedException
 import com.entrip.service.UsersService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -43,13 +44,15 @@ class UsersController(
     @GetMapping("api/v2/users/{nickname}/nickname/exist")
     fun isExistNickname(@PathVariable nickname: String): ResponseEntity<RestAPIMessages> {
         val isExist: Boolean = usersService.isExistNickname(nickname)
-        return sendResponseHttpByJson("Check if nickname $nickname is Exist", isExist)
+        if (!isExist) throw NotAcceptedException(false)
+        return sendResponseHttpByJson("Check if nickname $nickname is Exist", true)
     }
 
     @GetMapping("api/v2/users/{user_id}/user_id/exist")
     fun isExistUserId(@PathVariable user_id: String): ResponseEntity<RestAPIMessages> {
         val isExist: Boolean = usersService.isExistUserId(user_id)
-        return sendResponseHttpByJson("Check if user_id $user_id is Exist", isExist)
+        if (!isExist) throw NotAcceptedException(false)
+        return sendResponseHttpByJson("Check if user_id $user_id is Exist", true)
     }
 
     @DeleteMapping("/api/v1/users/{user_id}")
