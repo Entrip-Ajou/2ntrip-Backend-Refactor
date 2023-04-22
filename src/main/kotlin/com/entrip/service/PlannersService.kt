@@ -209,6 +209,12 @@ class PlannersService(
             val users = usersIterator.next()
             users.planners.remove(planners)
         }
+        val votesIterator = planners.votes.iterator()
+        while (votesIterator.hasNext()) {
+            val votes = votesIterator.next()
+            votesIterator.remove()
+            votesService.delete(votes.vote_id!!)
+        }
         plannersRepository.delete(planners)
         publishCrudEvents("Planner Delete", planners.planner_id!!)
         return planner_id
