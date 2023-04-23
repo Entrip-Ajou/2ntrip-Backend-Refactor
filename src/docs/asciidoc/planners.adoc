@@ -1,0 +1,533 @@
+= 2ntrip API Docs
+Powered By Jinhee Lee, https://github.com/Egenieee - Version 0.0.1-SNAPSHOT
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 1
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+[[Planners_save]]
+== Planners_save
+
+=== Http request
+
+include::{snippets}/Planners_save/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Planners_save/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/Planners_save/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Planners_save/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Planners_save/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Planners_save/response-body.adoc[]
+
+[[Planners_update]]
+== Planners_update
+
+=== Http request
+
+include::{snippets}/Planners_update/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Planners_update/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/Planners_update/path-parameters.adoc[]
+
+=== Request fields
+
+include::{snippets}/Planners_update/request-fields.adoc[]
+
+=== Request body
+
+include::{snippets}/Planners_update/request-body.adoc[]
+
+=== Http response
+
+include::{snippets}/Planners_update/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Planners_update/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Planners_update/response-body.adoc[]
+
+[[Planners_findById]]
+== Planners_findById
+
+=== Http request
+
+include::{snippets}/Planners_findByid/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Planners_findByid/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/Planners_findByid/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Planners_findByid/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Planners_findByid/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Planners_findByid/response-body.adoc[]
+
+[[Planners_getAllUsers]]
+== Planners_getAllUsers
+
+=== Http request
+
+include::{snippets}/Planners_getAllUsers/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Planners_getAllUsers/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/Planners_getAllUsers/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Planners_getAllUsers/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Planners_getAllUsers/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Planners_getAllUsers/response-body.adoc[]
+
+[[Planners_getAllPlans]]
+== Planners_getAllPlans
+
+=== Http request
+
+include::{snippets}/Planners_getAllPlans/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Planners_getAllPlans/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/Planners_getAllPlans/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Planners_getAllPlans/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Planners_getAllPlans/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Planners_getAllPlans/response-body.adoc[]
+
+[[Planners_getAllPlansWithDate]]
+== Planners_getAllPlansWithDate
+
+=== Http request
+
+include::{snippets}/Planners_getAllPlansWithDate/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Planners_getAllPlansWithDate/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/Planners_getAllPlansWithDate/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Planners_getAllPlansWithDate/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Planners_getAllPlansWithDate/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Planners_getAllPlansWithDate/response-body.adoc[]
+
+[[Planners_getAllNotices]]
+== Planners_getAllNotices
+
+=== Http request
+
+include::{snippets}/Planners_getAllNotices/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Planners_getAllNotices/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/Planners_getAllNotices/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Planners_getAllNotices/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Planners_getAllNotices/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Planners_getAllNotices/response-body.adoc[]
+
+[[Planners_getAllVotes]]
+== Planners_getAllVotes
+
+=== Http request
+
+include::{snippets}/Planners_getAllVotes/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Planners_getAllVotes/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/Planners_getAllVotes/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Planners_getAllVotes/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Planners_getAllVotes/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Planners_getAllVotes/response-body.adoc[]
+
+[[Planners_addUsersToPlanner]]
+== Planners_addUsersToPlanner
+
+=== Http request
+
+include::{snippets}/Planners_addUsersToPlanner/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Planners_addUsersToPlanner/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/Planners_addUsersToPlanner/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Planners_addUsersToPlanner/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Planners_addUsersToPlanner/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Planners_addUsersToPlanner/response-body.adoc[]
+
+[[Planners_addExistUsersToPlanner]]
+== Planners_addExistUsersToPlanner
+
+=== Http request
+
+include::{snippets}/Planners_addExistUsersToPlanner/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Planners_addExistUsersToPlanner/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/Planners_addExistUsersToPlanner/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Planners_addExistUsersToPlanner/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Planners_addExistUsersToPlanner/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Planners_addExistUsersToPlanner/response-body.adoc[]
+
+[[Planners_exitUser]]
+== Planners_exitUser
+
+=== Http request
+
+include::{snippets}/Planners_exitUser/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Planners_exitUser/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/Planners_exitUser/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Planners_exitUser/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Planners_exitUser/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Planners_exitUser/response-body.adoc[]
+
+[[Planners_delete]]
+== Planners_delete
+
+=== Http request
+
+include::{snippets}/Planners_delete/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Planners_delete/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/Planners_delete/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Planners_delete/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Planners_delete/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Planners_delete/response-body.adoc[]
+
+[[Planners_deleteWithExit]]
+== Planners_deleteWithExit
+
+=== Http request
+
+include::{snippets}/Planners_deleteWithExit/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Planners_deleteWithExit/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/Planners_deleteWithExit/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Planners_deleteWithExit/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Planners_deleteWithExit/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Planners_deleteWithExit/response-body.adoc[]
+
+[[Planners_isExistWithValidId]]
+== Planners_isExistWithValidId
+
+=== Http request
+
+include::{snippets}/Planners_isExistWithValidId/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Planners_isExistWithValidId/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/Planners_isExistWithValidId/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Planners_isExistWithValidId/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Planners_isExistWithValidId/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Planners_isExistWithValidId/response-body.adoc[]
+
+[[Planners_isExistWithInvalidId]]
+== Planners_isExistWithInvalidId
+
+=== Http request
+
+include::{snippets}/Planners_isExistWithInvalidId/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Planners_isExistWithInvalidId/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/Planners_isExistWithInvalidId/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Planners_isExistWithInvalidId/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Planners_isExistWithInvalidId/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Planners_isExistWithInvalidId/response-body.adoc[]
+
+[[Planners_isExistInPlannerWithValidUserId]]
+== Planners_isExistInPlannerWithValidUserId
+
+=== Http request
+
+include::{snippets}/Planners_isExistInPlannerWithValidUserId/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Planners_isExistInPlannerWithValidUserId/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/Planners_isExistInPlannerWithValidUserId/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Planners_isExistInPlannerWithValidUserId/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Planners_isExistInPlannerWithValidUserId/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Planners_isExistInPlannerWithValidUserId/response-body.adoc[]
+
+[[Planners_isExistInPlannerWithInvalidUserId]]
+== Planners_isExistInPlannerWithInvalidUserId
+
+=== Http request
+
+include::{snippets}/Planners_isExistInPlannerWithInvalidUserId/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Planners_isExistInPlannerWithInvalidUserId/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/Planners_isExistInPlannerWithInvalidUserId/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Planners_isExistInPlannerWithInvalidUserId/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Planners_isExistInPlannerWithInvalidUserId/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Planners_isExistInPlannerWithInvalidUserId/response-body.adoc[]
+
+[[Planners_isExistInPlannerWithValidNickname]]
+== Planners_isExistInPlannerWithValidNickname
+
+=== Http request
+
+include::{snippets}/Planners_isExistInPlannerWithValidNickname/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Planners_isExistInPlannerWithValidNickname/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/Planners_isExistInPlannerWithValidNickname/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Planners_isExistInPlannerWithValidNickname/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Planners_isExistInPlannerWithValidNickname/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Planners_isExistInPlannerWithValidNickname/response-body.adoc[]
+
+[[Planners_isExistInPlannerWithInvalidNickname]]
+== Planners_isExistInPlannerWithInvalidNickname
+
+=== Http request
+
+include::{snippets}/Planners_isExistInPlannerWithInvalidNickname/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Planners_isExistInPlannerWithInvalidNickname/request-headers.adoc[]
+
+=== Path parameters
+
+include::{snippets}/Planners_isExistInPlannerWithInvalidNickname/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Planners_isExistInPlannerWithInvalidNickname/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Planners_isExistInPlannerWithInvalidNickname/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Planners_isExistInPlannerWithInvalidNickname/response-body.adoc[]

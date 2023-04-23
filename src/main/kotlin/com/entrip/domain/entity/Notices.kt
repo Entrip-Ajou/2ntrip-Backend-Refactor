@@ -22,9 +22,13 @@ class Notices (
     @JoinColumn(name = "PLANNER_ID")
     var planners: Planners? = null
 
-) : BaseTimeEntity() {
-    fun update(title: String, content: String) : Unit {
+) : BaseTimeEntity(), Comparable<Notices> {
+    fun update(title: String, content: String): Unit {
         this.title = title
         this.content = content
+    }
+
+    override fun compareTo(other: Notices): Int {
+        return 1
     }
 }

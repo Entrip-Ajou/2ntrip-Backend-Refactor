@@ -2,7 +2,7 @@ package com.entrip.domain.entity
 
 import com.entrip.domain.BaseTimeEntity
 import java.time.LocalDateTime
-import java.util.TreeSet
+import java.util.*
 import javax.persistence.*
 
 @Entity
@@ -54,7 +54,6 @@ class Planners(
     }
 
     override fun compareTo(other: Planners): Int {
-        if (this.planner_id!! >= other.planner_id!!) return 1;
-        return -1;
+        return 1
     }
 }

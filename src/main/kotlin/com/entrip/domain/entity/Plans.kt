@@ -1,6 +1,6 @@
 package com.entrip.domain.entity
 
-import java.util.TreeSet
+import java.util.*
 import javax.persistence.*
 
 @Entity
@@ -23,7 +23,7 @@ class Plans(
 
     @OneToMany(mappedBy = "plans", fetch = FetchType.EAGER)
     var comments: MutableSet<Comments> = TreeSet()
-) {
+) : Comparable<Plans> {
     public fun update(date: String, todo: String, time: String, location: String?, rgb: Long): Unit {
         this.date = date
         this.todo = todo
@@ -39,5 +39,9 @@ class Plans(
 
     public fun isExistComments(): Boolean {
         return comments.isNotEmpty()
+    }
+
+    override fun compareTo(other: Plans): Int {
+        return 1
     }
 }
