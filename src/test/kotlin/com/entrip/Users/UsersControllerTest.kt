@@ -4,7 +4,6 @@ import com.entrip.auth.jwt.JwtTokenProvider
 import com.entrip.controller.UsersController
 import com.entrip.domain.RestAPIMessages
 import com.entrip.domain.dto.Users.UsersResponseDto
-import com.entrip.domain.dto.Users.UsersReturnDto
 import com.entrip.domain.dto.Users.UsersSaveRequestDto
 import com.entrip.service.RedisService
 import com.entrip.service.UsersService
@@ -72,12 +71,11 @@ class UsersControllerTest() : BehaviorSpec() {
             )
 
             val users = usersSaveRequestDto.toEntity()
-            val usersResponseDto = UsersResponseDto(usersSaveRequestDto.toEntity())
-            val usersReturnDto = UsersReturnDto(usersResponseDto)
+            val usersResponseDto = UsersResponseDto(users)
             val expected = RestAPIMessages(
                 httpStatus = 200,
                 message = "User is saved well",
-                data = usersReturnDto
+                data = usersResponseDto
             )
 
             every { usersService.save(any()) } returns validUserId

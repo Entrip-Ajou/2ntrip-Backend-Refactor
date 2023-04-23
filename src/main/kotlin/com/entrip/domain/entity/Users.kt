@@ -9,17 +9,18 @@ import javax.persistence.*
 
 @Entity
 @EnableJpaAuditing
+@Table(indexes = [Index(name = "idx_nickname", columnList = "nickname")])
 class Users(
     @Id @Column(name = "USER_ID")
-    val user_id: String? = null,
+    val user_id: String,
 
     @Column
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "PLANNERS_USERS")
     var planners: MutableSet<Planners> = TreeSet(),
 
     @Column
-    @OneToMany(mappedBy = "users", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY, orphanRemoval = true)
     //Check "orphanRemoval = true" is possible
     var comments: MutableSet<Comments> = TreeSet(),
 
@@ -60,22 +61,22 @@ class Users(
     var m_password: String
 
 ) : BaseTimeEntity(), Comparable<Users>, UserDetails {
-    public fun addPlanners(planners: Planners): Long? {
+    fun addPlanners(planners: Planners): Long? {
         this.planners.add(planners)
         return planners.planner_id
     }
 
-    public fun updateToken(token: String): String {
+    fun updateToken(token: String): String {
         this.token = token
         return token
     }
 
-    public override fun compareTo(other: Users): Int {
-        if (this.user_id!! >= other.user_id!!) return 1;
-        return -1;
+    override fun compareTo(other: Users): Int {
+        if (this.user_id >= other.user_id) return 1
+        return -1
     }
 
-    public override fun getAuthorities(): MutableCollection<out GrantedAuthority>? {
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority>? {
         return null
     }
 
@@ -84,7 +85,7 @@ class Users(
     }
 
     override fun getUsername(): String {
-        return user_id!!
+        return user_id
     }
 
     override fun isAccountNonExpired(): Boolean {

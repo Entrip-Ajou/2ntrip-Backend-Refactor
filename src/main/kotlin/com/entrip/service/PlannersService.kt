@@ -8,7 +8,6 @@ import com.entrip.domain.dto.Planners.PlannersUpdateRequestDto
 import com.entrip.domain.dto.Plans.PlansResponseDto
 import com.entrip.domain.dto.Plans.PlansReturnDto
 import com.entrip.domain.dto.Users.UsersResponseDto
-import com.entrip.domain.dto.Users.UsersReturnDto
 import com.entrip.domain.dto.Votes.VotesReturnDto
 import com.entrip.domain.dto.Votes.VotesReturnDtoComparator
 import com.entrip.domain.entity.Notices
@@ -18,6 +17,8 @@ import com.entrip.domain.entity.Users
 import com.entrip.repository.PlannersRepository
 import com.entrip.repository.PlansRepository
 import com.entrip.repository.UsersRepository
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -50,6 +51,9 @@ class PlannersService(
     private val eventPublisher: ApplicationEventPublisher
 
 ) {
+
+    val logger: Logger = LoggerFactory.getLogger(PlannersService::class.java)
+
     private fun findPlanners(planner_id: Long): Planners {
         val planners: Planners = plannersRepository.findById(planner_id!!).orElseThrow {
             IllegalArgumentException("Error raise at PlannersRepository.findById$planner_id")
@@ -58,8 +62,8 @@ class PlannersService(
     }
 
     private fun findUsers(user_id: String?): Users {
-        val users: Users = usersRepository.findById(user_id!!).orElseThrow {
-            IllegalArgumentException("Error raise at usersRepository.findById$user_id")
+        val users: Users = usersRepository.findUsersByUser_idFetchPlanners(user_id!!).orElseThrow {
+            IllegalArgumentException("Error raise at UsersRepository.findById$user_id")
         }
         return users
     }
@@ -81,6 +85,7 @@ class PlannersService(
     public fun save(requestDto: PlannersSaveRequestDto): Long? {
         val users = findUsers(requestDto.user_id)
         val planners = requestDto.toEntity()
+        logger.info("**********************************")
         planners.setComment_timeStamp()
         users.addPlanners(planners)
         planners.addUsers(users)
@@ -121,16 +126,15 @@ class PlannersService(
         return plansList
     }
 
-    public fun findAllUsersWithPlannerId(planner_id: Long): MutableList<UsersReturnDto> {
+    public fun findAllUsersWithPlannerId(planner_id: Long): MutableList<UsersResponseDto> {
         val planners = findPlanners(planner_id)
         val usersSet: MutableSet<Users>? = planners.users
-        val usersList: MutableList<UsersReturnDto> = ArrayList<UsersReturnDto>()
+        val usersList: MutableList<UsersResponseDto> = ArrayList<UsersResponseDto>()
         val iterator = usersSet!!.iterator()
         while (iterator.hasNext()) {
             val users = iterator.next()
             val responseDto = UsersResponseDto(users)
-            val returnDto = UsersReturnDto(responseDto)
-            usersList.add(returnDto)
+            usersList.add(responseDto)
         }
         return usersList
     }

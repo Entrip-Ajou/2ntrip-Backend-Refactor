@@ -1,23 +1,19 @@
 package com.entrip.domain.dto.Users
 
-import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Users
-import java.util.*
 
 class UsersResponseDto(
     var user_id: String?,
-    var planners: MutableSet<Planners> = TreeSet(),
     var nickname: String,
     var gender: Int?,
     var photoUrl: String?,
     var token: String?
 ) {
-    constructor(entity: Users) : this(
-        entity.user_id,
-        entity.planners,
-        entity.nickname,
-        entity.gender,
-        entity.photoUrl,
-        entity.token
+    constructor(users : Users) : this(
+        user_id = users.user_id,
+        nickname = users.nickname,
+        gender = users.gender,
+        photoUrl = users.photoUrl,
+        token = users.token
     )
 }

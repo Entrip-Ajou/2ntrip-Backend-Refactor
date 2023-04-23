@@ -5,7 +5,7 @@ import com.entrip.domain.dto.Planners.PlannersResponseDto
 import com.entrip.domain.dto.Planners.PlannersReturnDto
 import com.entrip.domain.dto.Users.UsersLoginRequestDto
 import com.entrip.domain.dto.Users.UsersLoginResReturnDto
-import com.entrip.domain.dto.Users.UsersReturnDto
+import com.entrip.domain.dto.Users.UsersResponseDto
 import com.entrip.domain.dto.Users.UsersSaveRequestDto
 import com.entrip.domain.entity.Planners
 import com.entrip.repository.PlannersRepository
@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.extensions.spring.SpringExtension
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.extension.ExtendWith
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -83,16 +84,16 @@ class UsersIntegrationTest() : BehaviorSpec() {
             val usersSaveRequestDto = UsersSaveRequestDto(
                 user_id = user_id, nickname = nickname, gender = gender, password = password, photoUrl = photoUrl
             )
-            val usersReturnDto = UsersReturnDto(
+            val usersResponseDto = UsersResponseDto(
                 user_id = user_id, nickname = nickname, gender = gender, photoUrl = photoUrl, token = null
             )
 
             val successExpectedResponse = RestAPIMessages(
-                httpStatus = 200, message = "User is saved well", data = usersReturnDto
+                httpStatus = 200, message = "User is saved well", data = usersResponseDto
             )
 
             val failExpectedResponse = RestAPIMessages(
-                httpStatus = 202, message = "NotAcceptedException\n", data = UsersReturnDto("", "", -1, "", "")
+                httpStatus = 202, message = "NotAcceptedException\n", data = UsersResponseDto("", "", -1, "", "")
             )
             `when`("회원 가입을 요청하면") {
                 then("회원 가입이 완료되고 usersReturnDto가 리턴된다") {
@@ -422,13 +423,13 @@ class UsersIntegrationTest() : BehaviorSpec() {
         given("올바른 accessToken을 Http Header에 실어서 (1)")
         {
 
-            val usersReturnDto = UsersReturnDto(
+            val usersResponseDto = UsersResponseDto(
                 user_id = user_id, nickname = nickname, gender = gender, photoUrl = photoUrl, token = tokenValue
             )
             val expectedResponse = RestAPIMessages(
-                httpStatus = 200, message = "Update user $user_id's token : $tokenValue", data = usersReturnDto
+                httpStatus = 200, message = "Update user $user_id's token : $tokenValue", data = usersResponseDto
             )
-            `when`("addToken을 실행하면") {
+            `when`("updateToken 실행하면") {
                 then("token이 더해진 UsersReturnDto가 리턴된다") {
                     mockMvc.perform(
                         RestDocumentationRequestBuilders.put(
@@ -474,11 +475,11 @@ class UsersIntegrationTest() : BehaviorSpec() {
 
         given("올바른 accessToken을 Http Header에 실어서 (2)")
         {
-            val usersReturnDto = UsersReturnDto(
+            val usersResponseDto = UsersResponseDto(
                 user_id = user_id, nickname = nickname, gender = gender, photoUrl = photoUrl, token = tokenValue
             )
             val successExpectedResponse = RestAPIMessages(
-                httpStatus = 200, message = "Load user with id : $user_id", data = usersReturnDto
+                httpStatus = 200, message = "Load user with id : $user_id", data = usersResponseDto
             )
             val failExpectedResponse = RestAPIMessages(
                 httpStatus = 500,
@@ -552,17 +553,17 @@ class UsersIntegrationTest() : BehaviorSpec() {
 
         given("올바른 accessToken을 Http Header에 실어서 (3)")
         {
-            val usersReturnDto = UsersReturnDto(
+            val usersResponseDto = UsersResponseDto(
                 user_id = user_id, nickname = nickname, gender = gender, photoUrl = photoUrl, token = tokenValue
             )
 
             class dummy(val e: String) {}
 
             val successExpectedResponseWithUserId = RestAPIMessages(
-                httpStatus = 200, message = "Get user with nicknameOrUserId : $user_id", data = usersReturnDto
+                httpStatus = 200, message = "Get user with nicknameOrUserId : $user_id", data = usersResponseDto
             )
             val successExpectedResponseWithNickname = RestAPIMessages(
-                httpStatus = 200, message = "Get user with nicknameOrUserId : $nickname", data = usersReturnDto
+                httpStatus = 200, message = "Get user with nicknameOrUserId : $nickname", data = usersResponseDto
             )
             val failExpectedResponse = RestAPIMessages(
                 httpStatus = 202,
@@ -831,6 +832,47 @@ class UsersIntegrationTest() : BehaviorSpec() {
                     }.andExpect {
                         status { isBadRequest() }
                     }
+                }
+            }
+        }
+
+        given("재로그인 후 올바른 accessToken을 Http Header에 실어서 (4)")
+        {
+            val usersLoginRequestDto = UsersLoginRequestDto(
+                user_id = user_id, password = password
+            )
+
+            val expectedResponse = RestAPIMessages (
+                httpStatus = 200, message = "Delete user with id : $user_id", data = user_id
+            )
+
+            `when`("회원 탈퇴를 요청하면") {
+                then("회원 탈퇴가 정상적으로 이루어진다") {
+                    val result = mockMvc.post("/api/v2/users/login") {
+                        contentType = MediaType.APPLICATION_JSON
+                        content = objectMapper.writeValueAsString(usersLoginRequestDto)
+                    }.andReturn()
+
+                    val content = result.response.contentAsString
+                    val restAPIMessages = objectMapper.readValue<RestAPIMessages>(content, RestAPIMessages::class.java)
+                    val str = restAPIMessages.data.toString()
+                    val pairs = str.substring(1, str.length - 1).split(", ")
+                    for (pair in pairs) {
+                        val keyValue = pair.split("=")
+                        if (keyValue[0] == "accessToken") accessToken = keyValue[1]
+                        if (keyValue[0] == "refreshToken") refreshToken = keyValue[1]
+                    }
+
+                    mockMvc.perform(
+                        RestDocumentationRequestBuilders.delete("/api/v1/users/{user_id}", user_id)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("AccessToken", accessToken)
+                    )
+                        .andExpect(status().isOk)
+                        .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)))
+
+                    usersRepository.findAll().size shouldBe 0
+                    plannersRepository.findById(1).get().users.size shouldBe 0
                 }
             }
         }
