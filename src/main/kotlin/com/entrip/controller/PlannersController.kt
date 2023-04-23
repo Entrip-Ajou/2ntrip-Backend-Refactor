@@ -10,27 +10,13 @@ import com.entrip.domain.dto.Users.UsersResponseDto
 import com.entrip.domain.dto.Votes.VotesReturnDto
 import com.entrip.exception.NotAcceptedException
 import com.entrip.service.PlannersService
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.nio.charset.Charset
 
 @RestController
 class PlannersController(
     final val plannersService: PlannersService
-) {
-    private fun sendResponseHttpByJson(message: String, data: Any): ResponseEntity<RestAPIMessages> {
-        val restAPIMessages: RestAPIMessages = RestAPIMessages(
-            httpStatus = 200,
-            message = message,
-            data = data
-        )
-        val headers: HttpHeaders = HttpHeaders()
-        headers.contentType = MediaType("application", "json", Charset.forName("UTF-8"))
-        return ResponseEntity<RestAPIMessages>(restAPIMessages, headers, HttpStatus.OK)
-    }
+) : BaseController() {
 
 //    @PostMapping("/api/v1/planners")
 //    public fun save (@RequestBody requestDto : PlannersSaveRequestDto) : ResponseEntity<Messages> {
