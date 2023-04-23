@@ -89,10 +89,10 @@ class PlannersService(
         planners.setComment_timeStamp()
         users.addPlanners(planners)
         planners.addUsers(users)
-        plannersRepository.save(planners).planner_id
+        return plannersRepository.save(planners).planner_id
         //eventPublisher.publishEvent(CrudEvent("save", planners.planner_id!!))
-        publishCrudEvents("Planner Save", planners.planner_id!!)
-        return planners.planner_id
+//        publishCrudEvents("Planner Save", planners.planner_id!!)
+//        return planners.planner_id
     }
 
     @Transactional
@@ -212,6 +212,12 @@ class PlannersService(
         while (usersIterator.hasNext()) {
             val users = usersIterator.next()
             users.planners.remove(planners)
+        }
+        val votesIterator = planners.votes.iterator()
+        while (votesIterator.hasNext()) {
+            val votes = votesIterator.next()
+            votesIterator.remove()
+            votesService.delete(votes.vote_id!!)
         }
         plannersRepository.delete(planners)
         publishCrudEvents("Planner Delete", planners.planner_id!!)

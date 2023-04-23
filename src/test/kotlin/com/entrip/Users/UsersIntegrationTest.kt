@@ -66,6 +66,8 @@ class UsersIntegrationTest() : BehaviorSpec() {
     final val photoUrl = "testPhotoUrl.com"
     final val password = "testPassword"
     final val tokenValue = "tokenValue"
+    var planner_id1 : Long = 1L
+    var planner_id2 : Long = 1L
 
     final val objectMapper = ObjectMapper().registerModule(KotlinModule())
 
@@ -676,23 +678,23 @@ class UsersIntegrationTest() : BehaviorSpec() {
                 title = "플래너 2번", start_date = "20230405", end_date = "20230407"
             )
 
-            plannersRepository.save(planners1)
-            plannersRepository.save(planners2)
+            planner_id1 = plannersRepository.save(planners1).planner_id!!
+            planner_id2 = plannersRepository.save(planners2).planner_id!!
 
             logger.info(planners1.planner_id.toString())
             logger.info(planners2.planner_id.toString())
 
-            val plannersResponseDto1 = PlannersResponseDto(plannersRepository.findById(1).get())
+            val plannersResponseDto1 = PlannersResponseDto(plannersRepository.findById(planner_id1).get())
             val plannersReturnDto1 = PlannersReturnDto(plannersResponseDto1)
-            val plannersResponseDto2 = PlannersResponseDto(plannersRepository.findById(2).get())
+            val plannersResponseDto2 = PlannersResponseDto(plannersRepository.findById(planner_id2).get())
             val plannersReturnDto2 = PlannersReturnDto(plannersResponseDto2)
 
             val expectedResponse1 = RestAPIMessages(
-                httpStatus = 200, message = "Add planner, id : 1 with user, id : $user_id", data = user_id
+                httpStatus = 200, message = "Add planner, id : $planner_id1 with user, id : $user_id", data = user_id
             )
 
             val expectedResponse2 = RestAPIMessages(
-                httpStatus = 200, message = "Add planner, id : 2 with user, id : $user_id", data = user_id
+                httpStatus = 200, message = "Add planner, id : $planner_id2 with user, id : $user_id", data = user_id
             )
 
             val expectedList = ArrayList<PlannersReturnDto>()
@@ -702,14 +704,10 @@ class UsersIntegrationTest() : BehaviorSpec() {
                 httpStatus = 200, message = "Load all planners with user, id : $user_id", data = expectedList
             )
 
-//            val users = usersRepository.findById(user_id).get()
-//            users.planners.add(planners1)
-//            planners1.users.add(users)
-
-            `when`("addPlanner로 플래너 1번을 등록하면") {
-                then("플래너가 사용자에게 등록되고 planner_id=1가 리턴된다") {
+            `when`("addPlanner로 플래너 아이디 planner_id1을 등록하면") {
+                then("플래너가 사용자에게 등록되고 planner_id1가 리턴된다") {
                     mockMvc.perform(
-                        RestDocumentationRequestBuilders.put("/api/v1/users/{planner_id}/{user_id}", 1, user_id)
+                        RestDocumentationRequestBuilders.put("/api/v1/users/{planner_id}/{user_id}", planner_id1, user_id)
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("AccessToken", accessToken)
                     )
@@ -737,9 +735,9 @@ class UsersIntegrationTest() : BehaviorSpec() {
                 }
             }
 
-            `when`("addPlanner로 플래너 2번을 등록하면") {
-                then("플래너가 사용자에게 등록되고 planner_id=2가 리턴된다") {
-                    mockMvc.put("/api/v1/users/{planner_id}/{user_id}", 2, user_id) {
+            `when`("addPlanner로 플래너 아이디 planner_id2을 등록하면") {
+                then("플래너가 사용자에게 등록되고 planner_id2가 리턴된다") {
+                    mockMvc.put("/api/v1/users/{planner_id}/{user_id}", planner_id2, user_id) {
                         contentType = MediaType.APPLICATION_JSON
                         header("AccessToken", accessToken)
                     }.andExpect {
@@ -750,7 +748,7 @@ class UsersIntegrationTest() : BehaviorSpec() {
             }
 
             `when`("이후에 올바른 userId로 findAllPlannersWithUserId를 실행하면") {
-                then("planner 1번, 2번이 list로 리턴된다") {
+                then("planner_id1인 플래너, planner_id2인 플래너가 list로 리턴된다") {
                     mockMvc.perform(
                         RestDocumentationRequestBuilders.get("/api/v1/users/{user_id}/all", user_id)
                             .contentType(MediaType.APPLICATION_JSON)
