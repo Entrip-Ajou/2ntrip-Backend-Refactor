@@ -90,8 +90,9 @@ class PlannersServiceTest : BehaviorSpec() {
         given("Planners save") {
 
             every { usersRepository.save(any()) } returns users
-            every { usersRepository.findById(users.user_id!!) } returns Optional.of(users)
+            every { usersRepository.findById(users.user_id) } returns Optional.of(users)
             every { usersRepository.findAll() } returns emptyList()
+            every { usersRepository.findUsersByUser_idFetchPlanners(users.user_id) } returns Optional.of(users)
 
             usersRepository.save(users)
 
@@ -161,7 +162,10 @@ class PlannersServiceTest : BehaviorSpec() {
 
             every { usersRepository.save(any()) } returns users
             every { usersRepository.findById(users.user_id!!) } returns Optional.of(users)
-            every { usersRepository.findById(invalidUserId) } returns Optional.of(users)
+            // Mocking 잘못 되어 있는 것 같아서 여기는 주석처리 할게요 !
+            // 사용하지도 않을 뿐더러 잘못된 아이디면 return users가 아니라 Exception Throw가 되야 합니다!
+            // every { usersRepository.findById(invalidUserId) } returns Optional.of(users)
+            every { usersRepository.findUsersByUser_idFetchPlanners(users.user_id) } returns Optional.of(users)
             every { usersRepository.findAll() } returns listOf(users)
             every { usersRepository.existsById(validUserId) } returns true
             every { usersRepository.existsById(invalidUserId) } returns false
