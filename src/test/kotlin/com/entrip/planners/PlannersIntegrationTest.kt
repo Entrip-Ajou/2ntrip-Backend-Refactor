@@ -12,7 +12,6 @@ import com.entrip.domain.dto.Plans.PlansReturnDto
 import com.entrip.domain.dto.Plans.PlansSaveRequestDto
 import com.entrip.domain.dto.Users.UsersLoginRequestDto
 import com.entrip.domain.dto.Users.UsersResponseDto
-import com.entrip.domain.dto.Users.UsersReturnDto
 import com.entrip.domain.dto.Users.UsersSaveRequestDto
 import com.entrip.domain.dto.Votes.VotesReturnDto
 import com.entrip.domain.dto.Votes.VotesSaveRequestDto
@@ -616,17 +615,8 @@ class PlannersIntegrationTest : BehaviorSpec() {
             usersService.updateToken(userOneId, "token")
             usersService.updateToken(userTwoId, "token")
 
-            val usersReturnDtoOne = UsersReturnDto(
-                UsersResponseDto(
-                    usersRepository.findById(userOneId).get()
-                )
-            )
-
-            val usersReturnDtoTwo = UsersReturnDto(
-                UsersResponseDto(
-                    usersRepository.findById(userTwoId).get()
-                )
-            )
+            val usersReturnDtoOne = UsersResponseDto(usersRepository.findById(userOneId).get())
+            val usersReturnDtoTwo = UsersResponseDto(usersRepository.findById(userTwoId).get())
 
             val usersList = mutableListOf(usersReturnDtoOne, usersReturnDtoTwo)
 
