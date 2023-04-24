@@ -10,9 +10,7 @@ import com.entrip.domain.dto.Plans.PlansReturnDto
 import com.entrip.domain.dto.Users.UsersResponseDto
 import com.entrip.domain.dto.Votes.VotesReturnDto
 import com.entrip.domain.dto.Votes.VotesReturnDtoComparator
-import com.entrip.domain.entity.Notices
 import com.entrip.domain.entity.Planners
-import com.entrip.domain.entity.Plans
 import com.entrip.domain.entity.Users
 import com.entrip.repository.PlannersRepository
 import com.entrip.repository.UsersRepository
@@ -61,8 +59,9 @@ class PlannersService(
     }
 
     private fun findUsersWithNickname(nickname: String): Users {
-        val usersList = usersRepository.findAll()
-        for (users in usersList) if (users.nickname == nickname) return users
+        if (usersRepository.existsByNickname(nickname)) {
+            return usersRepository.findUsersByNickname(nickname).get()
+        }
         throw IllegalArgumentException("Error raise at usersRepository.findByNickname : $nickname")
     }
 
@@ -73,7 +72,6 @@ class PlannersService(
     fun save(requestDto: PlannersSaveRequestDto): Long? {
         val users = findUsers(requestDto.user_id)
         val planners = requestDto.toEntity()
-        logger.info("**********************************")
         planners.setComment_timeStamp()
         users.addPlanners(planners)
         planners.addUsers(users)
@@ -83,126 +81,103 @@ class PlannersService(
     @Transactional
     fun update(planner_id: Long, requestDto: PlannersUpdateRequestDto): Long? {
         val planners = findPlanners(planner_id)
-        planners.update(requestDto.title!!, requestDto.start_date!!, requestDto.end_date!!)
+        planners.update(requestDto.title, requestDto.start_date, requestDto.end_date)
         return planner_id
     }
 
-    fun findByPlannerId(planner_id: Long): PlannersResponseDto {
-        val entity = findPlanners(planner_id)
-        return PlannersResponseDto(entity)
-    }
+    fun findByPlannerId(planner_id: Long): PlannersResponseDto = PlannersResponseDto(findPlanners(planner_id))
 
     fun findByPlannerIdWithDate(planner_id: Long, date: String): MutableList<PlansReturnDto> {
         val planners = findPlanners(planner_id)
-        val plansSet: MutableSet<Plans>? = planners.plans
         val plansList: MutableList<PlansReturnDto> = ArrayList<PlansReturnDto>()
-        val iterator = plansSet!!.iterator()
         val fixedDate: String = fixDate(date)
 
-        while (iterator.hasNext()) {
-            val plans = iterator.next()
+        for (plans in planners.plans!!) {
             if (plans.date == fixedDate) {
-                val responseDto = PlansResponseDto(plans)
-                val returnDto = PlansReturnDto(responseDto)
-                plansList.add(returnDto)
+                plansList.add(PlansReturnDto(PlansResponseDto(plans)))
             }
         }
+
         return plansList
     }
 
     fun findAllUsersWithPlannerId(planner_id: Long): MutableList<UsersResponseDto> {
         val planners = findPlanners(planner_id)
-        val usersSet: MutableSet<Users>? = planners.users
         val usersList: MutableList<UsersResponseDto> = ArrayList<UsersResponseDto>()
-        val iterator = usersSet!!.iterator()
-        while (iterator.hasNext()) {
-            val users = iterator.next()
-            val responseDto = UsersResponseDto(users)
-            usersList.add(responseDto)
+
+        for (user in planners.users) {
+            usersList.add(UsersResponseDto(user))
         }
+
         return usersList
     }
 
     fun findAllPlansWithPlannerId(planner_id: Long): MutableList<PlansReturnDto> {
         val planners = findPlanners(planner_id)
-        val plansSet: MutableSet<Plans>? = planners.plans
         val plansList: MutableList<PlansReturnDto> = ArrayList<PlansReturnDto>()
-        val plansIterator = plansSet?.iterator()
-        while (plansIterator?.hasNext() == true) {
-            val plans = plansIterator.next()
-            val plansResponseDto = PlansResponseDto(plans)
-            val plansReturnDto = PlansReturnDto(plansResponseDto)
-            plansList.add(plansReturnDto)
+
+        for (plan in planners.plans!!) {
+            plansList.add(PlansReturnDto(PlansResponseDto(plan)))
         }
+
         return plansList
     }
 
     fun findAllNoticesWithPlannerId(planner_id: Long): MutableList<NoticesReturnDto> {
         val planners = findPlanners(planner_id)
-        val noticesSet : MutableSet<Notices> = planners.notices
-        val noticesList : MutableList<NoticesReturnDto> = ArrayList<NoticesReturnDto>()
-        val noticesIterator = noticesSet.iterator()
+        val noticesList: MutableList<NoticesReturnDto> = ArrayList<NoticesReturnDto>()
 
-        while (noticesIterator.hasNext()) {
-            val notices = noticesIterator.next()
-            val returnDto = NoticesReturnDto(notices)
-            noticesList.add(returnDto)
+        for (notice in planners.notices) {
+            noticesList.add(NoticesReturnDto(notice))
         }
+
         Collections.sort(noticesList, NoticesReturnDtoComparator())
         return noticesList
     }
 
     fun findAllVotesWithPlannerID(planner_id : Long) : MutableList<VotesReturnDto> {
-        val planners : Planners = findPlanners(planner_id)
-        val votesListReturnDto : MutableList<VotesReturnDto> = ArrayList()
+        val planners: Planners = findPlanners(planner_id)
+        val votesList: MutableList<VotesReturnDto> = ArrayList()
 
         for (vote in planners.votes) {
             val returnDto = votesService.findById(vote.vote_id!!)
-            votesListReturnDto.add(returnDto)
+            votesList.add(returnDto)
         }
 
-        Collections.sort(votesListReturnDto, VotesReturnDtoComparator())
-
-        return votesListReturnDto
+        Collections.sort(votesList, VotesReturnDtoComparator())
+        return votesList
     }
 
-    fun plannerIsExistWithId(planner_id: Long): Boolean {
-        return plannersRepository.existsById(planner_id)
-    }
+    fun plannerIsExistWithId(planner_id: Long): Boolean = plannersRepository.existsById(planner_id)
 
     //Check and Refactor Delete function
     @Transactional
     fun delete(planner_id: Long): Long {
         val planners = findPlanners(planner_id)
-        val plansIterator = planners.plans!!.iterator()
-        while (plansIterator.hasNext()) {
-            val plans = plansIterator.next()
-            val commentsIterator = plans.comments.iterator()
-            while (commentsIterator.hasNext()) {
-                val comments = commentsIterator.next()
-                commentsIterator.remove()
-                commentsService.delete(comments.comment_id!!)
+
+        // delete Plans
+        for (plan in planners.plans!!) {
+            for (comment in plan.comments) {
+                commentsService.delete(comment.comment_id!!)
             }
-            plansIterator.remove()
-            plansService.delete(plans.plan_id!!)
+            plansService.delete(plan.plan_id!!)
         }
-        val noticesIterator = planners.notices.iterator()
-        while (noticesIterator.hasNext()) {
-            val notices = noticesIterator.next()
-            noticesIterator.remove()
-            noticesService.delete(notices.notice_id!!)
+
+        // delete Notices
+        for (notice in planners.notices) {
+            noticesService.delete(notice.notice_id!!)
         }
-        val usersIterator = planners.users!!.iterator()
-        while (usersIterator.hasNext()) {
-            val users = usersIterator.next()
-            users.planners.remove(planners)
+
+        // exit Users
+        for (user in planners.users) {
+            user.planners.remove(planners)
         }
-        val votesIterator = planners.votes.iterator()
-        while (votesIterator.hasNext()) {
-            val votes = votesIterator.next()
-            votesIterator.remove()
-            votesService.delete(votes.vote_id!!)
+
+        // delete Votes
+        for (vote in planners.votes) {
+            votesService.delete(vote.vote_id!!)
         }
+
         plannersRepository.delete(planners)
         return planner_id
     }
@@ -211,9 +186,12 @@ class PlannersService(
     fun addFriendToPlanner(planner_id: Long, user_id: String): String {
         val planners = findPlanners(planner_id)
         val friends = findUsers(user_id)
-        if (planners.users!!.contains(friends)) return "이미 planner에 등록되어있는 회원입니다."
+
+        if (planners.users.contains(friends)) return "이미 planner에 등록되어있는 회원입니다."
+
         planners.addUsers(friends)
         friends.planners.add(planners)
+
         return "$planner_id 번 플래너에 $user_id 사용자 등록 완료."
     }
 
@@ -245,10 +223,10 @@ class PlannersService(
         val planners = findPlanners(planner_id)
         val users = findUsers(user_id)
 
-        if (planners.plans != null) {
-            for (plans in planners.plans!!) {
-                for (comments in plans.comments) {
-                    if (comments.author == users.user_id) commentsService.delete(comments.comment_id!!)
+        for (plans in planners.plans!!) {
+            for (comments in plans.comments) {
+                if (comments.author == users.user_id) {
+                    commentsService.delete(comments.comment_id!!)
                 }
             }
         }
