@@ -73,7 +73,7 @@ jobs:
         run: echo "${{ secrets.APPLICATION_SECURITY_PROPERTIES }}" > ./src/main/resources/application-security.properties
 
       - name: Load Application Test Properties
-        run : echo $"{{ secrets.APPLICATION_TEST_PROPERTIES }}" > ./src/test/resources/application-test.properties
+        run : echo "${{ secrets.APPLICATION_TEST_PROPERTIES }}" > ./src/test/resources/application-test.properties
 
       # Build
       - name: Build with Gradle
