@@ -15,25 +15,20 @@ import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Plans
 import com.entrip.domain.entity.Users
 import com.entrip.repository.PlannersRepository
-import com.entrip.repository.PlansRepository
 import com.entrip.repository.UsersRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import java.util.*
 import javax.transaction.Transactional
 
 @Service
 class PlannersService(
-    private final val plannersRepository: PlannersRepository,
+    private val plannersRepository: PlannersRepository,
 
     @Autowired
     private val usersRepository: UsersRepository,
-
-    @Autowired
-    private val plansRepository: PlansRepository,
 
     @Autowired
     private val plansService: PlansService,
@@ -47,15 +42,12 @@ class PlannersService(
     @Autowired
     private val votesService: VotesService,
 
-    @Autowired
-    private val eventPublisher: ApplicationEventPublisher
-
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(PlannersService::class.java)
 
     private fun findPlanners(planner_id: Long): Planners {
-        val planners: Planners = plannersRepository.findById(planner_id!!).orElseThrow {
+        val planners: Planners = plannersRepository.findById(planner_id).orElseThrow {
             IllegalArgumentException("Error raise at PlannersRepository.findById$planner_id")
         }
         return planners
@@ -74,15 +66,11 @@ class PlannersService(
         throw IllegalArgumentException("Error raise at usersRepository.findByNickname : $nickname")
     }
 
-    private fun publishCrudEvents(message: String, planner_id: Long) {
-        //eventPublisher.publishEvent(CrudEvent(message, planner_id))
-    }
-
     private fun fixDate(date: String): String =
         "${date.subSequence(0, 4)}/${date.subSequence(4, 6)}/${date.subSequence(6, 8)}"
 
     @Transactional
-    public fun save(requestDto: PlannersSaveRequestDto): Long? {
+    fun save(requestDto: PlannersSaveRequestDto): Long? {
         val users = findUsers(requestDto.user_id)
         val planners = requestDto.toEntity()
         logger.info("**********************************")
@@ -90,25 +78,21 @@ class PlannersService(
         users.addPlanners(planners)
         planners.addUsers(users)
         return plannersRepository.save(planners).planner_id
-        //eventPublisher.publishEvent(CrudEvent("save", planners.planner_id!!))
-//        publishCrudEvents("Planner Save", planners.planner_id!!)
-//        return planners.planner_id
     }
 
     @Transactional
-    public fun update(planner_id: Long, requestDto: PlannersUpdateRequestDto): Long? {
+    fun update(planner_id: Long, requestDto: PlannersUpdateRequestDto): Long? {
         val planners = findPlanners(planner_id)
         planners.update(requestDto.title!!, requestDto.start_date!!, requestDto.end_date!!)
-        publishCrudEvents("Planner Update", planners.planner_id!!)
         return planner_id
     }
 
-    public fun findByPlannerId(planner_id: Long): PlannersResponseDto {
+    fun findByPlannerId(planner_id: Long): PlannersResponseDto {
         val entity = findPlanners(planner_id)
         return PlannersResponseDto(entity)
     }
 
-    public fun findByPlannerIdWithDate(planner_id: Long, date: String): MutableList<PlansReturnDto> {
+    fun findByPlannerIdWithDate(planner_id: Long, date: String): MutableList<PlansReturnDto> {
         val planners = findPlanners(planner_id)
         val plansSet: MutableSet<Plans>? = planners.plans
         val plansList: MutableList<PlansReturnDto> = ArrayList<PlansReturnDto>()
@@ -126,7 +110,7 @@ class PlannersService(
         return plansList
     }
 
-    public fun findAllUsersWithPlannerId(planner_id: Long): MutableList<UsersResponseDto> {
+    fun findAllUsersWithPlannerId(planner_id: Long): MutableList<UsersResponseDto> {
         val planners = findPlanners(planner_id)
         val usersSet: MutableSet<Users>? = planners.users
         val usersList: MutableList<UsersResponseDto> = ArrayList<UsersResponseDto>()
@@ -139,7 +123,7 @@ class PlannersService(
         return usersList
     }
 
-    public fun findAllPlansWithPlannerId(planner_id: Long): MutableList<PlansReturnDto> {
+    fun findAllPlansWithPlannerId(planner_id: Long): MutableList<PlansReturnDto> {
         val planners = findPlanners(planner_id)
         val plansSet: MutableSet<Plans>? = planners.plans
         val plansList: MutableList<PlansReturnDto> = ArrayList<PlansReturnDto>()
@@ -182,13 +166,13 @@ class PlannersService(
         return votesListReturnDto
     }
 
-    public fun plannerIsExistWithId(planner_id: Long): Boolean {
+    fun plannerIsExistWithId(planner_id: Long): Boolean {
         return plannersRepository.existsById(planner_id)
     }
 
     //Check and Refactor Delete function
     @Transactional
-    public fun delete(planner_id: Long): Long {
+    fun delete(planner_id: Long): Long {
         val planners = findPlanners(planner_id)
         val plansIterator = planners.plans!!.iterator()
         while (plansIterator.hasNext()) {
@@ -220,29 +204,27 @@ class PlannersService(
             votesService.delete(votes.vote_id!!)
         }
         plannersRepository.delete(planners)
-        publishCrudEvents("Planner Delete", planners.planner_id!!)
         return planner_id
     }
 
     @Transactional
-    public fun addFriendToPlanner(planner_id: Long, user_id: String): String {
+    fun addFriendToPlanner(planner_id: Long, user_id: String): String {
         val planners = findPlanners(planner_id)
         val friends = findUsers(user_id)
         if (planners.users!!.contains(friends)) return "이미 planner에 등록되어있는 회원입니다."
         planners.addUsers(friends)
         friends.planners.add(planners)
-        publishCrudEvents("Add Friend To Planner", planners.planner_id!!)
         return "$planner_id 번 플래너에 $user_id 사용자 등록 완료."
     }
 
-    public fun userIsExistInPlannerWithUserId(planner_id: Long, user_id: String): Boolean {
+    fun userIsExistInPlannerWithUserId(planner_id: Long, user_id: String): Boolean {
         val planners = findPlanners(planner_id)
         val users = findUsers(user_id)
         if (planners.users.contains(users)) return true
         return false
     }
 
-    public fun userIsExistInPlannerWithNickname(planner_id: Long, nickname: String): Boolean {
+    fun userIsExistInPlannerWithNickname(planner_id: Long, nickname: String): Boolean {
         val planners = findPlanners(planner_id)
         val users = findUsersWithNickname(nickname)
         if (planners.users.contains(users)) return true
@@ -250,7 +232,7 @@ class PlannersService(
     }
 
     @Transactional
-    public fun deleteWithExit(planner_id: Long, user_id: String): Long {
+    fun deleteWithExit(planner_id: Long, user_id: String): Long {
         val planners = findPlanners(planner_id)
         val users = findUsers(user_id)
         if (planners.users.contains(users)) throw Exception()
@@ -259,7 +241,7 @@ class PlannersService(
     }
 
     @Transactional
-    public fun exitPlanner(planner_id: Long, user_id: String): Boolean {
+    fun exitPlanner(planner_id: Long, user_id: String): Boolean {
         val planners = findPlanners(planner_id)
         val users = findUsers(user_id)
 
@@ -275,7 +257,6 @@ class PlannersService(
         planners.users.remove(users)
 
         if (planners.users.isEmpty()) this.delete(planner_id)
-        publishCrudEvents("User ${user_id} exit Planner", planners.planner_id!!)
         return true
     }
 }
