@@ -75,9 +75,13 @@ jobs:
       - name: Load Application Test Properties
         run : echo "${{ secrets.APPLICATION_TEST_PROPERTIES }}" > ./src/test/resources/application-test.properties
 
-      # Build
+      # Build first
       - name: Build with Gradle
-        run: ./gradlew clean build -i
+        run: ./gradlew clean build
+
+      # Build second
+      - name: Build with gradle Second
+        run: /gradlew build
 
       # 전송할 파일을 담을 디렉토리 생성
       - name: Make Directory for deliver
