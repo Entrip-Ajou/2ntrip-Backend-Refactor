@@ -75,13 +75,18 @@ class PlannersService(
         planners.setComment_timeStamp()
         users.addPlanners(planners)
         planners.addUsers(users)
-        return plannersRepository.save(planners).planner_id
+
+        val planner_id = plannersRepository.save(planners).planner_id
+        logger.info("Planners is saved in Database with plannerId : '{}'", planner_id)
+
+        return planner_id
     }
 
     @Transactional
     fun update(planner_id: Long, requestDto: PlannersUpdateRequestDto): Long? {
         val planners = findPlanners(planner_id)
         planners.update(requestDto.title, requestDto.start_date, requestDto.end_date)
+        logger.info("Planners is updated in Database with plannerId : '{}'", planner_id)
         return planner_id
     }
 
@@ -179,6 +184,7 @@ class PlannersService(
         }
 
         plannersRepository.delete(planners)
+        logger.info("Planners is deleted in Database with plannerId : '{}'", planner_id)
         return planner_id
     }
 
@@ -191,6 +197,8 @@ class PlannersService(
 
         planners.addUsers(friends)
         friends.planners.add(planners)
+
+        logger.info("Planner with planner_id : '{}' is added with User with user_id : '{}'", planner_id, user_id)
 
         return "$planner_id 번 플래너에 $user_id 사용자 등록 완료."
     }
@@ -242,6 +250,8 @@ class PlannersService(
                 votesService.delete(vote.vote_id!!)
             }
         }
+
+        logger.info("User with user_id : '{}' is exit with Planner with planner_id : '{}'", user_id, planner_id)
 
         users.planners.remove(planners)
         planners.users.remove(users)
