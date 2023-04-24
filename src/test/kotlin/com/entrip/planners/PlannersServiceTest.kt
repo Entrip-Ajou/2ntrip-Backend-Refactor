@@ -6,7 +6,6 @@ import com.entrip.domain.dto.Votes.VotesReturnDto
 import com.entrip.domain.dto.VotesContents.VotesContentsReturnDto
 import com.entrip.domain.entity.*
 import com.entrip.repository.PlannersRepository
-import com.entrip.repository.PlansRepository
 import com.entrip.repository.UsersRepository
 import com.entrip.service.*
 import io.kotest.assertions.throwables.shouldThrow
@@ -15,7 +14,6 @@ import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import org.springframework.context.ApplicationEventPublisher
 import java.time.LocalDateTime
 import java.util.*
 
@@ -26,21 +24,17 @@ class PlannersServiceTest : BehaviorSpec() {
 
     val plannersRepository = mockk<PlannersRepository>()
     val usersRepository = mockk<UsersRepository>()
-    val plansRepository = mockk<PlansRepository>()
     val plansService = mockk<PlansService>()
     val commentsService = mockk<CommentsService>()
     val noticesService = mockk<NoticesService>()
     val votesService = mockk<VotesService>()
-    val eventPublisher = mockk<ApplicationEventPublisher>()
     val plannersService = PlannersService(
         plannersRepository,
         usersRepository,
-        plansRepository,
         plansService,
         commentsService,
         noticesService,
         votesService,
-        eventPublisher
     )
 
     val users = Users(
@@ -169,8 +163,12 @@ class PlannersServiceTest : BehaviorSpec() {
             every { usersRepository.findAll() } returns listOf(users)
             every { usersRepository.existsById(validUserId) } returns true
             every { usersRepository.existsById(invalidUserId) } returns false
+            every { usersRepository.existsByUser_id(validUserId) } returns true
+            every { usersRepository.existsByUser_id(invalidUserId) } returns false
+            every { usersRepository.existsByNickname(validUserNickname) } returns true
+            every { usersRepository.existsByNickname(invalidUserNickname) } returns false
 
-            every { plansRepository.save(any()) } returns plans
+            every { plansService.plansRepository.save(any()) } returns plans
             every { noticesService.noticesRepository.save(any()) } returns notices
             every { votesService.votesRepository.save(any()) } returns votes
             every { votesService.findById(any()) } returns VotesReturnDto(
@@ -181,7 +179,7 @@ class PlannersServiceTest : BehaviorSpec() {
 
             val savedPlannersId = plannersService.save(plannersSaveRequestDto)
 
-            plansRepository.save(plans)
+            plansService.plansRepository.save(plans)
             noticesService.noticesRepository.save(notices)
             votesService.votesRepository.save(votes)
 
