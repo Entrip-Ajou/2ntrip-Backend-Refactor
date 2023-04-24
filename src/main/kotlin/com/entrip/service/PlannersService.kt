@@ -231,6 +231,18 @@ class PlannersService(
             }
         }
 
+        for (notice in planners.notices) {
+            if (notice.author!!.user_id == users.user_id) {
+                noticesService.delete(notice.notice_id!!)
+            }
+        }
+
+        for (vote in planners.votes) {
+            if (vote.author!!.user_id == users.user_id) {
+                votesService.delete(vote.vote_id!!)
+            }
+        }
+
         users.planners.remove(planners)
         planners.users.remove(users)
 
