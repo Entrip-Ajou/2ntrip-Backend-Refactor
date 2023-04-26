@@ -69,7 +69,7 @@ class Planners(
             )
 
             planner.setComment_timeStamp()
-            planner.users.add(users)
+            planner.addUsers(users)
             users.addPlanners(planner)
 
             return planner
