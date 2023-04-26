@@ -3,7 +3,6 @@ package com.entrip.service
 import com.entrip.domain.dto.Notices.NoticesReturnDto
 import com.entrip.domain.dto.Notices.NoticesReturnDtoComparator
 import com.entrip.domain.dto.Planners.PlannersResponseDto
-import com.entrip.domain.dto.Planners.PlannersSaveRequestDto
 import com.entrip.domain.dto.Planners.PlannersUpdateRequestDto
 import com.entrip.domain.dto.Plans.PlansResponseDto
 import com.entrip.domain.dto.Plans.PlansReturnDto
@@ -69,8 +68,8 @@ class PlannersService(
         "${date.subSequence(0, 4)}/${date.subSequence(4, 6)}/${date.subSequence(6, 8)}"
 
     @Transactional
-    fun save(requestDto: PlannersSaveRequestDto): Long? {
-        val users = findUsers(requestDto.user_id)
+    fun save(user_id: String): Long? {
+        val users = findUsers(user_id)
         val planners = Planners.createPlanners(users)
 
         val planner_id = plannersRepository.save(planners).planner_id

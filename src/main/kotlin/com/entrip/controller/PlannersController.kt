@@ -2,7 +2,6 @@ package com.entrip.controller
 
 import com.entrip.domain.RestAPIMessages
 import com.entrip.domain.dto.Planners.PlannersReturnDto
-import com.entrip.domain.dto.Planners.PlannersSaveRequestDto
 import com.entrip.domain.dto.Planners.PlannersUpdateRequestDto
 import com.entrip.exception.NotAcceptedException
 import com.entrip.service.PlannersService
@@ -16,8 +15,7 @@ class PlannersController(
 
     @PostMapping("/api/v1/planners/{user_id}")
     fun save(@PathVariable user_id: String): ResponseEntity<RestAPIMessages> {
-        val requestDto = PlannersSaveRequestDto(user_id)
-        val savedPlannerId: Long? = plannersService.save(requestDto)
+        val savedPlannerId: Long? = plannersService.save(user_id)
         val responseDto = plannersService.findByPlannerId(savedPlannerId!!)
         val returnDto = PlannersReturnDto(responseDto)
         return sendResponseHttpByJson("Planner is saved well", returnDto)

@@ -5,7 +5,6 @@ import com.entrip.domain.dto.Notices.NoticesReturnDto
 import com.entrip.domain.dto.Notices.NoticesSaveRequestDto
 import com.entrip.domain.dto.Planners.PlannersResponseDto
 import com.entrip.domain.dto.Planners.PlannersReturnDto
-import com.entrip.domain.dto.Planners.PlannersSaveRequestDto
 import com.entrip.domain.dto.Planners.PlannersUpdateRequestDto
 import com.entrip.domain.dto.Plans.PlansResponseDto
 import com.entrip.domain.dto.Plans.PlansReturnDto
@@ -935,11 +934,8 @@ class PlannersIntegrationTest : BehaviorSpec() {
         }
 
         given("플래너가 두 개 저장된 상태에서") {
-            val plannersSaveRequestDtoOne = PlannersSaveRequestDto(
-                user_id = userOneId
-            )
 
-            val plannerIdToDelete = plannersService.save(plannersSaveRequestDtoOne)
+            val plannerIdToDelete = plannersService.save(userOneId)
 
             `when`("플래너 삭제를 요청하면") {
                 val successExpectedResponse = RestAPIMessages(
@@ -976,11 +972,8 @@ class PlannersIntegrationTest : BehaviorSpec() {
         }
 
         given("플래너가 두 개와 유저가 두 명 저장된 상태에서") {
-            val plannersSaveRequestDtoOne = PlannersSaveRequestDto(
-                user_id = userOneId
-            )
 
-            val plannerIdToDelete = plannersService.save(plannersSaveRequestDtoOne)
+            val plannerIdToDelete = plannersService.save(userOneId)
 
             `when`("플래너 삭제 및 exit를 요청하면") {
                 val successExpectedResponse = RestAPIMessages(

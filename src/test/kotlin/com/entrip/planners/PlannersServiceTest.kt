@@ -1,6 +1,5 @@
 package com.entrip.planners
 
-import com.entrip.domain.dto.Planners.PlannersSaveRequestDto
 import com.entrip.domain.dto.Planners.PlannersUpdateRequestDto
 import com.entrip.domain.dto.Votes.VotesReturnDto
 import com.entrip.domain.dto.VotesContents.VotesContentsReturnDto
@@ -90,16 +89,12 @@ class PlannersServiceTest : BehaviorSpec() {
 
             usersRepository.save(users)
 
-            val plannersSaveRequestDto = PlannersSaveRequestDto(
-                user_id = "hhgg0925@ajou.ac.kr"
-            )
-
             every { plannersRepository.save(any()) } returns planners
             every { plannersRepository.save(any()).planner_id } returns planners.planner_id
             every { plannersRepository.findAll() } returns listOf(planners)
 
-            `when`("PlannersSaveRequestDto를 주고 저장하면") {
-                val savedPlannersId = plannersService.save(plannersSaveRequestDto)
+            `when`("user_id를 주고 저장하면") {
+                val savedPlannersId = plannersService.save("hhgg0925@ajou.ac.kr")
 
                 then("저장된 planners의 id가 반환된다") {
                     savedPlannersId!! shouldBe 1L
@@ -108,9 +103,6 @@ class PlannersServiceTest : BehaviorSpec() {
         }
 
         given("Planners Update") {
-            val plannersSaveRequestDto = PlannersSaveRequestDto(
-                user_id = "hhgg0925@ajou.ac.kr"
-            )
 
             val plannersUpdateRequestDto = PlannersUpdateRequestDto(
                 title = "testPlanners1",
@@ -121,7 +113,7 @@ class PlannersServiceTest : BehaviorSpec() {
             every { plannersRepository.findById(1L) } returns Optional.of(planners)
 
             `when`("id와 PlannersUpdateRequestDto를 주고 수정하면") {
-                val savedPlannersId = plannersService.save(plannersSaveRequestDto)
+                val savedPlannersId = plannersService.save("hhgg0925@ajou.ac.kr")
                 plannersService.update(savedPlannersId!!, plannersUpdateRequestDto)
 
                 val plannersResponseDto = plannersService.findByPlannerId(savedPlannersId)
@@ -136,9 +128,6 @@ class PlannersServiceTest : BehaviorSpec() {
         }
 
         given("Planners find") {
-            val plannersSaveRequestDto = PlannersSaveRequestDto(
-                user_id = "hhgg0925@ajou.ac.kr"
-            )
 
             val validPlannerId = 1L
             val invalidPlannerId = 3L
@@ -177,7 +166,7 @@ class PlannersServiceTest : BehaviorSpec() {
             )
 
 
-            val savedPlannersId = plannersService.save(plannersSaveRequestDto)
+            val savedPlannersId = plannersService.save("hhgg0925@ajou.ac.kr")
 
             plansService.plansRepository.save(plans)
             noticesService.noticesRepository.save(notices)
