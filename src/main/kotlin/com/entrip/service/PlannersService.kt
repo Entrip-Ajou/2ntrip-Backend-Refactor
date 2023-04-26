@@ -71,10 +71,7 @@ class PlannersService(
     @Transactional
     fun save(requestDto: PlannersSaveRequestDto): Long? {
         val users = findUsers(requestDto.user_id)
-        val planners = requestDto.toEntity()
-        planners.setComment_timeStamp()
-        users.addPlanners(planners)
-        planners.addUsers(users)
+        val planners = Planners.createPlanners(users)
 
         val planner_id = plannersRepository.save(planners).planner_id
         logger.info("Planners is saved in Database with plannerId : '{}'", planner_id)

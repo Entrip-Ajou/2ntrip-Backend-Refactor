@@ -2,6 +2,7 @@ package com.entrip.domain.entity
 
 import com.entrip.domain.BaseTimeEntity
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.persistence.*
 
@@ -43,17 +44,35 @@ class Planners(
         this.end_date = end_date
     }
 
-    fun addUsers(users: Users): String? {
-        this.users?.add(users)
+    fun addUsers(users: Users): String {
+        this.users.add(users)
         return users.user_id
     }
 
-    fun setComment_timeStamp(): Unit {
+    fun setComment_timeStamp() {
         this.comment_timeStamp = LocalDateTime.now()
-        return Unit
+        return
     }
 
     override fun compareTo(other: Planners): Int {
         return 1
+    }
+
+    companion object {
+        fun createPlanners(users: Users): Planners {
+            val time: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
+
+            val planner = Planners(
+                title = "제목 없음",
+                start_date = time,
+                end_date = time
+            )
+
+            planner.setComment_timeStamp()
+            planner.users.add(users)
+            users.addPlanners(planner)
+
+            return planner
+        }
     }
 }
