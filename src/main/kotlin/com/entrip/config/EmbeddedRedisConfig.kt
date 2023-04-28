@@ -29,7 +29,7 @@ class EmbeddedRedisConfig(
 
     @PreDestroy
     fun stopRedis() {
-        if (redisServer == null) {
+        if (redisServer != null) {
             redisServer.stop()
         }
     }
