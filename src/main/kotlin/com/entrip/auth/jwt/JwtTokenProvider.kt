@@ -26,6 +26,9 @@ class JwtTokenProvider(
 ) {
     private var logger: Logger = LoggerFactory.getLogger(JwtTokenProvider::class.java)
 
+    var accessTokenValidTime : Long = 10 * 60 * 1000L
+    var refreshTokenValidTime : Long = 3600 * 60 * 1000L
+
 
     // 객체 초기화. secretKey를 Base64로 인코딩
     @PostConstruct
@@ -51,17 +54,15 @@ class JwtTokenProvider(
 
     fun createAccessToken(userPk: String): String {
         //token Valid Time : 1 min
-        val tokenValidTime = 10 * 60 * 1000L
-        val accessToken = createToken(userPk, tokenValidTime)
-        redisService.setValues(userPk + "A", accessToken, Duration.ofMillis(tokenValidTime))
+        val accessToken = createToken(userPk, accessTokenValidTime)
+        redisService.setValues(userPk + "A", accessToken, Duration.ofMillis(accessTokenValidTime))
         return accessToken
     }
 
     fun createRefreshToken(userPk: String): String {
         //token Valid Time : 1 day
-        val tokenValidTime = 3600 * 60 * 1000L
-        val refreshToken = createToken(userPk, tokenValidTime)
-        redisService.setValues(userPk + "R", refreshToken, Duration.ofMillis(tokenValidTime))
+        val refreshToken = createToken(userPk, refreshTokenValidTime)
+        redisService.setValues(userPk + "R", refreshToken, Duration.ofMillis(refreshTokenValidTime))
         return refreshToken
     }
 
