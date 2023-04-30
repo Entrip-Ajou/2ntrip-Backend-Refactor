@@ -872,7 +872,7 @@ class UsersIntegrationTest() : BehaviorSpec() {
                         .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)))
 
                     usersRepository.findAll().size shouldBe 0
-                    plannersRepository.findById(planner_id1).get().users.size shouldBe 0
+                    plannersRepository.findPlannersByPlanner_idFetchUsers(planner_id1).get().users.size shouldBe 0
                 }
             }
         }

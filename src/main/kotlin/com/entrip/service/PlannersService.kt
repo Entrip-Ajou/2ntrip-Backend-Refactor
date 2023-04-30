@@ -50,6 +50,20 @@ class PlannersService(
         return planners
     }
 
+    private fun findPlannersWithFetchUsers(planner_id: Long): Planners {
+        val planners: Planners = plannersRepository.findPlannersByPlanner_idFetchUsers(planner_id).orElseThrow {
+            IllegalArgumentException("Error raise at PlannersRepository.findPlannersByPlanner_idFetchUsers$planner_id")
+        }
+        return planners
+    }
+
+    private fun findPlannersWithLazy(planner_id: Long): Planners {
+        val planners: Planners = plannersRepository.findPlannersByPlanner_idWithLazy(planner_id).orElseThrow {
+            IllegalArgumentException("Error raise at PlannersRepository.findPlannersByPlanner_idWithLazy$planner_id")
+        }
+        return planners
+    }
+
     private fun findUsers(user_id: String?): Users {
         val users: Users = usersRepository.findUsersByUser_idFetchPlanners(user_id!!).orElseThrow {
             IllegalArgumentException("Error raise at UsersRepository.findById$user_id")
@@ -80,7 +94,7 @@ class PlannersService(
 
     @Transactional
     fun update(planner_id: Long, requestDto: PlannersUpdateRequestDto): Long? {
-        val planners = findPlanners(planner_id)
+        val planners = findPlannersWithLazy(planner_id)
         planners.update(requestDto.title, requestDto.start_date, requestDto.end_date)
         logger.info("Planners is updated in Database with plannerId : '{}'", planner_id)
         return planner_id
@@ -103,7 +117,7 @@ class PlannersService(
     }
 
     fun findAllUsersWithPlannerId(planner_id: Long): MutableList<UsersResponseDto> {
-        val planners = findPlanners(planner_id)
+        val planners = findPlannersWithFetchUsers(planner_id)
         val usersList: MutableList<UsersResponseDto> = ArrayList<UsersResponseDto>()
 
         for (user in planners.users) {
@@ -186,7 +200,7 @@ class PlannersService(
 
     @Transactional
     fun addFriendToPlanner(planner_id: Long, user_id: String): String {
-        val planners = findPlanners(planner_id)
+        val planners = findPlannersWithFetchUsers(planner_id)
         val friends = findUsers(user_id)
 
         if (planners.users.contains(friends)) return "이미 planner에 등록되어있는 회원입니다."
@@ -200,14 +214,14 @@ class PlannersService(
     }
 
     fun userIsExistInPlannerWithUserId(planner_id: Long, user_id: String): Boolean {
-        val planners = findPlanners(planner_id)
+        val planners = findPlannersWithFetchUsers(planner_id)
         val users = findUsers(user_id)
         if (planners.users.contains(users)) return true
         return false
     }
 
     fun userIsExistInPlannerWithNickname(planner_id: Long, nickname: String): Boolean {
-        val planners = findPlanners(planner_id)
+        val planners = findPlannersWithFetchUsers(planner_id)
         val users = findUsersWithNickname(nickname)
         if (planners.users.contains(users)) return true
         return false
@@ -215,7 +229,7 @@ class PlannersService(
 
     @Transactional
     fun deleteWithExit(planner_id: Long, user_id: String): Long {
-        val planners = findPlanners(planner_id)
+        val planners = findPlannersWithFetchUsers(planner_id)
         val users = findUsers(user_id)
         if (planners.users.contains(users)) throw Exception()
         delete(planner_id)

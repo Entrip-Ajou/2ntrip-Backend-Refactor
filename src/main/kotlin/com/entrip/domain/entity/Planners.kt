@@ -20,7 +20,7 @@ class Planners(
     var comment_timeStamp: LocalDateTime = LocalDateTime.now(),
 
     @Column
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "USERS_PLANNERS")
     var users: MutableSet<Users> = TreeSet(),
 
@@ -36,7 +36,7 @@ class Planners(
     @OneToMany(mappedBy = "planners", fetch = FetchType.EAGER)
     var votes: MutableSet<Votes> = TreeSet(),
 
-) : BaseTimeEntity(), Comparable<Planners> {
+    ) : BaseTimeEntity(), Comparable<Planners> {
 
     fun update(title: String, start_date: String, end_date: String): Unit {
         this.title = title
