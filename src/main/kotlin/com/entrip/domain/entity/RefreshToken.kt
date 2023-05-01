@@ -7,10 +7,8 @@ import org.springframework.data.redis.core.TimeToLive
 @RedisHash("RefreshToken")
 class RefreshToken(
     @Id
-    private val usersId: String,
-    private val refreshToken: String,
+    val usersId: String,
+    val refreshToken: String,
     @TimeToLive
-    private val expiredTime: Long
-
-) {
-}
+    var expiredTime: Long
+)
