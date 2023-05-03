@@ -2,7 +2,7 @@ package com.entrip.service
 
 import com.entrip.auth.jwt.JwtTokenProvider
 import com.entrip.domain.dto.Planners.PlannersResponseDto
-import com.entrip.domain.dto.Planners.PlannersReturnDto
+//import com.entrip.domain.dto.Planners.PlannersReturnDto
 import com.entrip.domain.dto.Users.UsersLoginRequestDto
 import com.entrip.domain.dto.Users.UsersLoginResReturnDto
 import com.entrip.domain.dto.Users.UsersResponseDto
@@ -92,11 +92,11 @@ class UsersService(
     }
 
     @Transactional
-    fun findAllPlannersWithUserId(user_id: String): MutableList<PlannersReturnDto> {
+    fun findAllPlannersWithUserId(user_id: String): MutableList<PlannersResponseDto> {
         val users: Users = findUsersWithFetchPlanner(user_id)
-        val plannersList: MutableList<PlannersReturnDto> = ArrayList()
-        for (p : Planners in users.planners)
-            plannersList.add(PlannersReturnDto(PlannersResponseDto(p)))
+        val plannersList: MutableList<PlannersResponseDto> = ArrayList()
+        for (p: Planners in users.planners)
+            plannersList.add(PlannersResponseDto(p))
         return plannersList
     }
 
