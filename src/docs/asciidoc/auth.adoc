@@ -1,0 +1,39 @@
+= 2ntrip API Docs
+Powered By Dongwhwan Lee, https://github.com/hwanld
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 1
+:sectlinks:
+
+[[Auth_with_ExpiredAccessToken]]
+== Auth_with_ExpiredAccessToken
+
+operation::Auth_with_ExpiredAccessToken[snippets='http-request,request-headers,http-response,response-body,response-fields']
+
+[[Auth_with_InvalidAccessToken]]
+== Auth_with_InvalidAccessToken
+
+operation::Auth_with_InvalidAccessToken[snippets='http-request,request-headers,http-response,response-body,response-fields']
+
+[[Auth_reIssue]]
+== Auth_reIssue
+
+operation::Auth_reIssue[snippets='http-request,path-parameters,http-response,response-body,response-fields']
+
+[[Auth_reIssue_beforeAccessTokenExpired]]
+== Auth_reIssue_beforeAccessTokenExpired
+
+operation::Auth_reIssue_beforeAccessTokenExpired[snippets='http-request,path-parameters,http-response,response-body,response-fields']
+
+[[Auth_reIssue_withExpiredRefreshToken]]
+== Auth_reIssue_withExpiredRefreshToken
+
+operation::Auth_reIssue_withExpiredRefreshToken[snippets='http-request,path-parameters,http-response,response-body,response-fields']
+
+[[Auth_reIssue_withInvalidRefreshToken]]
+== Auth_reIssue_withInvalidRefreshToken
+
+operation::Auth_reIssue_withInvalidRefreshToken[snippets='http-request,path-parameters,http-response,response-body,response-fields']
+

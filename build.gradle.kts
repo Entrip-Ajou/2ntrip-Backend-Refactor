@@ -75,6 +75,7 @@ dependencies {
 	testImplementation("io.kotest:kotest-assertions-core:4.4.3")
 	implementation("io.kotest:kotest-extensions-spring:4.4.3")
 
+	implementation(group="it.ozimov", name="embedded-redis", version = "0.7.2")
 }
 
 
