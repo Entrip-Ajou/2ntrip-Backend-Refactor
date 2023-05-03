@@ -4,7 +4,7 @@ import com.entrip.domain.RestAPIMessages
 import com.entrip.domain.dto.Notices.NoticesReturnDto
 import com.entrip.domain.dto.Notices.NoticesSaveRequestDto
 import com.entrip.domain.dto.Planners.PlannersResponseDto
-//import com.entrip.domain.dto.Planners.PlannersReturnDto
+import com.entrip.domain.dto.Planners.PlannersReturnDto
 import com.entrip.domain.dto.Planners.PlannersUpdateRequestDto
 import com.entrip.domain.dto.Plans.PlansResponseDto
 import com.entrip.domain.dto.Plans.PlansReturnDto
@@ -242,14 +242,16 @@ class PlannersIntegrationTest : BehaviorSpec() {
                 }
             }
             `when`("findById를 요청하면") {
-                val plannersResponseDto = PlannersResponseDto(
-                    plannersRepository.findById(plannerOneId).get()
+                val plannersReturnDto = PlannersReturnDto(
+                    PlannersResponseDto(
+                        plannersRepository.findById(plannerOneId).get()
+                    )
                 )
 
                 val successExpectedResponse = RestAPIMessages(
                     httpStatus = 200,
                     message = "Load planner with $plannerOneId",
-                    data = plannersResponseDto
+                    data = plannersReturnDto
                 )
 
                 then("plannersReturnDto가 반환된다") {

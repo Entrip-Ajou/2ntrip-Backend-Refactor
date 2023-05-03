@@ -2,7 +2,7 @@ package com.entrip.Users
 
 import com.entrip.domain.RestAPIMessages
 import com.entrip.domain.dto.Planners.PlannersResponseDto
-//import com.entrip.domain.dto.Planners.PlannersReturnDto
+import com.entrip.domain.dto.Planners.PlannersReturnDto
 import com.entrip.domain.dto.Users.UsersLoginRequestDto
 import com.entrip.domain.dto.Users.UsersLoginResReturnDto
 import com.entrip.domain.dto.Users.UsersResponseDto
@@ -685,9 +685,9 @@ class UsersIntegrationTest() : BehaviorSpec() {
             logger.info(planners2.planner_id.toString())
 
             val plannersResponseDto1 = PlannersResponseDto(plannersRepository.findById(planner_id1).get())
-//            val plannersReturnDto1 = PlannersReturnDto(plannersResponseDto1)
+            val plannersReturnDto1 = PlannersReturnDto(plannersResponseDto1)
             val plannersResponseDto2 = PlannersResponseDto(plannersRepository.findById(planner_id2).get())
-//            val plannersReturnDto2 = PlannersReturnDto(plannersResponseDto2)
+            val plannersReturnDto2 = PlannersReturnDto(plannersResponseDto2)
 
             val expectedResponse1 = RestAPIMessages(
                 httpStatus = 200, message = "Add planner, id : $planner_id1 with user, id : $user_id", data = user_id
@@ -697,9 +697,9 @@ class UsersIntegrationTest() : BehaviorSpec() {
                 httpStatus = 200, message = "Add planner, id : $planner_id2 with user, id : $user_id", data = user_id
             )
 
-            val expectedList = ArrayList<PlannersResponseDto>()
-            expectedList.add(plannersResponseDto1)
-            expectedList.add(plannersResponseDto2)
+            val expectedList = ArrayList<PlannersReturnDto>()
+            expectedList.add(plannersReturnDto1)
+            expectedList.add(plannersReturnDto2)
             val expectedResponseForFindAll = RestAPIMessages(
                 httpStatus = 200, message = "Load all planners with user, id : $user_id", data = expectedList
             )
@@ -707,11 +707,7 @@ class UsersIntegrationTest() : BehaviorSpec() {
             `when`("addPlanner로 플래너 아이디 planner_id1을 등록하면") {
                 then("플래너가 사용자에게 등록되고 planner_id1가 리턴된다") {
                     mockMvc.perform(
-                        RestDocumentationRequestBuilders.put(
-                            "/api/v1/users/{planner_id}/{user_id}",
-                            planner_id1,
-                            user_id
-                        )
+                        RestDocumentationRequestBuilders.put("/api/v1/users/{planner_id}/{user_id}", planner_id1, user_id)
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("AccessToken", accessToken)
                     )
