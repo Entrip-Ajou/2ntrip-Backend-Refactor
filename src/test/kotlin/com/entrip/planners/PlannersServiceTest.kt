@@ -148,6 +148,15 @@ class PlannersServiceTest : BehaviorSpec() {
             every { plannersRepository.findPlannersByPlanner_idFetchUsers(planners.planner_id!!) } returns Optional.of(
                 planners
             )
+            every { plannersRepository.findPlannersByPlanner_idFetchNotices(planners.planner_id!!) } returns Optional.of(
+                planners
+            )
+            every { plannersRepository.findPlannersByPlanner_idFetchPlans(planners.planner_id!!) } returns Optional.of(
+                planners
+            )
+            every { plannersRepository.findPlannersByPlanner_idFetchVotes(planners.planner_id!!) } returns Optional.of(
+                planners
+            )
 
             every { plannersRepository.existsById(validPlannerId) } returns true
             every { plannersRepository.existsById(invalidPlannerId) } returns false

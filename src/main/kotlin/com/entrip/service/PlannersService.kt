@@ -57,6 +57,27 @@ class PlannersService(
         return planners
     }
 
+    private fun findPlannersWithFetchPlans(planner_id: Long): Planners {
+        val planners: Planners = plannersRepository.findPlannersByPlanner_idFetchPlans(planner_id).orElseThrow {
+            IllegalArgumentException("Error raise at PlannersRepository.findPlannersByPlanner_idFetchPlans$planner_id")
+        }
+        return planners
+    }
+
+    private fun findPlannersWithFetchNotices(planner_id: Long): Planners {
+        val planners: Planners = plannersRepository.findPlannersByPlanner_idFetchNotices(planner_id).orElseThrow {
+            IllegalArgumentException("Error raise at PlannersRepository.findPlannersByPlanner_idFetchNotices$planner_id")
+        }
+        return planners
+    }
+
+    private fun findPlannersWithFetchVotes(planner_id: Long): Planners {
+        val planners: Planners = plannersRepository.findPlannersByPlanner_idFetchVotes(planner_id).orElseThrow {
+            IllegalArgumentException("Error raise at PlannersRepository.findPlannersByPlanner_idFetchVotes$planner_id")
+        }
+        return planners
+    }
+
     private fun findPlannersWithLazy(planner_id: Long): Planners {
         val planners: Planners = plannersRepository.findPlannersByPlanner_idWithLazy(planner_id).orElseThrow {
             IllegalArgumentException("Error raise at PlannersRepository.findPlannersByPlanner_idWithLazy$planner_id")
@@ -128,7 +149,7 @@ class PlannersService(
     }
 
     fun findAllPlansWithPlannerId(planner_id: Long): MutableList<PlansReturnDto> {
-        val planners = findPlanners(planner_id)
+        val planners = findPlannersWithFetchPlans(planner_id)
         val plansList: MutableList<PlansReturnDto> = ArrayList<PlansReturnDto>()
 
         for (plan in planners.plans!!) {
@@ -139,7 +160,7 @@ class PlannersService(
     }
 
     fun findAllNoticesWithPlannerId(planner_id: Long): MutableList<NoticesReturnDto> {
-        val planners = findPlanners(planner_id)
+        val planners = findPlannersWithFetchNotices(planner_id)
         val noticesList: MutableList<NoticesReturnDto> = ArrayList<NoticesReturnDto>()
 
         for (notice in planners.notices) {
@@ -151,7 +172,7 @@ class PlannersService(
     }
 
     fun findAllVotesWithPlannerID(planner_id : Long) : MutableList<VotesReturnDto> {
-        val planners: Planners = findPlanners(planner_id)
+        val planners: Planners = findPlannersWithFetchVotes(planner_id)
         val votesList: MutableList<VotesReturnDto> = ArrayList()
 
         for (vote in planners.votes) {
