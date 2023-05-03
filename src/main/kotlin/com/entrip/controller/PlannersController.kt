@@ -1,7 +1,6 @@
 package com.entrip.controller
 
 import com.entrip.domain.RestAPIMessages
-import com.entrip.domain.dto.Planners.PlannersReturnDto
 import com.entrip.domain.dto.Planners.PlannersUpdateRequestDto
 import com.entrip.exception.NotAcceptedException
 import com.entrip.service.PlannersService
@@ -17,8 +16,7 @@ class PlannersController(
     fun save(@PathVariable user_id: String): ResponseEntity<RestAPIMessages> {
         val savedPlannerId: Long? = plannersService.save(user_id)
         val responseDto = plannersService.findByPlannerId(savedPlannerId!!)
-        val returnDto = PlannersReturnDto(responseDto)
-        return sendResponseHttpByJson("Planner is saved well", returnDto)
+        return sendResponseHttpByJson("Planner is saved well", responseDto)
     }
 
     @PutMapping("/api/v1/planners/{planner_id}")
@@ -28,15 +26,13 @@ class PlannersController(
     ): ResponseEntity<RestAPIMessages> {
         val updatedPlannerId: Long = plannersService.update(planner_id, requestDto)!!
         val responseDto = plannersService.findByPlannerId(updatedPlannerId)
-        val returnDto = PlannersReturnDto(responseDto)
-        return sendResponseHttpByJson("Planner is updated well", returnDto)
+        return sendResponseHttpByJson("Planner is updated well", responseDto)
     }
 
     @GetMapping("/api/v1/planners/{planner_id}")
     fun findById(@PathVariable planner_id: Long): ResponseEntity<RestAPIMessages> {
         val responseDto = plannersService.findByPlannerId(planner_id)
-        val returnDto = PlannersReturnDto(responseDto)
-        return sendResponseHttpByJson("Load planner with $planner_id", returnDto)
+        return sendResponseHttpByJson("Load planner with $planner_id", responseDto)
     }
 
     @DeleteMapping("/api/v1/planners/{planner_id}")

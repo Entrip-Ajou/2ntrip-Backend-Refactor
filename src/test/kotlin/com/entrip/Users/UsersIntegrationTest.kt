@@ -2,7 +2,6 @@ package com.entrip.Users
 
 import com.entrip.domain.RestAPIMessages
 import com.entrip.domain.dto.Planners.PlannersResponseDto
-//import com.entrip.domain.dto.Planners.PlannersReturnDto
 import com.entrip.domain.dto.Users.UsersLoginRequestDto
 import com.entrip.domain.dto.Users.UsersLoginResReturnDto
 import com.entrip.domain.dto.Users.UsersResponseDto
@@ -685,9 +684,7 @@ class UsersIntegrationTest() : BehaviorSpec() {
             logger.info(planners2.planner_id.toString())
 
             val plannersResponseDto1 = PlannersResponseDto(plannersRepository.findById(planner_id1).get())
-//            val plannersReturnDto1 = PlannersReturnDto(plannersResponseDto1)
             val plannersResponseDto2 = PlannersResponseDto(plannersRepository.findById(planner_id2).get())
-//            val plannersReturnDto2 = PlannersReturnDto(plannersResponseDto2)
 
             val expectedResponse1 = RestAPIMessages(
                 httpStatus = 200, message = "Add planner, id : $planner_id1 with user, id : $user_id", data = user_id
