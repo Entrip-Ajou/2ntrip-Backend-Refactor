@@ -25,15 +25,15 @@ class Planners(
     var users: MutableSet<Users> = TreeSet(),
 
     @Column
-    @OneToMany(mappedBy = "planners", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "planners", fetch = FetchType.LAZY)
     var plans: MutableSet<Plans>? = TreeSet(),
 
     @Column
-    @OneToMany(mappedBy = "planners", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "planners", fetch = FetchType.LAZY)
     var notices: MutableSet<Notices> = TreeSet(),
 
     @Column
-    @OneToMany(mappedBy = "planners", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "planners", fetch = FetchType.LAZY)
     var votes: MutableSet<Votes> = TreeSet(),
 
     ) : BaseTimeEntity(), Comparable<Planners> {

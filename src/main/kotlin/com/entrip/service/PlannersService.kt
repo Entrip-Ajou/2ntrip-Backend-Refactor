@@ -124,7 +124,7 @@ class PlannersService(
     fun findByPlannerId(planner_id: Long): PlannersResponseDto = PlannersResponseDto(findPlanners(planner_id))
 
     fun findByPlannerIdWithDate(planner_id: Long, date: String): MutableList<PlansReturnDto> {
-        val planners = findPlanners(planner_id)
+        val planners = findPlannersWithFetchPlans(planner_id)
         val plansList: MutableList<PlansReturnDto> = ArrayList<PlansReturnDto>()
         val fixedDate: String = fixDate(date)
 
