@@ -55,7 +55,7 @@ jobs:
           mysql password: ${{ secrets.MYSQL_PASSWORD }}
 
       - name: Create Properties Files
-        run: touch ./src/main/resources/application.properties ; touch ./src/main/resources/application-aws-s3.properties ; touch ./src/main/resources/application-mongodb.properties ; touch ./src/main/resources/application-redis.properties ; touch ./src/main/resources/application-security.properties ; touch ./src/test/resources/application-test.properties
+        run: touch ./src/main/resources/application.properties ; touch ./src/main/resources/application-aws-s3.properties ; touch ./src/main/resources/application-mongodb.properties ; touch ./src/main/resources/application-redis.properties ; touch ./src/main/resources/application-security.properties ; touch ./src/test/resources/application-test.properties ; touch ./src/test/resources/application-redis.properties
 
       - name: Load Application Properties
         run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.properties
@@ -73,7 +73,10 @@ jobs:
         run: echo "${{ secrets.APPLICATION_SECURITY_PROPERTIES }}" > ./src/main/resources/application-security.properties
 
       - name: Load Application Test Properties
-        run : echo "${{ secrets.APPLICATION_TEST_PROPERTIES }}" > ./src/test/resources/application-test.properties
+        run: echo "${{ secrets.APPLICATION_TEST_PROPERTIES }}" > ./src/test/resources/application-test.properties
+
+      - name: Load Application Test Redis Properties
+        run: echo "${{ secrets.APPLICATION_REDIS_TEST_PROPERTIES }}" > ./src/test/resources/application-redis.properties
 
       # Build first
       - name: Build with Gradle
