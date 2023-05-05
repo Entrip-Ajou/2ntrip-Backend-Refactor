@@ -25,6 +25,7 @@ class JwtTokenProvider(
 ) {
     private var logger: Logger = LoggerFactory.getLogger(JwtTokenProvider::class.java)
 
+    // Access Token valid time : 10 min | Refresh Token valid time : 1 day
     var accessTokenValidTime: Long = 10 * 60L
     var refreshTokenValidTime: Long = 3600 * 60L
 
@@ -38,7 +39,7 @@ class JwtTokenProvider(
     // JWT 토큰 생성
     private fun createToken(userPk: String, tokenValidtime: Long): String {
         val claims: Claims = Jwts.claims().setSubject(userPk)
-        // Payload에 저장되는 key/value 쌍
+        // Payload 에 저장되는 key/value 쌍
         claims["userPK"] = userPk
         val now = Date()
         return Jwts.builder()
@@ -52,14 +53,12 @@ class JwtTokenProvider(
     }
 
     fun createAccessToken(userPk: String): String {
-        //token Valid Time : 1 min
         val accessToken = createToken(userPk, accessTokenValidTime)
         redisService.saveAccessToken(userPk, accessToken, accessTokenValidTime)
         return accessToken
     }
 
     fun createRefreshToken(userPk: String): String {
-        //token Valid Time : 1 day
         val refreshToken = createToken(userPk, refreshTokenValidTime)
         redisService.saveRefreshToken(userPk, refreshToken, refreshTokenValidTime)
         return refreshToken
@@ -128,7 +127,7 @@ class JwtTokenProvider(
         try {
             //refreshToken 자체가 잘못된 경우 (SignatureException인 경우?)
             val user_id = getUserPk(refreshToken)
-            if (!checkAccessTokenIsExpiredInRedisWithUserPk(user_id)) {
+            if (redisService.findAccessToken(user_id) == null) {
                 redisService.deleteAccessToken(user_id)
                 redisService.deleteRefreshToken(user_id)
                 throw ReIssueBeforeAccessTokenExpiredException("ReIssue before Access Token Expired !!!")
@@ -140,10 +139,7 @@ class JwtTokenProvider(
         }
     }
 
-
-    private fun checkAccessTokenIsExpiredInRedisWithUserPk(userPk: String): Boolean =
-        redisService.findAccessToken(userPk) == null
-
+    
     fun expireAllTokensWithUserPk(userPk: String): String {
         val accessToken = redisService.findAccessToken(userPk)
         val refreshToken = redisService.findRefreshToken(userPk)
