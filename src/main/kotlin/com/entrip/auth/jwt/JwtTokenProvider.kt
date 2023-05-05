@@ -73,7 +73,6 @@ class JwtTokenProvider(
 
     // 토큰에서 회원 정보 추출
     // userPk 의 Signature가 맞지 않다면 SignatureException Raise
-    @Throws(SignatureException::class)
     fun getUserPk(token: String): String {
         return try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).body.subject
@@ -106,7 +105,7 @@ class JwtTokenProvider(
         val redisRT: String = redisService.findAccessToken(userPk)
             ?: throw ExpiredAccessTokenException("Access token was expired. Please reissue.")
         if (redisRT != redisService.findAccessToken(userPk)) {
-            expireAccessTokenManually(accessToken)
+            redisService.deleteAccessToken(userPk)
             throw SignatureException("Token is not valid!")
         }
         return validateToken(accessToken)
@@ -114,11 +113,11 @@ class JwtTokenProvider(
 
     @Throws(ExpiredRefreshTokenException::class, SignatureException::class)
     fun validateRefreshToken(refreshToken: String): Boolean {
-        val userPkWithR = getUserPk(refreshToken)
-        val redisRT: String = redisService.findRefreshToken(userPkWithR)
+        val userPk = getUserPk(refreshToken)
+        val redisRT: String = redisService.findRefreshToken(userPk)
             ?: throw ExpiredRefreshTokenException("Refresh token was expired. Please re-login.")
-        if (redisRT != redisService.findRefreshToken(userPkWithR)) {
-            expireRefreshTokenManually(refreshToken)
+        if (redisRT != redisService.findRefreshToken(userPk)) {
+            redisService.deleteRefreshToken(userPk)
             throw SignatureException("Refresh Token is not valid!")
         }
         return validateToken(refreshToken)
@@ -130,8 +129,8 @@ class JwtTokenProvider(
             //refreshToken 자체가 잘못된 경우 (SignatureException인 경우?)
             val user_id = getUserPk(refreshToken)
             if (!checkAccessTokenIsExpiredInRedisWithUserPk(user_id)) {
-                expireRefreshTokenManually(refreshToken)
-                expireAccessTokenManually(refreshToken)
+                redisService.deleteAccessToken(user_id)
+                redisService.deleteRefreshToken(user_id)
                 throw ReIssueBeforeAccessTokenExpiredException("ReIssue before Access Token Expired !!!")
             }
             validateRefreshToken(refreshToken)
@@ -145,20 +144,12 @@ class JwtTokenProvider(
     private fun checkAccessTokenIsExpiredInRedisWithUserPk(userPk: String): Boolean =
         redisService.findAccessToken(userPk) == null
 
-
-    private fun expireAccessTokenManually(token: String) =
-        redisService.deleteAccessToken(getUserPk(token))
-
-    private fun expireRefreshTokenManually(token: String) =
-        redisService.deleteRefreshToken(getUserPk(token))
-
-
     fun expireAllTokensWithUserPk(userPk: String): String {
         val accessToken = redisService.findAccessToken(userPk)
         val refreshToken = redisService.findRefreshToken(userPk)
         if (accessToken != null && refreshToken != null) {
-            expireAccessTokenManually(accessToken)
-            expireRefreshTokenManually(refreshToken)
+            redisService.deleteAccessToken(userPk)
+            redisService.deleteRefreshToken(userPk)
         }
         return userPk
     }
