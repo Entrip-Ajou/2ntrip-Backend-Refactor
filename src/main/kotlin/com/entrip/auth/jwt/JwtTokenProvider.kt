@@ -54,7 +54,7 @@ class JwtTokenProvider(
     fun createAccessToken(userPk: String): String {
         //token Valid Time : 1 min
         val accessToken = createToken(userPk, accessTokenValidTime)
-        redisService.saveAccessToken(userPk + "A", accessToken, accessTokenValidTime)
+        redisService.saveAccessToken(userPk, accessToken, accessTokenValidTime)
         return accessToken
     }
 
@@ -102,10 +102,10 @@ class JwtTokenProvider(
 
     @Throws(ExpiredAccessTokenException::class, SignatureException::class)
     fun validateAccessToken(accessToken: String): Boolean {
-        val userPkWithA = getUserPk(accessToken) + "A"
-        val redisRT: String = redisService.findAccessToken(userPkWithA)
+        val userPk = getUserPk(accessToken)
+        val redisRT: String = redisService.findAccessToken(userPk)
             ?: throw ExpiredAccessTokenException("Access token was expired. Please reissue.")
-        if (redisRT != redisService.findAccessToken(userPkWithA)) {
+        if (redisRT != redisService.findAccessToken(userPk)) {
             expireAccessTokenManually(accessToken)
             throw SignatureException("Token is not valid!")
         }
@@ -143,18 +143,18 @@ class JwtTokenProvider(
 
 
     private fun checkAccessTokenIsExpiredInRedisWithUserPk(userPk: String): Boolean =
-        redisService.findAccessToken(userPk + "A") == null
+        redisService.findAccessToken(userPk ) == null
 
 
     private fun expireAccessTokenManually(token: String) =
-        redisService.deleteAccessToken(getUserPk(token) + "A")
+        redisService.deleteAccessToken(getUserPk(token))
 
     private fun expireRefreshTokenManually(token: String) =
         redisService.deleteRefreshToken(getUserPk(token) + "R")
 
 
     fun expireAllTokensWithUserPk(userPk: String): String {
-        val accessToken = redisService.findAccessToken(userPk + "A")
+        val accessToken = redisService.findAccessToken(userPk )
         val refreshToken = redisService.findRefreshToken(userPk + "R")
         if (accessToken != null && refreshToken != null) {
             expireAccessTokenManually(accessToken)
