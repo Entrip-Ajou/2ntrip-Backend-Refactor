@@ -25,8 +25,8 @@ class JwtTokenProvider(
 ) {
     private var logger: Logger = LoggerFactory.getLogger(JwtTokenProvider::class.java)
 
-    var accessTokenValidTime : Long = 10 * 60L
-    var refreshTokenValidTime : Long = 3600 * 60L
+    var accessTokenValidTime: Long = 10 * 60L
+    var refreshTokenValidTime: Long = 3600 * 60L
 
 
     // 객체 초기화. secretKey를 Base64로 인코딩
@@ -61,7 +61,7 @@ class JwtTokenProvider(
     fun createRefreshToken(userPk: String): String {
         //token Valid Time : 1 day
         val refreshToken = createToken(userPk, refreshTokenValidTime)
-        redisService.saveRefreshToken(userPk + "R", refreshToken, refreshTokenValidTime)
+        redisService.saveRefreshToken(userPk, refreshToken, refreshTokenValidTime)
         return refreshToken
     }
 
@@ -114,7 +114,7 @@ class JwtTokenProvider(
 
     @Throws(ExpiredRefreshTokenException::class, SignatureException::class)
     fun validateRefreshToken(refreshToken: String): Boolean {
-        val userPkWithR = getUserPk(refreshToken) + "R"
+        val userPkWithR = getUserPk(refreshToken)
         val redisRT: String = redisService.findRefreshToken(userPkWithR)
             ?: throw ExpiredRefreshTokenException("Refresh token was expired. Please re-login.")
         if (redisRT != redisService.findRefreshToken(userPkWithR)) {
@@ -143,19 +143,19 @@ class JwtTokenProvider(
 
 
     private fun checkAccessTokenIsExpiredInRedisWithUserPk(userPk: String): Boolean =
-        redisService.findAccessToken(userPk ) == null
+        redisService.findAccessToken(userPk) == null
 
 
     private fun expireAccessTokenManually(token: String) =
         redisService.deleteAccessToken(getUserPk(token))
 
     private fun expireRefreshTokenManually(token: String) =
-        redisService.deleteRefreshToken(getUserPk(token) + "R")
+        redisService.deleteRefreshToken(getUserPk(token))
 
 
     fun expireAllTokensWithUserPk(userPk: String): String {
-        val accessToken = redisService.findAccessToken(userPk )
-        val refreshToken = redisService.findRefreshToken(userPk + "R")
+        val accessToken = redisService.findAccessToken(userPk)
+        val refreshToken = redisService.findRefreshToken(userPk)
         if (accessToken != null && refreshToken != null) {
             expireAccessTokenManually(accessToken)
             expireRefreshTokenManually(refreshToken)
