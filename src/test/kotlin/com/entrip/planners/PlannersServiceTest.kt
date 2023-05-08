@@ -1,6 +1,5 @@
 package com.entrip.planners
 
-import com.entrip.domain.dto.Planners.PlannersSaveRequestDto
 import com.entrip.domain.dto.Planners.PlannersUpdateRequestDto
 import com.entrip.domain.dto.Votes.VotesReturnDto
 import com.entrip.domain.dto.VotesContents.VotesContentsReturnDto
@@ -85,21 +84,17 @@ class PlannersServiceTest : BehaviorSpec() {
 
             every { usersRepository.save(any()) } returns users
             every { usersRepository.findById(users.user_id) } returns Optional.of(users)
-            every { usersRepository.findAll() } returns emptyList()
             every { usersRepository.findUsersByUser_idFetchPlanners(users.user_id) } returns Optional.of(users)
+            every { usersRepository.findAll() } returns listOf(users)
 
             usersRepository.save(users)
-
-            val plannersSaveRequestDto = PlannersSaveRequestDto(
-                user_id = "hhgg0925@ajou.ac.kr"
-            )
 
             every { plannersRepository.save(any()) } returns planners
             every { plannersRepository.save(any()).planner_id } returns planners.planner_id
             every { plannersRepository.findAll() } returns listOf(planners)
 
-            `when`("PlannersSaveRequestDto를 주고 저장하면") {
-                val savedPlannersId = plannersService.save(plannersSaveRequestDto)
+            `when`("user_id를 주고 저장하면") {
+                val savedPlannersId = plannersService.save("hhgg0925@ajou.ac.kr")
 
                 then("저장된 planners의 id가 반환된다") {
                     savedPlannersId!! shouldBe 1L
@@ -108,9 +103,6 @@ class PlannersServiceTest : BehaviorSpec() {
         }
 
         given("Planners Update") {
-            val plannersSaveRequestDto = PlannersSaveRequestDto(
-                user_id = "hhgg0925@ajou.ac.kr"
-            )
 
             val plannersUpdateRequestDto = PlannersUpdateRequestDto(
                 title = "testPlanners1",
@@ -118,10 +110,15 @@ class PlannersServiceTest : BehaviorSpec() {
                 end_date = "2023/05/10",
             )
 
-            every { plannersRepository.findById(1L) } returns Optional.of(planners)
+            every { plannersRepository.findPlannersByPlanner_idWithLazy(planners.planner_id!!) } returns Optional.of(
+                planners
+            )
+            every { plannersRepository.findById(planners.planner_id!!) } returns Optional.of(planners)
+
+            every { usersRepository.findUsersByUser_idFetchPlanners(users.user_id) } returns Optional.of(users)
 
             `when`("id와 PlannersUpdateRequestDto를 주고 수정하면") {
-                val savedPlannersId = plannersService.save(plannersSaveRequestDto)
+                val savedPlannersId = plannersService.save("hhgg0925@ajou.ac.kr")
                 plannersService.update(savedPlannersId!!, plannersUpdateRequestDto)
 
                 val plannersResponseDto = plannersService.findByPlannerId(savedPlannersId)
@@ -136,9 +133,6 @@ class PlannersServiceTest : BehaviorSpec() {
         }
 
         given("Planners find") {
-            val plannersSaveRequestDto = PlannersSaveRequestDto(
-                user_id = "hhgg0925@ajou.ac.kr"
-            )
 
             val validPlannerId = 1L
             val invalidPlannerId = 3L
@@ -151,14 +145,25 @@ class PlannersServiceTest : BehaviorSpec() {
             every { plannersRepository.save(any()).planner_id } returns planners.planner_id
             every { plannersRepository.findAll() } returns listOf(planners)
             every { plannersRepository.findById(1L) } returns Optional.of(planners)
+            every { plannersRepository.findPlannersByPlanner_idFetchUsers(planners.planner_id!!) } returns Optional.of(
+                planners
+            )
+            every { plannersRepository.findPlannersByPlanner_idFetchNotices(planners.planner_id!!) } returns Optional.of(
+                planners
+            )
+            every { plannersRepository.findPlannersByPlanner_idFetchPlans(planners.planner_id!!) } returns Optional.of(
+                planners
+            )
+            every { plannersRepository.findPlannersByPlanner_idFetchVotes(planners.planner_id!!) } returns Optional.of(
+                planners
+            )
+
             every { plannersRepository.existsById(validPlannerId) } returns true
             every { plannersRepository.existsById(invalidPlannerId) } returns false
 
             every { usersRepository.save(any()) } returns users
             every { usersRepository.findById(users.user_id!!) } returns Optional.of(users)
-            // Mocking 잘못 되어 있는 것 같아서 여기는 주석처리 할게요 !
-            // 사용하지도 않을 뿐더러 잘못된 아이디면 return users가 아니라 Exception Throw가 되야 합니다!
-            // every { usersRepository.findById(invalidUserId) } returns Optional.of(users)
+
             every { usersRepository.findUsersByUser_idFetchPlanners(users.user_id) } returns Optional.of(users)
             every { usersRepository.findAll() } returns listOf(users)
             every { usersRepository.existsById(validUserId) } returns true
@@ -177,7 +182,7 @@ class PlannersServiceTest : BehaviorSpec() {
             )
 
 
-            val savedPlannersId = plannersService.save(plannersSaveRequestDto)
+            val savedPlannersId = plannersService.save("hhgg0925@ajou.ac.kr")
 
             plansService.plansRepository.save(plans)
             noticesService.noticesRepository.save(notices)
