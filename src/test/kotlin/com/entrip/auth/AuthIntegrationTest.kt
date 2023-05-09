@@ -134,7 +134,7 @@ class AuthIntegrationTest() : BehaviorSpec() {
             `when`("v1 메소드를 호출하는 경우") {
                 then("ExpiredAccessTokenException 이 throw 된다.") {
                     // Make AccessToken valid time to 1s
-                    jwtTokenProvider.accessTokenValidTime = 1 * 1000L
+                    jwtTokenProvider.accessTokenValidTime = 1L
 
                     // Get New AccessToken with valid time is 1s
                     getNewTokenValue()
@@ -171,7 +171,7 @@ class AuthIntegrationTest() : BehaviorSpec() {
             `when`("reIssue 를 요청하면") {
                 then("새로운 AccessToken 이 발급된다.") {
                     // Make AccessToken valid time to 1s
-                    jwtTokenProvider.accessTokenValidTime = 1 * 1000L
+                    jwtTokenProvider.accessTokenValidTime = 1L
 
                     // Get New AccessToken with valid time is 1s
                     getNewTokenValue()
@@ -291,8 +291,8 @@ class AuthIntegrationTest() : BehaviorSpec() {
                 then("Exception 이 throw 된다") {
 
                     // Make Token valid time to 1s
-                    jwtTokenProvider.accessTokenValidTime = 1 * 1000L
-                    jwtTokenProvider.refreshTokenValidTime = 1 * 1000L
+                    jwtTokenProvider.accessTokenValidTime = 1L
+                    jwtTokenProvider.refreshTokenValidTime = 1L
 
                     // Get New AccessToken with valid time is 1s
                     getNewTokenValue()
@@ -341,8 +341,8 @@ class AuthIntegrationTest() : BehaviorSpec() {
     }
 
     private fun resetTokenValidTimeToNormalValue() {
-        jwtTokenProvider.accessTokenValidTime = 10 * 60 * 1000L
-        jwtTokenProvider.refreshTokenValidTime = 3600 * 60 * 1000L
+        jwtTokenProvider.accessTokenValidTime = 10 * 60L
+        jwtTokenProvider.refreshTokenValidTime = 3600 * 60L
     }
 
     private fun saveTestUsers() {

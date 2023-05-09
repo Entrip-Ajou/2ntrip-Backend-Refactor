@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Component
-import java.time.Duration
 import java.util.*
 import javax.annotation.PostConstruct
 import javax.servlet.http.HttpServletRequest
@@ -19,15 +18,15 @@ import javax.servlet.http.HttpServletRequest
 // JWT를 생성하고 검증하는 컴포넌트
 @Component
 class JwtTokenProvider(
-    private final val userDetailsService: UserDetailsService,
-    private final val redisService: RedisService,
+    private val userDetailsService: UserDetailsService,
+    private val redisService: RedisService,
     @Value("#{security['spring.encryption.key']}")
     private var secretKey: String
 ) {
     private var logger: Logger = LoggerFactory.getLogger(JwtTokenProvider::class.java)
 
-    var accessTokenValidTime : Long = 10 * 60 * 1000L
-    var refreshTokenValidTime : Long = 3600 * 60 * 1000L
+    var accessTokenValidTime: Long = 10 * 60L
+    var refreshTokenValidTime: Long = 3600 * 60L
 
 
     // 객체 초기화. secretKey를 Base64로 인코딩
@@ -46,7 +45,7 @@ class JwtTokenProvider(
             .setHeaderParam("typ", "JWT")
             .setClaims(claims)
             .setIssuedAt(now)
-            .setExpiration(Date(now.time + tokenValidtime))
+            .setExpiration(Date(now.time + tokenValidtime * 1000L))
             // 암호화 알고리즘과 signature에 들어갈 secret 값 세팅
             .signWith(SignatureAlgorithm.HS256, secretKey)
             .compact()
@@ -55,14 +54,14 @@ class JwtTokenProvider(
     fun createAccessToken(userPk: String): String {
         //token Valid Time : 1 min
         val accessToken = createToken(userPk, accessTokenValidTime)
-        redisService.setValues(userPk + "A", accessToken, Duration.ofMillis(accessTokenValidTime))
+        redisService.saveAccessToken(userPk, accessToken, accessTokenValidTime)
         return accessToken
     }
 
     fun createRefreshToken(userPk: String): String {
         //token Valid Time : 1 day
         val refreshToken = createToken(userPk, refreshTokenValidTime)
-        redisService.setValues(userPk + "R", refreshToken, Duration.ofMillis(refreshTokenValidTime))
+        redisService.saveRefreshToken(userPk, refreshToken, refreshTokenValidTime)
         return refreshToken
     }
 
@@ -74,7 +73,6 @@ class JwtTokenProvider(
 
     // 토큰에서 회원 정보 추출
     // userPk 의 Signature가 맞지 않다면 SignatureException Raise
-    @Throws(SignatureException::class)
     fun getUserPk(token: String): String {
         return try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).body.subject
@@ -103,11 +101,11 @@ class JwtTokenProvider(
 
     @Throws(ExpiredAccessTokenException::class, SignatureException::class)
     fun validateAccessToken(accessToken: String): Boolean {
-        val userPkWithA = getUserPk(accessToken) + "A"
-        val redisRT: String = redisService.getValues(userPkWithA)
+        val userPk = getUserPk(accessToken)
+        val redisRT: String = redisService.findAccessToken(userPk)
             ?: throw ExpiredAccessTokenException("Access token was expired. Please reissue.")
-        if (redisRT != redisService.getValues(userPkWithA)) {
-            expireAccessTokenManually(accessToken)
+        if (redisRT != redisService.findAccessToken(userPk)) {
+            redisService.deleteAccessToken(userPk)
             throw SignatureException("Token is not valid!")
         }
         return validateToken(accessToken)
@@ -115,11 +113,11 @@ class JwtTokenProvider(
 
     @Throws(ExpiredRefreshTokenException::class, SignatureException::class)
     fun validateRefreshToken(refreshToken: String): Boolean {
-        val userPkWithR = getUserPk(refreshToken!!) + "R"
-        val redisRT: String? = redisService.getValues(userPkWithR)
+        val userPk = getUserPk(refreshToken)
+        val redisRT: String = redisService.findRefreshToken(userPk)
             ?: throw ExpiredRefreshTokenException("Refresh token was expired. Please re-login.")
-        if (redisRT != redisService.getValues(userPkWithR)) {
-            expireRefreshTokenManually(refreshToken)
+        if (redisRT != redisService.findRefreshToken(userPk)) {
+            redisService.deleteRefreshToken(userPk)
             throw SignatureException("Refresh Token is not valid!")
         }
         return validateToken(refreshToken)
@@ -131,8 +129,8 @@ class JwtTokenProvider(
             //refreshToken 자체가 잘못된 경우 (SignatureException인 경우?)
             val user_id = getUserPk(refreshToken)
             if (!checkAccessTokenIsExpiredInRedisWithUserPk(user_id)) {
-                expireRefreshTokenManually(refreshToken)
-                expireAccessTokenManually(refreshToken)
+                redisService.deleteAccessToken(user_id)
+                redisService.deleteRefreshToken(user_id)
                 throw ReIssueBeforeAccessTokenExpiredException("ReIssue before Access Token Expired !!!")
             }
             validateRefreshToken(refreshToken)
@@ -144,27 +142,15 @@ class JwtTokenProvider(
 
 
     private fun checkAccessTokenIsExpiredInRedisWithUserPk(userPk: String): Boolean =
-        redisService.getValues(userPk + "A") == null
-
-
-    private fun expireAccessTokenManually(token: String) =
-        removeTokenFromRedis(getUserPk(token) + "A")
-
-    private fun expireRefreshTokenManually(token: String) =
-        removeTokenFromRedis(getUserPk(token) + "R")
-
-
-    private fun removeTokenFromRedis(userPk: String) =
-        redisService.deleteValues(userPk)
+        redisService.findAccessToken(userPk) == null
 
     fun expireAllTokensWithUserPk(userPk: String): String {
-        val accessToken = redisService.getValues(userPk + "A")
-        val refreshToken = redisService.getValues(userPk + "R")
+        val accessToken = redisService.findAccessToken(userPk)
+        val refreshToken = redisService.findRefreshToken(userPk)
         if (accessToken != null && refreshToken != null) {
-            expireAccessTokenManually(accessToken)
-            expireRefreshTokenManually(refreshToken)
+            redisService.deleteAccessToken(userPk)
+            redisService.deleteRefreshToken(userPk)
         }
-        logger.warn("*************************************************")
         return userPk
     }
 }
