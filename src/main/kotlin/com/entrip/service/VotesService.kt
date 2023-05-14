@@ -15,7 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Collections
+import java.util.*
 import javax.transaction.Transactional
 
 @Service
@@ -46,6 +46,7 @@ class VotesService(
     @Transactional
     fun saveVotes(requestDto: VotesSaveRequestDto) : Long? {
         val plannerId = requestDto.planner_id
+
         val planners : Planners = findPlanners(plannerId)
         val author = findUsers(requestDto.author)
         val votes = requestDto.toEntity()
@@ -149,7 +150,7 @@ class VotesService(
         Collections.sort(votingUsersList, VotingUsersReturnDtoComparator())
 
         return VotesFullInfoReturnDto(votes.title, votingUsersList,
-            votes.multipleVote, votes.anonymousVote, votes.author!!.user_id!!, votes.voting)
+            votes.multipleVote, votes.anonymousVote, votes.author!!.user_id, votes.voting)
     }
 
     @Transactional

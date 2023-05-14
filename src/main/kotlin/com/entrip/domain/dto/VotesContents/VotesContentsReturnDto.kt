@@ -3,7 +3,7 @@ package com.entrip.domain.dto.VotesContents
 import com.entrip.domain.entity.VotesContents
 
 class VotesContentsReturnDto(
-    val votesContents_id : Long?,
+    var votesContents_id : Long?,
     val content : String,
     val selectedCount : Int,
 ) {

@@ -9,7 +9,7 @@ class Votes(
     @Id
     @GeneratedValue
     @Column(name = "VOTE_ID")
-    val vote_id : Long? = null,
+    var vote_id : Long? = null,
 
     @Column
     var title : String,
