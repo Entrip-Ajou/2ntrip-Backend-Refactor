@@ -1,0 +1,58 @@
+= 2ntrip API Docs
+Powered By Dongwhwan Lee, https://github.com/hwanld
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 1
+:sectlinks:
+
+[[Votes_save]]
+== Votes_save
+
+operation::Votes_save[snippets='http-request,request-body,request-fields,http-response,response-body,response-fields']
+
+[[Votes_findById]]
+== Votes_findById
+
+operation::Votes_findById[snippets='http-request,path-parameters,http-response,response-body,response-fields']
+
+[[Votes_update]]
+== Votes_update
+
+operation::Votes_update[snippets='http-request,request-body,request-fields,http-response,response-body,response-fields']
+
+[[Votes_doVote]]
+== Votes_doVote
+
+operation::Votes_doVote[snippets='http-request,request-body,request-fields,http-response,response-body,response-fields']
+
+[[Votes_undoVote]]
+== Votes_undoVote
+
+`undoVote` 의 requestBody 의 voteContents_id 는 doVote 메소드와 동일한 DTO 를 사용하기 위해서 존재하는 것 뿐, 아무런 기능을 가지고 있지 않습니다.
+
+`undoVote` 는 해당 사용자가 해당 투표에서 투표한 모든 항목을 초기화 하는 기능을 가지고 있습니다. 따라서 사용자가 1,2 번 항목을 투표하였다가 2번 항목을 취소한다면 아래와 같은 절차를 거쳐야 합니다.
+
+* 1. [1,2] 번 항목에 모두 투표 (doVote)
+* 2. 해당 Votes 에 대해서 투표 취소 (undoVote)
+* 3. 다시 [1] 번 항목에만 투표 (doVote)
+
+operation::Votes_undoVote[snippets='http-request,request-body,request-fields,http-response,response-body,response-fields']
+
+[[Votes_getPreviousVotes]]
+== Votes_getPreviousVotes
+
+`getPreviousVotes` 메소드는 A 사용자 (Users)가 1번 투표(Votes)에서 어떤 항목들에 투표하였는지 투표한 항목들 (VotesContents)의 아이디 리스트를 반환하는 역할입니다.
+
+operation::Votes_getPreviousVotes[snippets='http-request,request-body,request-fields,http-response,response-body,response-fields']
+
+[[Votes_terminateVote]]
+== Votes_terminateVote
+
+operation::Votes_terminateVote[snippets='http-request,path-parameters,http-response,response-body,response-fields']
+
+[[Votes_delete]]
+== Votes_delete
+
+operation::Votes_delete[snippets='http-request,path-parameters,http-response,response-body,response-fields']
