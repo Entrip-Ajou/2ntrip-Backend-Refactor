@@ -1,0 +1,155 @@
+= 2ntrip API Docs
+Powered By Jinhee Lee, https://github.com/Egenieee - Version 0.0.1-SNAPSHOT
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 1
+:sectlinks:
+
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+[[Plans_save]]
+== Plans_save
+
+=== Http request
+
+include::{snippets}/Plans_save/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Plans_save/request-headers.adoc[]
+
+=== Request fields
+
+include::{snippets}/Plans_save/request-fields.adoc[]
+
+=== Request body
+
+include::{snippets}/Plans_save/request-body.adoc[]
+
+=== Http response
+
+include::{snippets}/Plans_save/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Plans_save/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Plans_save/response-body.adoc[]
+
+[[Plans_update]]
+== Plans_update
+
+=== Http request
+
+include::{snippets}/Plans_update/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Plans_update/request-headers.adoc[]
+
+=== Request fields
+
+include::{snippets}/Plans_update/request-fields.adoc[]
+
+=== Request body
+
+include::{snippets}/Plans_update/request-body.adoc[]
+
+=== Http response
+
+include::{snippets}/Plans_update/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Plans_update/response-fields.adoc[]
+
+=== Response body
+
+include::{snippets}/Plans_update/response-body.adoc[]
+
+[[Plans_findById_success]]
+== Plans_findById : success case
+
+=== Http request
+
+include::{snippets}/Plans_findById : success case/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Plans_findById : success case/request-headers.adoc[]
+
+=== Path Parameters
+
+include::{snippets}/Plans_findById : success case/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Plans_findById : success case/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Plans_findById : success case/response-fields.adoc[]
+
+=== Response Body
+
+include::{snippets}/Plans_findById : success case/response-body.adoc[]
+
+[[Plans_findById_fail]]
+== Plans_findById : fail case
+
+=== Http request
+
+include::{snippets}/Plans_findById : fail case/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Plans_findById : fail case/request-headers.adoc[]
+
+=== Path Parameters
+
+include::{snippets}/Plans_findById : fail case/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Plans_findById : fail case/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Plans_findById : fail case/response-fields.adoc[]
+
+=== Response Body
+
+include::{snippets}/Plans_findById : fail case/response-body.adoc[]
+
+[[Plans_delete]]
+== Plans_delete
+
+=== Http request
+
+include::{snippets}/Plans_delete/http-request.adoc[]
+
+=== Request headers
+
+include::{snippets}/Plans_delete/request-headers.adoc[]
+
+=== Path Parameters
+
+include::{snippets}/Plans_delete/path-parameters.adoc[]
+
+=== Http response
+
+include::{snippets}/Plans_delete/http-response.adoc[]
+
+=== Response fields
+
+include::{snippets}/Plans_delete/response-fields.adoc[]
+
+=== Response Body
+
+include::{snippets}/Plans_delete/response-body.adoc[]
