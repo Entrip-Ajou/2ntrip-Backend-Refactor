@@ -192,26 +192,43 @@ class PlannersService(
         val planners = findPlanners(planner_id)
 
         // delete Plans
-        for (plan in planners.plans!!) {
-            for (comment in plan.comments) {
-                commentsService.delete(comment.comment_id!!)
+        val plansSet = planners.plans
+        val plansIterator = plansSet!!.iterator()
+        while (plansIterator.hasNext()) {
+            val plans = plansIterator.next()
+            val commentsIterator = plans.comments.iterator()
+
+            while (commentsIterator.hasNext()) {
+                val comments = commentsIterator.next()
+                commentsIterator.remove()
+                commentsService.delete(comments.comment_id!!)
             }
-            plansService.delete(plan.plan_id!!)
+
+            plansIterator.remove()
+            plansService.delete(plans.plan_id!!)
         }
 
         // delete Notices
-        for (notice in planners.notices) {
-            noticesService.delete(notice.notice_id!!)
+        val noticesIterator = planners.notices.iterator()
+        while (noticesIterator.hasNext()) {
+            val notices = noticesIterator.next()
+            noticesIterator.remove()
+            noticesService.delete(notices.notice_id!!)
         }
 
         // exit Users
-        for (user in planners.users) {
-            user.planners.remove(planners)
+        val usersIterator = planners.users.iterator()
+        while (usersIterator.hasNext()) {
+            val users = usersIterator.next()
+            users.planners.remove(planners)
         }
 
         // delete Votes
-        for (vote in planners.votes) {
-            votesService.delete(vote.vote_id!!)
+        val votesIterator = planners.votes.iterator()
+        while (votesIterator.hasNext()) {
+            val votes = votesIterator.next()
+            votesIterator.remove()
+            votesService.delete(votes.vote_id!!)
         }
 
         plannersRepository.delete(planners)
