@@ -2,13 +2,11 @@ package com.entrip.plans
 
 import com.entrip.auth.getContent
 import com.entrip.domain.RestAPIMessages
-import com.entrip.domain.dto.Plans.PlansResponseDto
 import com.entrip.domain.dto.Plans.PlansReturnDto
 import com.entrip.domain.dto.Plans.PlansSaveRequestDto
 import com.entrip.domain.dto.Plans.PlansUpdateRequestDto
 import com.entrip.domain.dto.Users.UsersLoginRequestDto
 import com.entrip.domain.dto.Users.UsersSaveRequestDto
-import com.entrip.domain.entity.Plans
 import com.entrip.repository.PlansRepository
 import com.entrip.service.PlannersService
 import com.entrip.service.PlansService
@@ -105,9 +103,9 @@ class PlansIntegrationTest : BehaviorSpec() {
         }
 
         afterEach {
-            deleteUsers()
-            deletePlanners()
             deleteAllPlans()
+            deletePlanners()
+            deleteUsers()
         }
 
         given("PlansSaveRequestDto가 주어졌을 때") {
@@ -123,18 +121,14 @@ class PlansIntegrationTest : BehaviorSpec() {
             `when`("저장하면") {
                 then("Plans가 저장된다") {
                     val plansReturnDto = PlansReturnDto(
-                        PlansResponseDto(
-                            Plans(
-                                2L,
-                                planDate,
-                                planTodo,
-                                planTime,
-                                planLocation,
-                                planRgb,
-                                plansRepository.findById(plansId).get().planners,
-                                plansRepository.findById(plansId).get().comments
-                            )
-                        )
+                        plan_id = 2L,
+                        date = planDate,
+                        todo = planTodo,
+                        time = planTime,
+                        location = planLocation,
+                        rgb = planRgb,
+                        planner_id = plannersId,
+                        isExistComments = false
                     )
 
                     val successExpectedResponse = RestAPIMessages(
@@ -199,18 +193,14 @@ class PlansIntegrationTest : BehaviorSpec() {
             `when`("수정을 요청하면") {
                 then("Plans가 수정되고 plansReturnDto가 반환된다.") {
                     val plansReturnDto = PlansReturnDto(
-                        PlansResponseDto(
-                            Plans(
-                                plansId,
-                                changePlanDate,
-                                planTodo,
-                                changePlanTime,
-                                planLocation,
-                                planRgb,
-                                plansRepository.findById(plansId).get().planners,
-                                plansRepository.findById(plansId).get().comments
-                            )
-                        )
+                        plan_id = plansId,
+                        date = changePlanDate,
+                        todo = planTodo,
+                        time = changePlanTime,
+                        location = planLocation,
+                        rgb = planRgb,
+                        planner_id = plannersId,
+                        isExistComments = false
                     )
 
                     val successExpectedResponse = RestAPIMessages(
