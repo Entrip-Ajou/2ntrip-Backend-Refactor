@@ -14,6 +14,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.shouldBe
 import io.mockk.every
+import io.mockk.justRun
 import io.mockk.mockk
 import org.springframework.context.ApplicationEventPublisher
 import java.util.*
@@ -111,7 +112,7 @@ class PlansServiceTest : BehaviorSpec() {
             val invalidPlansId = 100L
 
             every { plansRepository.findById(validPlansId) } returns Optional.of(plans)
-            every { plansRepository.findById(invalidPlansId) } throws IllegalArgumentException()
+            every { plansRepository.findById(invalidPlansId) } returns Optional.empty()
 
             `when`("올바른 Id값으로 findById를 호출하면") {
                 val savedPlans = plansService.findById(validPlansId)
@@ -133,7 +134,7 @@ class PlansServiceTest : BehaviorSpec() {
         given("Plans의 Id가 주어졌을 때 (2)") {
             val plansId = 1L
 
-            every { plansRepository.delete(plans) } returns Unit
+            justRun { plansRepository.delete(plans) }
             every { plansRepository.findAll() } returns emptyList()
 
             `when`("plans을 삭제하면") {
