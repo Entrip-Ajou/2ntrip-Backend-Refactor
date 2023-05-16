@@ -34,7 +34,7 @@ class Planners(
 
     @Column
     @OneToMany(mappedBy = "planners", fetch = FetchType.LAZY)
-    var votes: MutableSet<Votes> = TreeSet(),
+    var votes: MutableList<Votes> = ArrayList(),
 
     ) : BaseTimeEntity(), Comparable<Planners> {
 

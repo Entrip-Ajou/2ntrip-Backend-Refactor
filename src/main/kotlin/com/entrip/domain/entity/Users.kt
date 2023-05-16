@@ -51,7 +51,7 @@ class Users(
 
     @Column
     @OneToMany(mappedBy = "author", fetch = FetchType.EAGER)
-    var votes : MutableSet<Votes> = TreeSet(),
+    var votes : MutableList<Votes> = ArrayList(),
 
     @Column
     val nickname: String,

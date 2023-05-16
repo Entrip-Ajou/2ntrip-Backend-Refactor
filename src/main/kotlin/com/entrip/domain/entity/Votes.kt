@@ -1,7 +1,6 @@
 package com.entrip.domain.entity
 
 import java.time.LocalDateTime
-import java.util.*
 import javax.persistence.*
 
 @Entity
@@ -18,19 +17,19 @@ class Votes(
     var voting : Boolean,
     var deadLine : LocalDateTime?,
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     var author: Users? = null,
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PLANNER_ID")
     var planners: Planners? = null,
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "VOTES")
-    var contents: MutableSet<VotesContents> = TreeSet()
+    var contents: MutableList<VotesContents> = ArrayList()
 
-) : Comparable<Votes> {
+) {
     fun updateTitle(title: String) {
         this.title = title
     }
@@ -49,10 +48,6 @@ class Votes(
 
     fun terminate() {
         this.voting = false
-    }
-
-    override fun compareTo(other: Votes): Int {
-        return 1
     }
 
 }

@@ -1,7 +1,7 @@
 package com.entrip.service
 
-import com.entrip.domain.dto.Votes.VotesUserReturnDto
 import com.entrip.domain.dto.Votes.UsersAndContentsReturnDto
+import com.entrip.domain.dto.Votes.VotesUserReturnDto
 import com.entrip.domain.dto.VotesContents.PreviousVotesContentsRequestDto
 import com.entrip.domain.dto.VotesContents.VotesContentsCountRequestDto
 import com.entrip.domain.entity.Users
@@ -13,9 +13,7 @@ import com.entrip.repository.VotesContentsRepository
 import com.entrip.repository.VotesRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.util.*
 import javax.transaction.Transactional
-import kotlin.collections.ArrayList
 
 @Service
 class VotesContentsService(
@@ -28,16 +26,16 @@ class VotesContentsService(
     private val usersRepository: UsersRepository,
 ) {
 
-    fun saveVotesContents(votesId : Long, contents: MutableList<String>) : MutableSet<VotesContents> {
+    fun saveVotesContents(votesId : Long, contents: MutableList<String>) : MutableList<VotesContents> {
         // VotesContents Entity 하나씩 만들어서 리스트로 묶어서 리턴
-        val votesSet : MutableSet<VotesContents> = TreeSet()
+        val votesList : MutableList<VotesContents> = kotlin.collections.ArrayList()
         for (content in contents) {
             val votesContentsId = save(votesId, content)
             val votesContents = findVotesContents(votesContentsId!!)
-            votesSet.add(votesContents)
+            votesList.add(votesContents)
         }
 
-        return votesSet
+        return votesList
     }
 
     @Transactional
@@ -105,7 +103,8 @@ class VotesContentsService(
     fun undoVote(requestDto : VotesContentsCountRequestDto) : Long? {
         val users : Users = findUsers(requestDto.user_id)
         val votes = checkValidVotes(requestDto.vote_id)
-        val votesContents : MutableSet<VotesContents> = votes.contents
+        val votesContents : MutableList<VotesContents> = votes.contents
+//        val votesContents : MutableSet<VotesContents> = votes.contents
         for (votesContent in votesContents) {
             if (votesContent.usersSet.contains(users)) {
                 votesContent.usersSet.remove(users)
@@ -120,7 +119,8 @@ class VotesContentsService(
         val previousVotesContents : MutableList<Long> = ArrayList()
         val votes : Votes = findVotes(requestDto.vote_id)
         val user : Users = findUsers(requestDto.user_id)
-        val votesContents : MutableSet<VotesContents> = votes.contents
+        val votesContents : MutableList<VotesContents> = votes.contents
+//        val votesContents : MutableSet<VotesContents> = votes.contents
 
         for (voteContent in votesContents) {
             if (voteContent.usersSet.contains(user)) {

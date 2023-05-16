@@ -81,7 +81,7 @@ class VotesServiceTest : BehaviorSpec() {
         selectedCount = 0
     )
 
-    final val votesContents = mutableSetOf<VotesContents>(votesContents1, votesContents2)
+    final val votesContents = mutableListOf<VotesContents>(votesContents1, votesContents2)
 
     final val testVotes = Votes(
         vote_id = 1L,

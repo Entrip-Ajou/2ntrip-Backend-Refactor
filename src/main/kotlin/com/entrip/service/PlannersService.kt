@@ -11,6 +11,7 @@ import com.entrip.domain.dto.Votes.VotesReturnDto
 import com.entrip.domain.dto.Votes.VotesReturnDtoComparator
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Users
+import com.entrip.domain.entity.Votes
 import com.entrip.repository.PlannersRepository
 import com.entrip.repository.UsersRepository
 import org.slf4j.Logger
@@ -276,10 +277,21 @@ class PlannersService(
             }
         }
 
-        for (vote in planners.votes) {
-            if (vote.author!!.user_id == users.user_id) {
-                votesService.delete(vote.vote_id!!)
+        // Using iterator
+        // Because of ConcurrentModificationException
+        val votesToDelete = mutableListOf<Votes>()
+
+        val iterator = planners.votes.iterator()
+        while (iterator.hasNext()) {
+            val vote = iterator.next()
+            if (vote.author?.user_id == users.user_id) {
+                votesToDelete.add(vote)
+                iterator.remove()
             }
+        }
+
+        votesToDelete.forEach { vote ->
+            votesService.delete(vote.vote_id!!)
         }
 
         logger.info("User with user_id : '{}' is exit with Planner with planner_id : '{}'", user_id, planner_id)

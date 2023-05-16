@@ -38,7 +38,7 @@ class VotesService(
         val contents = votesContentsService.saveVotesContents(votesId!!, requestDto.contents)
 
         val votes : Votes = findVotes(votesId)
-        votes.contents = contents
+        votes.contents = contents.toMutableList()
 
         return votes.vote_id
     }
