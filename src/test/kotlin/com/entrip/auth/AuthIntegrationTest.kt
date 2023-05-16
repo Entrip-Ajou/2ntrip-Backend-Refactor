@@ -387,3 +387,4 @@ fun BehaviorSpec.getContent(result: MvcResult, target: String): String {
 
     return ""
 }
+

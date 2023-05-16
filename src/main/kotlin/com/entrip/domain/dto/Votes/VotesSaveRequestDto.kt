@@ -1,7 +1,6 @@
 package com.entrip.domain.dto.Votes
 
 import com.entrip.domain.entity.Votes
-import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -11,7 +10,7 @@ class VotesSaveRequestDto(
     val multipleVotes : Boolean,
     val anonymousVotes : Boolean,
     val deadLine : String?,
-    val planner_id : Long,
+    var planner_id : Long,
     val author : String,
 ) {
     fun toEntity() : Votes {
