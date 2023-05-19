@@ -5,7 +5,6 @@ import com.entrip.domain.dto.Plans.PlansSaveRequestDto
 import com.entrip.domain.dto.Plans.PlansUpdateRequestDto
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Plans
-import com.entrip.events.CrudEvent
 import com.entrip.repository.CommentsRepository
 import com.entrip.repository.PlannersRepository
 import com.entrip.repository.PlansRepository
@@ -53,11 +52,8 @@ class PlansService(
     public fun save(requestDto: PlansSaveRequestDto): Long? {
         val planner_id: Long = requestDto.planner_id
         val planners = findPlanners(planner_id)
-        val plans = requestDto.toEntity()
-        planners.plans!!.add(plans)
-        planners.setTimeStamp(LocalDateTime.now())
+        val plans = Plans.createPlans(planners, requestDto.toEntity())
 
-        plans.setPlanners(planners)
         publishCrudEvents("Plans Save", planner_id)
         return plansRepository.save(plans).plan_id
     }

@@ -1,5 +1,6 @@
 package com.entrip.domain.entity
 
+import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
 
@@ -17,14 +18,14 @@ class Plans(
     var location: String? = null,
     var rgb: Long,
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PLANNER_ID")
     var planners: Planners? = null,
 
-    @OneToMany(mappedBy = "plans", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "plans")
     var comments: MutableSet<Comments> = TreeSet()
 ) : Comparable<Plans> {
-    public fun update(date: String, todo: String, time: String, location: String?, rgb: Long): Unit {
+    fun update(date: String, todo: String, time: String, location: String?, rgb: Long): Unit {
         this.date = date
         this.todo = todo
         this.time = time
@@ -32,16 +33,27 @@ class Plans(
         this.rgb = rgb
     }
 
-    public fun setPlanners(planners: Planners): Long? {
+    fun setPlanners(planners: Planners): Long? {
         this.planners = planners
         return this.planners!!.planner_id
     }
 
-    public fun isExistComments(): Boolean {
+    fun isExistComments(): Boolean {
         return comments.isNotEmpty()
     }
 
     override fun compareTo(other: Plans): Int {
         return 1
+    }
+
+    companion object {
+        fun createPlans(planners: Planners, plans: Plans): Plans {
+            plans.setPlanners(planners)
+            planners.plans!!.add(plans)
+
+            planners.setTimeStamp(LocalDateTime.now())
+
+            return plans
+        }
     }
 }
