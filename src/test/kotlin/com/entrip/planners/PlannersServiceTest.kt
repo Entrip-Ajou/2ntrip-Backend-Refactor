@@ -190,6 +190,7 @@ class PlannersServiceTest : BehaviorSpec() {
 
             planners.users.add(users)
             users.planners.add(planners)
+            plans.setPlanners(planners)
             planners.plans?.add(plans)
             planners.notices.add(notices)
             planners.votes.add(votes)

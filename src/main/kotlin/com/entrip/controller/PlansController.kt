@@ -2,7 +2,6 @@ package com.entrip.controller
 
 import com.entrip.domain.RestAPIMessages
 import com.entrip.domain.dto.Plans.PlansResponseDto
-import com.entrip.domain.dto.Plans.PlansReturnDto
 import com.entrip.domain.dto.Plans.PlansSaveRequestDto
 import com.entrip.domain.dto.Plans.PlansUpdateRequestDto
 import com.entrip.service.PlansService
@@ -18,8 +17,7 @@ class PlansController(
     fun save(@RequestBody requestDto: PlansSaveRequestDto): ResponseEntity<RestAPIMessages> {
         val savedPlanId: Long = plansService.save(requestDto)!!
         val responseDto: PlansResponseDto = plansService.findById(savedPlanId)
-        val returnDto = PlansReturnDto(responseDto)
-        return sendResponseHttpByJson("Plan is saved well", returnDto)
+        return sendResponseHttpByJson("Plan is saved well", responseDto)
     }
 
     @PutMapping("/api/v1/plans/{plan_id}")
@@ -29,15 +27,13 @@ class PlansController(
     ): ResponseEntity<RestAPIMessages> {
         plansService.update(plan_id, requestDto)
         val responseDto = plansService.findById(plan_id)
-        val returnDto = PlansReturnDto(responseDto)
-        return sendResponseHttpByJson("Plan is updated well", returnDto)
+        return sendResponseHttpByJson("Plan is updated well", responseDto)
     }
 
     @GetMapping("/api/v1/plans/{plan_id}")
     fun findById(@PathVariable plan_id: Long): ResponseEntity<RestAPIMessages> {
         val responseDto = plansService.findById(plan_id)
-        val returnDto = PlansReturnDto(responseDto)
-        return sendResponseHttpByJson("Load plan with id : $plan_id", returnDto)
+        return sendResponseHttpByJson("Load plan with id : $plan_id", responseDto)
     }
 
     @DeleteMapping("/api/v1/plans/{plan_id}")

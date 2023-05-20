@@ -1,7 +1,5 @@
 package com.entrip.domain.dto.Plans
 
-import com.entrip.domain.entity.Comments
-import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Plans
 
 class PlansResponseDto(
@@ -11,8 +9,7 @@ class PlansResponseDto(
     val time: String,
     val location: String? = null,
     val rgb: Long,
-    val planners: Planners?,
-    val comments: MutableSet<Comments>,
+    val planner_id: Long?,
     val isExistComments: Boolean
 ) {
     constructor(entity: Plans) : this(
@@ -22,8 +19,7 @@ class PlansResponseDto(
         entity.time,
         entity.location,
         entity.rgb,
-        entity.planners,
-        entity.comments,
+        entity.planners!!.planner_id,
         entity.isExistComments()
     )
 }

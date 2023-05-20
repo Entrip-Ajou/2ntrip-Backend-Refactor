@@ -2,7 +2,6 @@ package com.entrip.service
 
 import com.entrip.domain.dto.Comments.*
 import com.entrip.domain.dto.Plans.PlansResponseDto
-import com.entrip.domain.dto.Plans.PlansReturnDto
 import com.entrip.domain.entity.Comments
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Plans
@@ -85,10 +84,9 @@ class CommentsService(
     fun getAllCommentsAndPlanWithPlanId(plan_id: Long) : CommentsWithPlanReturnDto {
         val plans = findPlans(plan_id)
         val plansResponseDto = PlansResponseDto(plans)
-        val planReturnDto = PlansReturnDto(plansResponseDto)
         val commentsList : MutableList<CommentsReturnDto> = getAllCommentsWithPlanId(plan_id)
 
-        return CommentsWithPlanReturnDto(planReturnDto, commentsList)
+        return CommentsWithPlanReturnDto(plansResponseDto, commentsList)
     }
 
     @Transactional

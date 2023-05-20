@@ -6,7 +6,6 @@ import com.entrip.domain.dto.Notices.NoticesSaveRequestDto
 import com.entrip.domain.dto.Planners.PlannersResponseDto
 import com.entrip.domain.dto.Planners.PlannersUpdateRequestDto
 import com.entrip.domain.dto.Plans.PlansResponseDto
-import com.entrip.domain.dto.Plans.PlansReturnDto
 import com.entrip.domain.dto.Plans.PlansSaveRequestDto
 import com.entrip.domain.dto.Users.UsersLoginRequestDto
 import com.entrip.domain.dto.Users.UsersResponseDto
@@ -365,11 +364,9 @@ class PlannersIntegrationTest : BehaviorSpec() {
 
             val planId = plansService.save(plansSaveRequestDto)
 
-            val plansReturnDto = PlansReturnDto(
-                PlansResponseDto(plansRepository.findById(planId!!).get())
-            )
+            val plansResponseDto = PlansResponseDto(plansRepository.findById(planId!!).get())
 
-            val plansList = mutableListOf(plansReturnDto)
+            val plansList = mutableListOf(plansResponseDto)
 
             `when`("플래너에 있는 모든 플랜 조회를 요청하면") {
                 val successExpectedResponse = RestAPIMessages(

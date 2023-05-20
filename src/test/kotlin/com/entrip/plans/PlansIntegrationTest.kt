@@ -2,7 +2,7 @@ package com.entrip.plans
 
 import com.entrip.auth.getContent
 import com.entrip.domain.RestAPIMessages
-import com.entrip.domain.dto.Plans.PlansReturnDto
+import com.entrip.domain.dto.Plans.PlansResponseDto
 import com.entrip.domain.dto.Plans.PlansSaveRequestDto
 import com.entrip.domain.dto.Plans.PlansUpdateRequestDto
 import com.entrip.domain.dto.Users.UsersLoginRequestDto
@@ -120,7 +120,7 @@ class PlansIntegrationTest : BehaviorSpec() {
 
             `when`("저장하면") {
                 then("Plans가 저장된다") {
-                    val plansReturnDto = PlansReturnDto(
+                    val plansResponseDto = PlansResponseDto(
                         plan_id = 2L,
                         date = planDate,
                         todo = planTodo,
@@ -134,7 +134,7 @@ class PlansIntegrationTest : BehaviorSpec() {
                     val successExpectedResponse = RestAPIMessages(
                         httpStatus = 200,
                         message = "Plan is saved well",
-                        data = plansReturnDto
+                        data = plansResponseDto
                     )
 
                     mockMvc.perform(
@@ -191,8 +191,8 @@ class PlansIntegrationTest : BehaviorSpec() {
             )
 
             `when`("수정을 요청하면") {
-                then("Plans가 수정되고 plansReturnDto가 반환된다.") {
-                    val plansReturnDto = PlansReturnDto(
+                then("Plans가 수정되고 plansResponseDto가 반환된다.") {
+                    val plansResponseDto = PlansResponseDto(
                         plan_id = plansId,
                         date = changePlanDate,
                         todo = planTodo,
@@ -206,7 +206,7 @@ class PlansIntegrationTest : BehaviorSpec() {
                     val successExpectedResponse = RestAPIMessages(
                         httpStatus = 200,
                         message = "Plan is updated well",
-                        data = plansReturnDto
+                        data = plansResponseDto
                     )
 
                     mockMvc.perform(
@@ -254,15 +254,13 @@ class PlansIntegrationTest : BehaviorSpec() {
 
         given("Plans이 한 개 저장되어있는 상태에서 (1) ") {
             `when`("올바른 아이디로 findById를 호출하면") {
-                then("plansReturnDto가 반환된다") {
-                    val plansReturnDto = PlansReturnDto(
-                        plansService.findById(plansId)
-                    )
+                then("plansResponseDto가 반환된다") {
+                    val plansResponseDto = plansService.findById(plansId)
 
                     val successExpectedResponse = RestAPIMessages(
                         httpStatus = 200,
                         message = "Load plan with id : $plansId",
-                        data = plansReturnDto
+                        data = plansResponseDto
                     )
 
                     mockMvc.perform(

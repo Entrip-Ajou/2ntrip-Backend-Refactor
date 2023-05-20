@@ -5,7 +5,6 @@ import com.entrip.domain.dto.Notices.NoticesReturnDtoComparator
 import com.entrip.domain.dto.Planners.PlannersResponseDto
 import com.entrip.domain.dto.Planners.PlannersUpdateRequestDto
 import com.entrip.domain.dto.Plans.PlansResponseDto
-import com.entrip.domain.dto.Plans.PlansReturnDto
 import com.entrip.domain.dto.Users.UsersResponseDto
 import com.entrip.domain.dto.Votes.VotesReturnDto
 import com.entrip.domain.dto.Votes.VotesReturnDtoComparator
@@ -123,14 +122,14 @@ class PlannersService(
 
     fun findByPlannerId(planner_id: Long): PlannersResponseDto = PlannersResponseDto(findPlanners(planner_id))
 
-    fun findByPlannerIdWithDate(planner_id: Long, date: String): MutableList<PlansReturnDto> {
+    fun findByPlannerIdWithDate(planner_id: Long, date: String): MutableList<PlansResponseDto> {
         val planners = findPlannersWithFetchPlans(planner_id)
-        val plansList: MutableList<PlansReturnDto> = ArrayList<PlansReturnDto>()
+        val plansList: MutableList<PlansResponseDto> = ArrayList<PlansResponseDto>()
         val fixedDate: String = fixDate(date)
 
         for (plans in planners.plans!!) {
             if (plans.date == fixedDate) {
-                plansList.add(PlansReturnDto(PlansResponseDto(plans)))
+                plansList.add(PlansResponseDto(plans))
             }
         }
 
@@ -148,12 +147,12 @@ class PlannersService(
         return usersList
     }
 
-    fun findAllPlansWithPlannerId(planner_id: Long): MutableList<PlansReturnDto> {
+    fun findAllPlansWithPlannerId(planner_id: Long): MutableList<PlansResponseDto> {
         val planners = findPlannersWithFetchPlans(planner_id)
-        val plansList: MutableList<PlansReturnDto> = ArrayList<PlansReturnDto>()
+        val plansList: MutableList<PlansResponseDto> = ArrayList<PlansResponseDto>()
 
         for (plan in planners.plans!!) {
-            plansList.add(PlansReturnDto(PlansResponseDto(plan)))
+            plansList.add(PlansResponseDto(plan))
         }
 
         return plansList
