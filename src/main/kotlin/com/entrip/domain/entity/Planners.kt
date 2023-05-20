@@ -25,7 +25,7 @@ class Planners(
     var users: MutableSet<Users> = TreeSet(),
 
     @Column
-    @OneToMany(mappedBy = "planners", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "planners", fetch = FetchType.LAZY, orphanRemoval = true)
     var plans: MutableSet<Plans>? = TreeSet(),
 
     @Column

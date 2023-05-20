@@ -363,8 +363,9 @@ class PlannersIntegrationTest : BehaviorSpec() {
 
 
             val planId = plansService.save(plansSaveRequestDto)
+            val plans = plansRepository.findPlansByPlan_idFetchComments(planId!!).get()
 
-            val plansResponseDto = PlansResponseDto(plansRepository.findById(planId!!).get())
+            val plansResponseDto = PlansResponseDto(plans, plans.isExistComments())
 
             val plansList = mutableListOf(plansResponseDto)
 

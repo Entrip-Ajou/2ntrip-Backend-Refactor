@@ -129,7 +129,7 @@ class PlannersService(
 
         for (plans in planners.plans!!) {
             if (plans.date == fixedDate) {
-                plansList.add(PlansResponseDto(plans))
+                plansList.add(PlansResponseDto(plans, plans.isExistComments()))
             }
         }
 
@@ -152,7 +152,7 @@ class PlannersService(
         val plansList: MutableList<PlansResponseDto> = ArrayList<PlansResponseDto>()
 
         for (plan in planners.plans!!) {
-            plansList.add(PlansResponseDto(plan))
+            plansList.add(PlansResponseDto(plan, plan.isExistComments()))
         }
 
         return plansList
@@ -189,23 +189,6 @@ class PlannersService(
     @Transactional
     fun delete(planner_id: Long): Long {
         val planners = findPlanners(planner_id)
-
-        // delete Plans
-        val plansSet = planners.plans
-        val plansIterator = plansSet!!.iterator()
-        while (plansIterator.hasNext()) {
-            val plans = plansIterator.next()
-            val commentsIterator = plans.comments.iterator()
-
-            while (commentsIterator.hasNext()) {
-                val comments = commentsIterator.next()
-                commentsIterator.remove()
-                commentsService.delete(comments.comment_id!!)
-            }
-
-            plansIterator.remove()
-            plansService.delete(plans.plan_id!!)
-        }
 
         // delete Notices
         val noticesIterator = planners.notices.iterator()

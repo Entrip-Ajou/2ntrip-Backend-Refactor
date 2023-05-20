@@ -22,7 +22,7 @@ class Plans(
     @JoinColumn(name = "PLANNER_ID")
     var planners: Planners? = null,
 
-    @OneToMany(mappedBy = "plans")
+    @OneToMany(mappedBy = "plans", fetch = FetchType.LAZY, orphanRemoval = true)
     var comments: MutableSet<Comments> = TreeSet()
 ) : Comparable<Plans> {
     fun update(date: String, todo: String, time: String, location: String?, rgb: Long): Unit {

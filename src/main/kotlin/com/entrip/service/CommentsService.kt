@@ -49,7 +49,7 @@ class CommentsService(
     }
 
     private fun findPlans(plan_id: Long): Plans {
-        val plans: Plans = plansRepository.findById(plan_id!!).orElseThrow {
+        val plans: Plans = plansRepository.findPlansByPlan_idFetchComments(plan_id!!).orElseThrow {
             IllegalArgumentException("Error raise at plansRepository.findById$plan_id")
         }
         return plans
@@ -83,8 +83,8 @@ class CommentsService(
 
     fun getAllCommentsAndPlanWithPlanId(plan_id: Long) : CommentsWithPlanReturnDto {
         val plans = findPlans(plan_id)
-        val plansResponseDto = PlansResponseDto(plans)
-        val commentsList : MutableList<CommentsReturnDto> = getAllCommentsWithPlanId(plan_id)
+        val plansResponseDto = PlansResponseDto(plans, plans.isExistComments())
+        val commentsList: MutableList<CommentsReturnDto> = getAllCommentsWithPlanId(plan_id)
 
         return CommentsWithPlanReturnDto(plansResponseDto, commentsList)
     }
