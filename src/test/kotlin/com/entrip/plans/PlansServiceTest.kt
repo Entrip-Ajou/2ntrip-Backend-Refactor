@@ -4,7 +4,6 @@ import com.entrip.domain.dto.Plans.PlansSaveRequestDto
 import com.entrip.domain.dto.Plans.PlansUpdateRequestDto
 import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Plans
-import com.entrip.repository.CommentsRepository
 import com.entrip.repository.PlannersRepository
 import com.entrip.repository.PlansRepository
 import com.entrip.service.CommentsService
@@ -16,7 +15,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
-import org.springframework.context.ApplicationEventPublisher
 import java.util.*
 
 class PlansServiceTest : BehaviorSpec() {
@@ -25,16 +23,11 @@ class PlansServiceTest : BehaviorSpec() {
 
     val plansRepository = mockk<PlansRepository>()
     val plannersRepository = mockk<PlannersRepository>()
-    val commentsRepository = mockk<CommentsRepository>()
     val commentsService = mockk<CommentsService>()
-    val eventPublisher = mockk<ApplicationEventPublisher>()
 
     val plansService = PlansService(
         plansRepository,
         plannersRepository,
-        commentsRepository,
-        commentsService,
-        eventPublisher
     )
 
     val planners = Planners(
@@ -70,7 +63,7 @@ class PlansServiceTest : BehaviorSpec() {
             )
 
             every { plansRepository.save(any()) } returns plans
-            every { plannersRepository.findById(any()) } returns Optional.of(planners)
+            every { plannersRepository.findPlannersByPlanner_idFetchPlans(any()) } returns Optional.of(planners)
 
             `when`("저장하면") {
                 val savedPlansId = plansService.save(plansSaveRequestDto)
@@ -92,6 +85,8 @@ class PlansServiceTest : BehaviorSpec() {
             )
 
             every { plansRepository.findById(plans.plan_id!!) } returns Optional.of(plans)
+            every { plansRepository.findPlansByPlan_idFetchPlanners(plans.plan_id!!) } returns Optional.of(plans)
+            every { plansRepository.findPlansByPlan_idFetchComments(plans.plan_id!!) } returns Optional.of(plans)
 
             plans.setPlanners(planners)
 
@@ -111,8 +106,11 @@ class PlansServiceTest : BehaviorSpec() {
             val validPlansId = 1L
             val invalidPlansId = 100L
 
-            every { plansRepository.findById(validPlansId) } returns Optional.of(plans)
-            every { plansRepository.findById(invalidPlansId) } returns Optional.empty()
+            every { plansRepository.findPlansByPlan_idFetchPlanners(validPlansId) } returns Optional.of(plans)
+            every { plansRepository.findPlansByPlan_idFetchComments(validPlansId) } returns Optional.of(plans)
+
+            every { plansRepository.findPlansByPlan_idFetchPlanners(invalidPlansId) } returns Optional.empty()
+            every { plansRepository.findPlansByPlan_idFetchComments(invalidPlansId) } returns Optional.empty()
 
             `when`("올바른 Id값으로 findById를 호출하면") {
                 val savedPlans = plansService.findById(validPlansId)
@@ -135,6 +133,7 @@ class PlansServiceTest : BehaviorSpec() {
             val plansId = 1L
 
             justRun { plansRepository.delete(plans) }
+            every { plansRepository.findPlansByPlan_idFetchPlanners(plans.plan_id!!) } returns Optional.of(plans)
             every { plansRepository.findAll() } returns emptyList()
 
             `when`("plans을 삭제하면") {

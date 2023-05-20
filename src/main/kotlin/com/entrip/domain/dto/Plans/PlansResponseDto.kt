@@ -12,7 +12,7 @@ class PlansResponseDto(
     val planner_id: Long?,
     val isExistComments: Boolean
 ) {
-    constructor(entity: Plans) : this(
+    constructor(entity: Plans, isExistComments: Boolean) : this(
         entity.plan_id,
         entity.date,
         entity.todo,
@@ -20,6 +20,6 @@ class PlansResponseDto(
         entity.location,
         entity.rgb,
         entity.planners!!.planner_id,
-        entity.isExistComments()
+        isExistComments
     )
 }

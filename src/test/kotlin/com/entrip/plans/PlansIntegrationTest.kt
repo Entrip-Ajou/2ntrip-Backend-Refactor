@@ -304,7 +304,7 @@ class PlansIntegrationTest : BehaviorSpec() {
                 val failExpectedResponse = RestAPIMessages(
                     httpStatus = 500,
                     message = "IllegalArgumentException\n",
-                    data = "Error raise at plansRepository.findById$wrongPlansId"
+                    data = "Error raise at plansRepository.findPlansByPlans_idFetchPlanners$wrongPlansId"
                 )
 
                 then("Exception이 반환된다") {
