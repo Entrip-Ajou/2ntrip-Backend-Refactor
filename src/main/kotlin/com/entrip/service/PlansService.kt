@@ -7,6 +7,8 @@ import com.entrip.domain.entity.Planners
 import com.entrip.domain.entity.Plans
 import com.entrip.repository.PlannersRepository
 import com.entrip.repository.PlansRepository
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -20,6 +22,9 @@ class PlansService(
     val plannersRepository: PlannersRepository,
 
     ) {
+
+    val logger: Logger = LoggerFactory.getLogger(PlansService::class.java)
+
     private fun findPlanners(planner_id: Long): Planners {
         val planners: Planners = plannersRepository.findPlannersByPlanner_idFetchPlans(planner_id).orElseThrow {
             IllegalArgumentException("Error raise at PlannersRepository.findPlannersByPlanner_idFetchPlans$planner_id")
@@ -54,7 +59,10 @@ class PlansService(
         val planners = findPlanners(planner_id)
         val plans = Plans.createPlans(planners, requestDto.toEntity())
 
-        return plansRepository.save(plans).plan_id
+        val plans_id = plansRepository.save(plans).plan_id
+        logger.info("Plans is saved in Database with planId : '{}'", plans_id)
+
+        return plans_id
     }
 
     @Transactional
@@ -62,6 +70,7 @@ class PlansService(
         val plans = findPlans(plan_id)
         plans.planners!!.setTimeStamp(LocalDateTime.now())
         plans.update(requestDto.date, requestDto.todo, requestDto.time, requestDto.location, requestDto.rgb)
+        logger.info("Plans is updated in Database with planId : '{}'", plan_id)
         return plan_id
     }
 
@@ -80,6 +89,7 @@ class PlansService(
         planners?.setTimeStamp(LocalDateTime.now())
 
         plansRepository.delete(plans)
+        logger.info("Plans is deleted in Database with planId : '{}'", plan_id)
 
         return plan_id
     }
